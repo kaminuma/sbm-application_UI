@@ -1,61 +1,58 @@
 <template>
   <div id="app">
-    <!-- Header コンポーネントの呼び出し -->
-    <Header :title="appTitle" />
-
-    <div class="container">
-      <!-- Sidebar コンポーネントの呼び出し -->
-      <Sidebar @navigate="changeView" />
-
-      <main>
-        <ScheduleView v-if="currentView === 'schedule'" />
-        <UploadView v-if="currentView === 'upload'" />
+    <HeaderComponent />
+    <div class="layout">
+      <SidebarComponent />
+      <main class="main-content">
+        <router-view /> <!-- ルートに応じたコンポーネントがここに表示される -->
       </main>
     </div>
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue';
-import Sidebar from './components/Sidebar.vue';
-import ScheduleView from './components/ScheduleView.vue';
-import UploadView from './components/UploadView.vue';
+import HeaderComponent from './components/Header.vue';
+import SidebarComponent from './components/Sidebar.vue';
 
 export default {
+  name: 'App',
   components: {
-    Header,
-    Sidebar,
-    ScheduleView,
-    UploadView,
-  },
-  data() {
-    return {
-      appTitle: 'sbm-application',
-      currentView: 'schedule', // デフォルトはスケジュール表示
-    };
-  },
-  methods: {
-    changeView(view) {
-      this.currentView = view;
-    },
+    HeaderComponent,
+    SidebarComponent,
   },
 };
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 30px;
-}
-
-.container {
+.layout {
   display: flex;
+  height: calc(100vh - 50px);
 }
 
 .main-content {
-  flex-grow: 1; /* メインコンテンツが余白を占める */
-  padding: 20px; /* メインコンテンツのパディング */
+  flex-grow: 1;
+  padding: 20px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* ビュー全体を占める */
+}
+
+.layout {
+  display: flex;
+  flex-grow: 1; /* 余白を利用 */
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
 }
 </style>
