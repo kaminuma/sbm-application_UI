@@ -1,15 +1,16 @@
 <template>
-    <div>
-      <h2>一括アップロード画面</h2>
-      <input type="file" @change="handleFileUpload" multiple />
-      <button @click="uploadFiles">アップロード</button>
-  
-      <div v-if="selectedFiles.length">
-        <h3>選択されたファイル:</h3>
-        <ul>
-          <li v-for="file in selectedFiles" :key="file.name">{{ file.name }}</li>
-        </ul>
-      </div>
+    <div class="upload-view">
+      <h2>一括アップロード</h2>
+      <v-form @submit.prevent="uploadFiles">
+        <v-file-input
+          v-model="files"
+          multiple
+          label="ファイルを選択"
+          prepend-icon="mdi-upload"
+          required
+        />
+        <v-btn type="submit" color="primary">アップロード</v-btn>
+      </v-form>
     </div>
   </template>
   
@@ -18,32 +19,21 @@
     name: 'UploadView',
     data() {
       return {
-        selectedFiles: [],
+        files: null,
       };
     },
     methods: {
-      handleFileUpload(event) {
-        this.selectedFiles = Array.from(event.target.files);
-      },
       uploadFiles() {
-        if (this.selectedFiles.length === 0) {
-          alert('ファイルが選択されていません。');
-          return;
-        }
-  
-        // 実際のアップロード処理はここに実装
-        alert('アップロード処理を実装してください。');
+        // アップロード処理をここに実装します
+        alert('アップロードするファイル: ' + this.files.length + '個');
       },
     },
   };
   </script>
   
   <style scoped>
-  input[type="file"] {
-    margin-bottom: 1rem;
-  }
-  
-  button {
-    margin-top: 1rem;
+  .upload-view {
+    padding: 20px;
   }
   </style>
+  
