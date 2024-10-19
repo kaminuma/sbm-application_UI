@@ -1,42 +1,59 @@
 <template>
-    <nav>
-      <ul>
-        <li><a href="#" @click.prevent="navigate('schedule')">スケジュール表示</a></li>
-        <li><a href="#" @click.prevent="navigate('upload')">一括アップロード</a></li>
-      </ul>
-    </nav>
-  </template>
+    <div class="sidebar">
+        <ul class="sidebar-list">
+            <li class="sidebar-item">
+                  <router-link to="/">スケジュール表示</router-link>
+            </li>
+            <li class="sidebar-item">
+                    <router-link to="/upload">一括アップロード</router-link>
+            </li>
+        </ul>
+    </div>
+</template>
+
+<script>
+import { useRouter } from 'vue-router';
   
-  <script>
-  export default {
+export default {
     name: 'Sidebar',
-    methods: {
-      navigate(view) {
-        this.$emit('navigate', view);
-      },
-    },
-  };
-  </script>
+        setup() {
+            const router = useRouter();
+            
+            const navigateTo = (routeName) => {
+                router.push({ name: routeName });
+            };
+  
+            return {
+                navigateTo,
+            };
+        },
+    };
+</script>
   
   <style scoped>
-  nav {
-    width: 200px; /* サイドバーの幅を固定 */
-    background-color: #f8f8f8;
-    padding: 1rem;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* シャドウを追加 */
+  .sidebar {
+    background-color: #f9e79f; /* 薄い黄色 */
+    width: 200px; /* 横幅300px */
+    height: 100vh; /* 高さをブラウザのビューポートに合わせる */
+    display: flex; /* フレックスボックスで配置 */
+    flex-direction: column; /* 縦に配置 */
   }
   
-  ul {
-    list-style-type: none;
-    padding: 0;
+  .sidebar-list {
+    list-style-type: none; /* リストのデフォルトスタイルを解除 */
+    padding: 0; /* パディングをリセット */
+    margin: 0; /* マージンをリセット */
   }
   
-  li {
-    margin: 1rem 0;
+  .sidebar-item {
+    height: 50px; /* 各項目の高さを50pxに設定 */
+    display: flex; /* フレックスボックスで配置 */
+    align-items: center; /* 縦中央揃え */
+    padding: 0 20px; /* 左右にパディングを追加 */
+    cursor: pointer; /* ホバー時にカーソルをポインタに変更 */
   }
   
-  a {
-    text-decoration: none;
-    color: #333;
+  .sidebar-item:hover {
+    background-color: #e0e0e0; /* ホバー時の背景色 */
   }
   </style>
