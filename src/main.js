@@ -1,5 +1,8 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router'; // ルーターのインポート
+import vuetify from './plugins/vuetify'; // Vuetifyのインポート
 
-createApp(App).mount('#app')
+const app = createApp(App);
+app.use(router); // ルーターをアプリに追加
+app.use(vuetify).mount("#app");
