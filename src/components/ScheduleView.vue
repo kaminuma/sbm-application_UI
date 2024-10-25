@@ -1,7 +1,27 @@
 <template>
   <v-app>
     <v-main>
-      <vue-cal :events="events"></vue-cal>
+      <vue-cal 
+        :events="events"
+        class="vuecal--blue-theme vuecal--date-picker demo"
+        xsmall
+        :selected-date="selectedDate"
+        hide-view-selector
+        :time="false"
+        :transitions="false"
+        active-view="month"
+        :disable-views="['week', 'day']"
+        @cell-click="handleDateClick"
+      ></vue-cal>
+      <v-dialog v-model="dialog" max-width="290">
+        <v-card>
+          <v-card-title class="headline">{{ selectedEventTitle }}</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-main>
   </v-app>
 </template>
