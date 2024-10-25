@@ -1,7 +1,27 @@
 <template>
   <v-app>
     <v-main>
-      <vue-cal :events="events"></vue-cal>
+      <vue-cal 
+        :events="events"
+        class="vuecal--blue-theme vuecal--date-picker demo"
+        xsmall
+        :selected-date="selectedDate"
+        hide-view-selector
+        :time="false"
+        :transitions="false"
+        active-view="month"
+        :disable-views="['week', 'day']"
+        @cell-click="handleDateClick"
+      ></vue-cal>
+      <v-dialog v-model="dialog" max-width="290">
+        <v-card>
+          <v-card-title class="headline">{{ selectedEventTitle }}</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="dialog = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-main>
   </v-app>
 </template>
@@ -28,7 +48,22 @@ export default {
           title: 'Event 2',
         },
       ],
+     dialog: false, // ダイアログの表示状態
+     selectedEventTitle: '', // 選択されたイベントのタイトル
     };
+  },
+  methods: { 
+    handleDateClick(date) {
+      const clickedDate = date.toISOString().substr(0, 10);
+      // クリックされた日付のイベントを検索
+      const clickedEvent = this.events.find(event => {
+      const eventStartDate = new Date(event.start).toISOString().substr(0, 10);
+      const eventEndDate = new Date(event.end).toISOString().substr(0, 10);
+      return clickedDate >= eventStartDate && clickedDate <= eventEndDate; // 日付が一致するイベントを探す
+    });
+      this.selectedEventTitle = clickedEvent.title; // タイトルを設定
+      this.dialog = true; // ダイアログを表示
+    }
   },
 };
 </script>
