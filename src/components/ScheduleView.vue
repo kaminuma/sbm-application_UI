@@ -28,7 +28,22 @@ export default {
           title: 'Event 2',
         },
       ],
+     dialog: false, // ダイアログの表示状態
+     selectedEventTitle: '', // 選択されたイベントのタイトル
     };
+  },
+  methods: { 
+    handleDateClick(date) {
+      const clickedDate = date.toISOString().substr(0, 10);
+      // クリックされた日付のイベントを検索
+      const clickedEvent = this.events.find(event => {
+      const eventStartDate = new Date(event.start).toISOString().substr(0, 10);
+      const eventEndDate = new Date(event.end).toISOString().substr(0, 10);
+      return clickedDate >= eventStartDate && clickedDate <= eventEndDate; // 日付が一致するイベントを探す
+    });
+      this.selectedEventTitle = clickedEvent.title; // タイトルを設定
+      this.dialog = true; // ダイアログを表示
+    }
   },
 };
 </script>
