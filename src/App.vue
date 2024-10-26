@@ -2,7 +2,7 @@
   <div id="app">
     <HeaderComponent />
     <div class="layout">
-      <SidebarComponent />
+      <SidebarComponent v-if="isAuthenticated" />
       <main class="main-content">
         <router-view /> <!-- ルートに応じたコンポーネントがここに表示される -->
       </main>
@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 import HeaderComponent from './components/Header.vue';
 import SidebarComponent from './components/Sidebar.vue';
 
@@ -19,6 +21,14 @@ export default {
   components: {
     HeaderComponent,
     SidebarComponent,
+  },
+  setup() {
+    const store = useStore();
+    const isAuthenticated = computed(() => store.state.isAuthenticated);
+
+    return {
+      isAuthenticated,
+    };
   },
 };
 </script>
