@@ -1,10 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import ScheduleView from '../components/ScheduleView.vue';
 import UploadView from '../components/UploadView.vue';
+import Auth from '../components/Auth.vue';
 
 const routes = [
   {
     path: '/',
+    name: 'Auth', // デフォルトで表示されるコンポーネント
+    component: Auth, // ログインコンポーネントを表示
+  },
+  {
+    path: '/schedule',
     name: 'ScheduleView',
     component: ScheduleView, // デフォルトで表示されるコンポーネント
   },
