@@ -1,70 +1,119 @@
 <template>
     <v-container>
-      <v-row justify="center">
-        <v-col cols="12" sm="6" md="4">
-          <v-card>
-            <v-card-title class="headline">
-              {{ isRegister ? '新規登録' : 'ログイン' }}
-            </v-card-title>
-            <v-card-text>
-              <v-form @submit.prevent="handleSubmit">
-                <v-text-field
-                  v-model="username"
-                  label="ユーザー名"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="password"
-                  label="パスワード"
-                  type="password"
-                  required
-                ></v-text-field>
-                <v-btn type="submit" color="primary">{{ isRegister ? '登録' : 'ログイン' }}</v-btn>
-                <v-btn @click="toggleMode" text>{{ isRegister ? 'ログインへ' : '新規登録へ' }}</v-btn>
-              </v-form>
-              <v-alert v-if="errorMessage" type="error">{{ errorMessage }}</v-alert>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
+      <v-card>
+        <v-card-title>
+          <span v-if="isLogin">Login</span>
+          <span v-else>Register</span>
+        </v-card-title>
+  
+        <v-card-text>
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-text-field
+              v-model="username"
+              :rules="[rules.required]"
+              label="Username"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-if="!isLogin"
+              v-model="email"
+              label="Email"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="password"
+              :rules="[rules.required, rules.min]"
+              label="Password"
+              type="password"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-if="!isLogin"
+              v-model="confirmPassword"
+              :rules="[rules.required, rules.matchPassword]"
+              label="Confirm Password"
+              type="password"
+              required
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+  
+        <v-card-actions>
+          <v-btn @click="submit" color="primary">{{ isLogin ? 'Login' : 'Register' }}</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text @click="toggleLogin">{{ isLogin ? 'Switch to Register' : 'Switch to Login' }}</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-container>
   </template>
   
   <script>
-  import axios from 'axios';
+  import apiFacade from '../services/apiFacade';
+  import { computed } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useStore } from 'vuex'; 
   
   export default {
     data() {
       return {
         username: '',
+        email:'',
         password: '',
-        isRegister: false,
-        errorMessage: '',
+        confirmPassword: '',
+        valid: false,
+        isLogin: true,
+        rules: {
+          required: (value) => !!value || 'Required.',
+          min: (v) => (v && v.length >= 8) || 'Minimum 8 characters',
+          matchPassword: (v) => v === this.password || 'Passwords must match',
+        },
       };
     },
+    setup() {
+      const router = useRouter();
+      const store = useStore();
+      const isAuthenticated = computed(() => store.state.isAuthenticated);
+      return { router, store, isAuthenticated };
+    },
     methods: {
-      toggleMode() {
-        this.isRegister = !this.isRegister;
-        this.errorMessage = ''; // エラーメッセージをリセット
+      toggleLogin() {
+        this.isLogin = !this.isLogin;
+        this.resetFields();
       },
-      async handleSubmit() {
-        const url = this.isRegister ? '/auth/register' : '/auth/login';
-        const payload = {
-          username: this.username,
-          password: this.password,
-        };
-  
-        try {
-          const response = await axios.post(url, payload);
-          if (!this.isRegister) {
-            // ログイン成功時の処理
-            localStorage.setItem('userId', response.data.id); // ユーザーIDを保存
-            // メインメニューにリダイレクト
-            this.$router.push('/main-menu');
+      resetFields() {
+        this.username = '';
+        this.password = '';
+        this.email = '';
+        this.confirmPassword = '';
+      },
+      async submit() {
+        if (this.$refs.form.validate()) {
+          if (this.isLogin) {
+            // ログイン
+            try {
+              await apiFacade.loginUser(this.username, this.password); 
+              // Vuexのactionを呼び出し
+              this.$store.dispatch('login');
+              this.$router.push('/schedule'); // 認証後にスケジュール画面へ遷移
+            } 
+            catch (error) {
+              alert('Invalid credentials');
+              console.error('Login error:', error);
+            }
+          } else {
+            // ユーザー登録
+            if (this.password !== this.confirmPassword) {
+              alert("Passwords don't match");
+              return;
+            }
+            try {
+              await apiFacade.registerUser(this.username, this.email, this.password);
+              alert('Registration successful! Please log in.');
+              this.toggleLogin(); // 登録後はログイン画面に切り替え
+            } catch (error) {
+              alert('Registration failed. Please try again.');
+            }
           }
-          this.errorMessage = '';
-        } catch (error) {
-          this.errorMessage = error.response ? error.response.data : '通信エラーが発生しました';
         }
       },
     },
@@ -72,7 +121,9 @@
   </script>
   
   <style scoped>
-  .v-alert {
-    margin-top: 20px;
+  .v-card {
+    max-width: 400px;
+    margin: auto;
   }
   </style>
+  
