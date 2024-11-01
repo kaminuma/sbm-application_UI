@@ -40,7 +40,20 @@ const apiFacade = {
     }).catch(error => {
       console.error('API Error:', error); // エラーの詳細を出力
       throw error; // エラーを再スロー
-    });
+    })
+  },
+  async uploadExcelFile(formData) {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // ここを確認
+        },
+      });
+      return response.data; // アップロード成功時のレスポンスを返す
+    } catch (error) {
+      console.error('Error uploading Excel file:', error);
+      throw error; // エラーを再スロー
+    }
   }
 };
 
