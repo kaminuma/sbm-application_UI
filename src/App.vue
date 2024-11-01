@@ -30,6 +30,30 @@ export default {
       isAuthenticated,
     };
   },
+  methods: {
+    checkToken() {
+      const token = localStorage.getItem('token');
+
+      if (token) {
+        // トークンが存在する場合、有効期限をチェック
+        if (this.isTokenExpired(token)) {
+          // 有効期限が切れている場合、ログイン画面にリダイレクト
+          this.$router.push('/login');
+        } else {
+          // トークンをヘッダーに追加
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+      } else {
+        // トークンが存在しない場合、ログイン画面にリダイレクト
+        this.$router.push('/login');
+      }
+    },
+    isTokenExpired(token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    },
+  },
 };
 </script>
 

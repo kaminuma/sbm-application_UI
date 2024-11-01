@@ -2,7 +2,7 @@
   <div class="sidebar">
       <ul class="sidebar-list">
           <li class="sidebar-item">
-                <router-link to="/">スケジュール表示</router-link>
+                <router-link to="/schedule">スケジュール表示</router-link>
           </li>
           <li class="sidebar-item">
                   <router-link to="/upload">一括アップロード</router-link>
