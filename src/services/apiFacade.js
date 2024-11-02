@@ -31,30 +31,45 @@ const apiFacade = {
     }).then(response => {
       if (response.status === 200) {
         // 成功した場合、トークンをローカルストレージに保存
-        localStorage.setItem('token', response.data.token); // 適宜プロパティ名を修正
-        setAuthToken(); // トークンをヘッダーに設定
+        localStorage.setItem('token', response.data.token);
+        setAuthToken();
         return response.data;
       } else {
-        throw new Error('Login failed'); // ステータスが200以外の場合
+        throw new Error('Login failed'); 
       }
     }).catch(error => {
-      console.error('API Error:', error); // エラーの詳細を出力
-      throw error; // エラーを再スロー
+      console.error('API Error:', error); 
+      throw error; 
     })
   },
   async uploadExcelFile(formData) {
     try {
       const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // ここを確認
+          'Content-Type': 'multipart/form-data', 
         },
       });
-      return response.data; // アップロード成功時のレスポンスを返す
+      return response.data; 
     } catch (error) {
       console.error('Error uploading Excel file:', error);
-      throw error; // エラーを再スロー
+      throw error; 
     }
-  }
+  },
+  async getActivities(userId) {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/activities`, {
+        params: { userId } 
+      });
+      if (response.status === 200) {
+        return response.data; // 活動データを返す
+      } else {
+        throw new Error('Failed to fetch activities');
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error; // エラーをスロー
+    }
+  },
 };
 
 export default apiFacade;
