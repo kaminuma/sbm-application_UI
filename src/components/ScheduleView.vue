@@ -1,16 +1,17 @@
 <template>
   <v-app>
     <v-main>
-      <vue-cal 
+      <vue-cal
+        :disable-views="['years', 'year', 'month']"
+        :time-from="7 * 60"
+        :time-to="24 * 60"
+        :special-hours="specialHours"
         :events="events"
         class="vuecal--blue-theme vuecal--date-picker demo"
         xsmall
         :selected-date="selectedDate"
         hide-view-selector
-        :time="false"
         :transitions="false"
-        active-view="month"
-        :disable-views="['week', 'day']"
         @cell-click="handleDateClick"
       ></vue-cal>
       <v-dialog v-model="dialog" max-width="290">
@@ -28,6 +29,7 @@
 
 <script>
 import VueCal from 'vue-cal';
+import apiFacade from '../services/apiFacade';
 import 'vue-cal/dist/vuecal.css'; // CSSをインポート
 
 export default {
@@ -36,33 +38,41 @@ export default {
   },
   data() {
     return {
-      events: [
-        {
-          start: '2024-10-19',
-          end: '2024-10-19',
-          title: 'Event 1',
-        },
-        {
-          start: '2024-10-21',
-          end: '2024-10-22',
-          title: 'Event 2',
-        },
-      ],
-     dialog: false, // ダイアログの表示状態
-     selectedEventTitle: '', // 選択されたイベントのタイトル
+      events: [], // カレンダーに表示するイベント
+      userId: 9999,  // ユーザーIDのサンプル値（必要に応じて変更）
+      dialog: false, // ダイアログの表示状態
+      selectedEventTitle: '', // 選択されたイベントのタイトル
+      selectedDate: new Date(), // 選択された日付の初期値
     };
   },
-  methods: { 
+  created() {
+    this.fetchActivities();
+  },
+  methods: {
+    async fetchActivities() {     
+      try {
+        const activities = await apiFacade.getActivities(this.userId); 
+
+        // 活動をカレンダー用の形式に変換
+        this.events = activities;
+      } catch (error) {
+        console.error('Error fetching activities:', error);
+      }
+    },
+
     handleDateClick(date) {
       const clickedDate = date.toISOString().substr(0, 10);
       // クリックされた日付のイベントを検索
       const clickedEvent = this.events.find(event => {
-      const eventStartDate = new Date(event.start).toISOString().substr(0, 10);
-      const eventEndDate = new Date(event.end).toISOString().substr(0, 10);
-      return clickedDate >= eventStartDate && clickedDate <= eventEndDate; // 日付が一致するイベントを探す
-    });
-      this.selectedEventTitle = clickedEvent.title; // タイトルを設定
-      this.dialog = true; // ダイアログを表示
+        const eventStartDate = new Date(event.start).toISOString().substr(0, 10);
+        const eventEndDate = new Date(event.end).toISOString().substr(0, 10);
+        return clickedDate >= eventStartDate && clickedDate <= eventEndDate; // 日付が一致するイベントを探す
+      });
+
+      if (clickedEvent) { // イベントが見つかった場合
+        this.selectedEventTitle = clickedEvent.title; // タイトルを設定
+        this.dialog = true; // ダイアログを表示
+      }
     }
   },
 };
