@@ -1,6 +1,9 @@
 <template>
   <v-app>
     <v-main>
+      <div>
+        <v-btn color="primary" @click="newCreate">新規記録</v-btn>
+      </div>
       <vue-cal
         :disable-views="['years', 'year', 'month']"
         :time-from="7 * 60"
@@ -12,14 +15,56 @@
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
-        @cell-click="handleDateClick"
+        @event-click="handleDateClick"
       ></vue-cal>
-      <v-dialog v-model="dialog" max-width="290">
+      <v-dialog v-model="dialog" max-width="400">
         <v-card>
-          <v-card-title class="headline">{{ selectedEventTitle }}</v-card-title>
+          <v-card-title class="headline">{{ isEdit ? 'イベントを更新' : '新規イベントを登録' }}</v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="selectedEventTitle"
+              label="イベントタイトル"
+              placeholder="タイトルを入力"
+            ></v-text-field>
+            <v-textarea
+              v-model="selectedEventContents"
+              label="イベント詳細"
+              placeholder="詳細を入力"
+              rows="3"
+            ></v-textarea>
+            <v-menu
+            v-model="datePicker"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="selectedDate"
+                label="日付"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="selectedDate" @input="datePicker = false"></v-date-picker>
+          </v-menu>
+            <v-text-field
+              v-model="selectedEventStartTime"
+              label="開始時間"
+              placeholder="HH:mm形式で入力"
+            ></v-text-field>
+            <v-text-field
+              v-model="selectedEventEndTime"
+              label="終了時間"
+              placeholder="HH:mm形式で入力"
+            ></v-text-field>
+          </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="dialog = false">Close</v-btn>
+            <v-btn color="primary" text @click="saveEvent">{{ isEdit ? '更新' : '保存' }}</v-btn>
+            <v-btn color="primary" text @click="dialog = false">閉じる</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -30,7 +75,8 @@
 <script>
 import VueCal from 'vue-cal';
 import apiFacade from '../services/apiFacade';
-import 'vue-cal/dist/vuecal.css'; // CSSをインポート
+import 'vue-cal/dist/vuecal.css';
+import 'vuetify/dist/vuetify.min.css';
 
 export default {
   components: {
@@ -38,48 +84,101 @@ export default {
   },
   data() {
     return {
-      events: [], // カレンダーに表示するイベント
-      userId: 9999,  // ユーザーIDのサンプル値（必要に応じて変更）
-      dialog: false, // ダイアログの表示状態
-      selectedEventTitle: '', // 選択されたイベントのタイトル
-      selectedDate: new Date(), // 選択された日付の初期値
+      events: [],
+      userId: 9999,
+      dialog: false,
+      isEdit: false,
+      selectedEventTitle: '',
+      selectedEventContents: '',
+      selectedEventStartTime: '',
+      selectedEventEndTime: '',
+      selectedDateTime: null,
+      dataPicker: '',
     };
   },
   created() {
     this.fetchActivities();
   },
   methods: {
-    async fetchActivities() {     
+    async fetchActivities() {
       try {
-        const activities = await apiFacade.getActivities(this.userId); 
-
-        // 活動をカレンダー用の形式に変換
+        const activities = await apiFacade.getActivities(this.userId);
         this.events = activities;
       } catch (error) {
         console.error('Error fetching activities:', error);
       }
     },
-
     handleDateClick(date) {
-      const clickedDate = date.toISOString().substr(0, 10);
-      // クリックされた日付のイベントを検索
+      const clickedDateTime = new Date(date);
+      this.selectedDateTime = clickedDateTime;
+
+      // clickedDateTimeを基にイベントを検索
       const clickedEvent = this.events.find(event => {
-        const eventStartDate = new Date(event.start).toISOString().substr(0, 10);
-        const eventEndDate = new Date(event.end).toISOString().substr(0, 10);
-        return clickedDate >= eventStartDate && clickedDate <= eventEndDate; // 日付が一致するイベントを探す
+      const eventStart = new Date(event.start);
+      const eventEnd = new Date(event.end);
+        return this.events; // イベントがあるかどうか
       });
 
-      if (clickedEvent) { // イベントが見つかった場合
-        this.selectedEventTitle = clickedEvent.title; // タイトルを設定
-        this.dialog = true; // ダイアログを表示
+      if (clickedEvent) {
+      // クリックしたイベントの詳細を設定
+        this.selectedEventTitle = clickedEvent.title;
+        this.selectedEventContents = clickedEvent.contents; // 詳細を設定
+        this.isEdit = true;
+        this.selectedEventStartTime = new Date(clickedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        this.selectedEventEndTime = new Date(clickedEvent.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } else {
+      // 新規イベントのための初期化
+        this.selectedEventTitle = '';
+        this.selectedEventContents = '';
+        this.selectedEventStartTime = ''; // 空に初期化
+        this.selectedEventEndTime = ''; // 空に初期化
+        this.isEdit = false;
       }
-    }
-  },
-};
+      // ダイアログを表示
+     this.dialog = true;
+    },
+    newCreate(date) {
+      this.selectedDateTime = new Date(date);
+      this.selectedEventTitle = '';
+      this.selectedEventContents = '';
+      this.selectedEventStartTime = '';
+      this.selectedEventEndTime = '';
+      this.isEdit = false;
+      this.dialog = true;
+    },
+    saveEvent() {
+      if (this.isEdit) {
+        const eventIndex = this.events.findIndex(event => {
+          const eventStart = new Date(event.start);
+          return eventStart.getTime() === this.selectedDateTime.getTime();
+        });
+
+        if (eventIndex !== -1) {
+          this.events[eventIndex].title = this.selectedEventTitle;
+          this.events[eventIndex].details = this.selectedEventContents;
+          this.events[eventIndex].start = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventStartTime}`).toISOString();
+          this.events[eventIndex].end = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventEndTime}`).toISOString();
+        }
+      } else {
+        apiFacade.addEvent(events) 
+          .then(() => {
+              return this.fetchActivities(); // 成功したら再取得して一覧を更新
+          })
+          .then(() => {
+              this.dialog = false; // ダイアログを閉じる
+          })
+          .catch(error => {
+              console.error('Error adding event:', error); // エラーハンドリング
+          });
+      }
+      this.dialog = false;
+    },
+  }
+}
 </script>
 
 <style scoped>
 .v-calendar {
-  height: 600px;
+  height: 600px; /* カレンダーの高さ */
 }
 </style>
