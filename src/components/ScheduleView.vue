@@ -17,7 +17,7 @@
         :transitions="false"
         @event-click="handleDateClick"
       ></vue-cal>
-      <v-dialog v-model="dialog" max-width="400">
+      <v-dialog v-model="dialog" max-width="400" class="custom-dialog">
         <v-card>
           <v-card-title class="headline">{{ isEdit ? 'イベントを更新' : '新規イベントを登録' }}</v-card-title>
           <v-card-text>
@@ -47,8 +47,10 @@
                 readonly
                 v-bind="on"
               ></v-text-field>
+              <VueDatePicker v-model="selectedDate"
+              format="yyyy/MM/dd"
+              model-type="yyyy-MM-dd"/>
             </template>
-            <v-date-picker v-model="selectedDate" @input="datePicker = false"></v-date-picker>
           </v-menu>
             <v-text-field
               v-model="selectedEventStartTime"
@@ -77,6 +79,8 @@ import VueCal from 'vue-cal';
 import apiFacade from '../services/apiFacade';
 import 'vue-cal/dist/vuecal.css';
 import 'vuetify/dist/vuetify.min.css';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
   components: {
@@ -160,7 +164,15 @@ export default {
           this.events[eventIndex].end = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventEndTime}`).toISOString();
         }
       } else {
-        apiFacade.addEvent(events) 
+        const eventData = {
+          userId: this.userId,
+          date: this.selectedDate,
+          start: this.selectedEventStartTime,
+          end: this.selectedEventEndTime,
+          title: this.selectedEventTitle,
+          contents: this.selectedEventContents,
+        };
+        apiFacade.createActivity(eventData) 
           .then(() => {
               return this.fetchActivities(); // 成功したら再取得して一覧を更新
           })
@@ -179,6 +191,9 @@ export default {
 
 <style scoped>
 .v-calendar {
-  height: 600px; /* カレンダーの高さ */
+  height: 400px; /* カレンダーの高さ */
+}
+.custom-dialog .v-card {
+  height: 80vh;
 }
 </style>
