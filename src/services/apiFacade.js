@@ -70,6 +70,15 @@ const apiFacade = {
       throw error; // エラーをスロー
     }
   },
+  async createActivity(activity) {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/activities`, activity);
+      return response.data; // APIからのレスポンスを返す
+    } catch (error) {
+      console.error('Error creating activity:', error);
+      throw error; // エラーをスロー
+    }
+  },
 };
 
 export default apiFacade;
