@@ -86,10 +86,14 @@ export default {
   components: {
     VueCal,
   },
+  computed: {
+    userId() {
+      return this.$store.state.userId; // VuexストアからuserIdを取得
+    }
+  },
   data() {
     return {
       events: [],
-      userId: 9999,
       dialog: false,
       isEdit: false,
       selectedEventTitle: '',
