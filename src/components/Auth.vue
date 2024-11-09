@@ -91,17 +91,19 @@
           if (this.isLogin) {
             // ログイン
             try {
-              await apiFacade.loginUser(this.username, this.password); 
+              const response = await apiFacade.loginUser(this.username, this.password); 
               // Vuexのactionを呼び出し
-              this.$store.dispatch('login');
+              const userId = response.userId; // userIdのみを抽出
+              this.$store.dispatch('login', userId);
               this.$router.push('/schedule'); // 認証後にスケジュール画面へ遷移
             } 
             catch (error) {
               alert('Invalid credentials');
               console.error('Login error:', error);
             }
-          } else {
-            // ユーザー登録
+            } else {
+            
+              // ユーザー登録
             if (this.password !== this.confirmPassword) {
               alert("Passwords don't match");
               return;
