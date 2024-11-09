@@ -19,9 +19,7 @@
       ></vue-cal>
       <v-dialog v-model="dialog" max-width="400" class="custom-dialog">
         <v-card>
-          <v-card-title class="headline">{{
-            isEdit ? "イベントを更新" : "新規イベントを登録"
-          }}</v-card-title>
+          <v-card-title class="headline">{{ isEdit ? 'イベントを更新' : '新規イベントを登録' }}</v-card-title>
           <v-card-text>
             <v-text-field
               v-model="selectedEventTitle"
@@ -34,25 +32,26 @@
               placeholder="詳細を入力"
               rows="3"
             ></v-textarea>
-            <v-row align-item="center" justify="start">
-              <!-- 日付部分（3列分のスペース） -->
-              <v-col class="d-flex" cols="3">
-                <span>日付</span>
-              </v-col>
-
-              <!-- 日付ピッカー部分（残りのスペースを使う） -->
-              <v-col class="d-flex" cols="9">
-                <VueDatePicker
-                  placeholder="クリックして日付を選択"
-                  v-model="selectedDate"
-                  format="yyyy/MM/dd"
-                  model-type="yyyy-MM-dd"
-                  :enable-time-picker="false"
-                  :format-locale="ja"
-                  style="max-width: 280px"
-                />
-              </v-col>
-            </v-row>
+            <v-menu
+            v-model="datePicker"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="selectedDate"
+                label="日付"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="on"
+              ></v-text-field>
+              <VueDatePicker v-model="selectedDate"
+              format="yyyy/MM/dd"
+              model-type="yyyy-MM-dd"/>
+            </template>
+          </v-menu>
             <v-text-field
               v-model="selectedEventStartTime"
               label="開始時間"
@@ -66,9 +65,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="saveEvent">{{
-              isEdit ? "更新" : "保存"
-            }}</v-btn>
+            <v-btn color="primary" text @click="saveEvent">{{ isEdit ? '更新' : '保存' }}</v-btn>
             <v-btn color="primary" text @click="dialog = false">閉じる</v-btn>
           </v-card-actions>
         </v-card>
@@ -78,12 +75,12 @@
 </template>
 
 <script>
-import VueCal from "vue-cal";
-import apiFacade from "../services/apiFacade";
-import "vue-cal/dist/vuecal.css";
-import "vuetify/dist/vuetify.min.css";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
+import VueCal from 'vue-cal';
+import apiFacade from '../services/apiFacade';
+import 'vue-cal/dist/vuecal.css';
+import 'vuetify/dist/vuetify.min.css';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
   components: {
@@ -95,12 +92,12 @@ export default {
       userId: 9999,
       dialog: false,
       isEdit: false,
-      selectedEventTitle: "",
-      selectedEventContents: "",
-      selectedEventStartTime: "",
-      selectedEventEndTime: "",
-      selectedDate: "",
-      dataPicker: "",
+      selectedEventTitle: '',
+      selectedEventContents: '',
+      selectedEventStartTime: '',
+      selectedEventEndTime: '',
+      selectedDateTime: null,
+      dataPicker: '',
     };
   },
   created() {
@@ -112,7 +109,7 @@ export default {
         const activities = await apiFacade.getActivities(this.userId);
         this.events = activities;
       } catch (error) {
-        console.error("Error fetching activities:", error);
+        console.error('Error fetching activities:', error);
       }
     },
     handleDateClick(date) {
@@ -120,46 +117,42 @@ export default {
       this.selectedDateTime = clickedDateTime;
 
       // clickedDateTimeを基にイベントを検索
-      const clickedEvent = this.events.find((event) => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
+      const clickedEvent = this.events.find(event => {
+      const eventStart = new Date(event.start);
+      const eventEnd = new Date(event.end);
         return this.events; // イベントがあるかどうか
       });
 
       if (clickedEvent) {
-        // クリックしたイベントの詳細を設定
+      // クリックしたイベントの詳細を設定
         this.selectedEventTitle = clickedEvent.title;
         this.selectedEventContents = clickedEvent.contents; // 詳細を設定
         this.isEdit = true;
-        this.selectedEventStartTime = new Date(
-          clickedEvent.start
-        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-        this.selectedEventEndTime = new Date(
-          clickedEvent.end
-        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        this.selectedEventStartTime = new Date(clickedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        this.selectedEventEndTime = new Date(clickedEvent.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       } else {
-        // 新規イベントのための初期化
-        this.selectedEventTitle = "";
-        this.selectedEventContents = "";
-        this.selectedEventStartTime = ""; // 空に初期化
-        this.selectedEventEndTime = ""; // 空に初期化
+      // 新規イベントのための初期化
+        this.selectedEventTitle = '';
+        this.selectedEventContents = '';
+        this.selectedEventStartTime = ''; // 空に初期化
+        this.selectedEventEndTime = ''; // 空に初期化
         this.isEdit = false;
       }
       // ダイアログを表示
-      this.dialog = true;
+     this.dialog = true;
     },
     newCreate(date) {
-      this.selectedDate = "";
-      this.selectedEventTitle = "";
-      this.selectedEventContents = "";
-      this.selectedEventStartTime = "";
-      this.selectedEventEndTime = "";
+      this.selectedDateTime = new Date(date);
+      this.selectedEventTitle = '';
+      this.selectedEventContents = '';
+      this.selectedEventStartTime = '';
+      this.selectedEventEndTime = '';
       this.isEdit = false;
       this.dialog = true;
     },
     saveEvent() {
       if (this.isEdit) {
-        const eventIndex = this.events.findIndex((event) => {
+        const eventIndex = this.events.findIndex(event => {
           const eventStart = new Date(event.start);
           return eventStart.getTime() === this.selectedDateTime.getTime();
         });
@@ -167,12 +160,8 @@ export default {
         if (eventIndex !== -1) {
           this.events[eventIndex].title = this.selectedEventTitle;
           this.events[eventIndex].details = this.selectedEventContents;
-          this.events[eventIndex].start = new Date(
-            `${this.selectedDateTime.toDateString()} ${this.selectedEventStartTime}`
-          ).toISOString();
-          this.events[eventIndex].end = new Date(
-            `${this.selectedDateTime.toDateString()} ${this.selectedEventEndTime}`
-          ).toISOString();
+          this.events[eventIndex].start = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventStartTime}`).toISOString();
+          this.events[eventIndex].end = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventEndTime}`).toISOString();
         }
       } else {
         const eventData = {
@@ -183,22 +172,21 @@ export default {
           title: this.selectedEventTitle,
           contents: this.selectedEventContents,
         };
-        apiFacade
-          .createActivity(eventData)
+        apiFacade.createActivity(eventData) 
           .then(() => {
-            return this.fetchActivities(); // 成功したら再取得して一覧を更新
+              return this.fetchActivities(); // 成功したら再取得して一覧を更新
           })
           .then(() => {
-            this.dialog = false; // ダイアログを閉じる
+              this.dialog = false; // ダイアログを閉じる
           })
-          .catch((error) => {
-            console.error("Error adding event:", error); // エラーハンドリング
+          .catch(error => {
+              console.error('Error adding event:', error); // エラーハンドリング
           });
       }
       this.dialog = false;
     },
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
