@@ -19,7 +19,9 @@
       ></vue-cal>
       <v-dialog v-model="dialog" max-width="400" class="custom-dialog">
         <v-card>
-          <v-card-title class="headline">{{ isEdit ? 'イベントを更新' : '新規イベントを登録' }}</v-card-title>
+          <v-card-title class="headline">{{
+            isEdit ? "イベントを更新" : "新規イベントを登録"
+          }}</v-card-title>
           <v-card-text>
             <v-text-field
               v-model="selectedEventTitle"
@@ -32,40 +34,44 @@
               placeholder="詳細を入力"
               rows="3"
             ></v-textarea>
-            <v-menu
-            v-model="datePicker"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field
+            <br />
+            <v-manu>
+              <VueDatePicker
+                placeholder="日付"
                 v-model="selectedDate"
-                label="日付"
-                prepend-icon="mdi-calendar"
-                readonly
-                v-bind="on"
-              ></v-text-field>
-              <VueDatePicker v-model="selectedDate"
-              format="yyyy/MM/dd"
-              model-type="yyyy-MM-dd"/>
-            </template>
-          </v-menu>
-            <v-text-field
-              v-model="selectedEventStartTime"
-              label="開始時間"
-              placeholder="HH:mm形式で入力"
-            ></v-text-field>
-            <v-text-field
-              v-model="selectedEventEndTime"
-              label="終了時間"
-              placeholder="HH:mm形式で入力"
-            ></v-text-field>
+                format="yyyy/MM/dd"
+                model-type="yyyy-MM-dd"
+                :enable-time-picker="false"
+              />
+            </v-manu>
+            <br />
+            <v-manu>
+              <VueDatePicker
+                time-picker
+                disable-time-range-validation
+                v-model="selectedEventStartTime"
+                placeholder="開始時刻"
+                type="time"
+                format="HH:mm"
+              />
+            </v-manu>
+            <br />
+            <v-manu>
+              <VueDatePicker
+                time-picker
+                disable-time-range-validation
+                v-model="selectedEventEndTime"
+                placeholder="終了時刻"
+                type="time"
+                format="HH:mm"
+              />
+            </v-manu>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="saveEvent">{{ isEdit ? '更新' : '保存' }}</v-btn>
+            <v-btn color="primary" text @click="saveEvent">{{
+              isEdit ? "更新" : "保存"
+            }}</v-btn>
             <v-btn color="primary" text @click="dialog = false">閉じる</v-btn>
           </v-card-actions>
         </v-card>
@@ -75,12 +81,12 @@
 </template>
 
 <script>
-import VueCal from 'vue-cal';
-import apiFacade from '../services/apiFacade';
-import 'vue-cal/dist/vuecal.css';
-import 'vuetify/dist/vuetify.min.css';
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+import VueCal from "vue-cal";
+import apiFacade from "../services/apiFacade";
+import "vue-cal/dist/vuecal.css";
+import "vuetify/dist/vuetify.min.css";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 
 export default {
   components: {
@@ -89,19 +95,19 @@ export default {
   computed: {
     userId() {
       return this.$store.state.userId; // VuexストアからuserIdを取得
-    }
+    },
   },
   data() {
     return {
       events: [],
       dialog: false,
       isEdit: false,
-      selectedEventTitle: '',
-      selectedEventContents: '',
-      selectedEventStartTime: '',
-      selectedEventEndTime: '',
-      selectedDateTime: null,
-      dataPicker: '',
+      selectedEventTitle: "",
+      selectedEventContents: "",
+      selectedEventStartTime: "",
+      selectedEventEndTime: "",
+      selectedDate: "",
+      dataPicker: "",
     };
   },
   created() {
@@ -113,7 +119,7 @@ export default {
         const activities = await apiFacade.getActivities(this.userId);
         this.events = activities;
       } catch (error) {
-        console.error('Error fetching activities:', error);
+        console.error("Error fetching activities:", error);
       }
     },
     handleDateClick(date) {
@@ -121,42 +127,46 @@ export default {
       this.selectedDateTime = clickedDateTime;
 
       // clickedDateTimeを基にイベントを検索
-      const clickedEvent = this.events.find(event => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
+      const clickedEvent = this.events.find((event) => {
+        const eventStart = new Date(event.start);
+        const eventEnd = new Date(event.end);
         return this.events; // イベントがあるかどうか
       });
 
       if (clickedEvent) {
-      // クリックしたイベントの詳細を設定
+        // クリックしたイベントの詳細を設定
         this.selectedEventTitle = clickedEvent.title;
         this.selectedEventContents = clickedEvent.contents; // 詳細を設定
         this.isEdit = true;
-        this.selectedEventStartTime = new Date(clickedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        this.selectedEventEndTime = new Date(clickedEvent.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        this.selectedEventStartTime = new Date(
+          clickedEvent.start
+        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        this.selectedEventEndTime = new Date(
+          clickedEvent.end
+        ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       } else {
-      // 新規イベントのための初期化
-        this.selectedEventTitle = '';
-        this.selectedEventContents = '';
-        this.selectedEventStartTime = ''; // 空に初期化
-        this.selectedEventEndTime = ''; // 空に初期化
+        // 新規イベントのための初期化
+        this.selectedEventTitle = "";
+        this.selectedEventContents = "";
+        this.selectedEventStartTime = ""; // 空に初期化
+        this.selectedEventEndTime = ""; // 空に初期化
         this.isEdit = false;
       }
       // ダイアログを表示
-     this.dialog = true;
+      this.dialog = true;
     },
     newCreate(date) {
-      this.selectedDateTime = new Date(date);
-      this.selectedEventTitle = '';
-      this.selectedEventContents = '';
-      this.selectedEventStartTime = '';
-      this.selectedEventEndTime = '';
+      this.selectedDate = "";
+      this.selectedEventTitle = "";
+      this.selectedEventContents = "";
+      this.selectedEventStartTime = "";
+      this.selectedEventEndTime = "";
       this.isEdit = false;
       this.dialog = true;
     },
     saveEvent() {
       if (this.isEdit) {
-        const eventIndex = this.events.findIndex(event => {
+        const eventIndex = this.events.findIndex((event) => {
           const eventStart = new Date(event.start);
           return eventStart.getTime() === this.selectedDateTime.getTime();
         });
@@ -164,10 +174,16 @@ export default {
         if (eventIndex !== -1) {
           this.events[eventIndex].title = this.selectedEventTitle;
           this.events[eventIndex].details = this.selectedEventContents;
-          this.events[eventIndex].start = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventStartTime}`).toISOString();
-          this.events[eventIndex].end = new Date(`${this.selectedDateTime.toDateString()} ${this.selectedEventEndTime}`).toISOString();
+          this.events[eventIndex].start = new Date(
+            `${this.selectedDateTime.toDateString()} ${this.selectedEventStartTime}`
+          ).toISOString();
+          this.events[eventIndex].end = new Date(
+            `${this.selectedDateTime.toDateString()} ${this.selectedEventEndTime}`
+          ).toISOString();
         }
       } else {
+        this.formatTime(this.selectedEventStartTime, "start");
+        this.formatTime(this.selectedEventEndTime, "end");
         const eventData = {
           userId: this.userId,
           date: this.selectedDate,
@@ -176,21 +192,38 @@ export default {
           title: this.selectedEventTitle,
           contents: this.selectedEventContents,
         };
-        apiFacade.createActivity(eventData) 
+        apiFacade
+          .createActivity(eventData)
           .then(() => {
-              return this.fetchActivities(); // 成功したら再取得して一覧を更新
+            return this.fetchActivities(); // 成功したら再取得して一覧を更新
           })
           .then(() => {
-              this.dialog = false; // ダイアログを閉じる
+            this.dialog = false; // ダイアログを閉じる
           })
-          .catch(error => {
-              console.error('Error adding event:', error); // エラーハンドリング
+          .catch((error) => {
+            console.error("Error adding event:", error); // エラーハンドリング
           });
       }
       this.dialog = false;
     },
-  }
-}
+    // 時間をHH:mm形式に変換して格納
+    formatTime(timeObj, type) {
+      if (timeObj && timeObj.hours !== undefined) {
+        // HH:mm形式にフォーマット
+        const hours = String(timeObj.hours).padStart(2, "0");
+        const minutes = String(timeObj.minutes).padStart(2, "0");
+        const formattedTime = `${hours}:${minutes}`;
+
+        // API用に変換された時間を格納
+        if (type === "start") {
+          this.selectedEventStartTime = formattedTime;
+        } else if (type === "end") {
+          this.selectedEventEndTime = formattedTime;
+        }
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
