@@ -130,7 +130,7 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="saveEvent">更新</v-btn>
+            <v-btn color="primary" text @click="saveEvent(event)">更新</v-btn>
             <v-btn color="error" text @click="deleteEvent(selectedEventId)"
               >削除</v-btn
             >
@@ -250,25 +250,28 @@ export default {
         this.createDialog = true; // 新規作成ダイアログを表示
       }
     },
-    saveEvent() {
+    saveEvent(event) {
       if (this.isEdit) {
+        console.log("isEdit:", this.isEdit); // 確認ポイント
         // 更新処理
         const eventIndex = this.events.findIndex(
-          (event) => event.id === this.selectedEventId
+          (event) => event.activityId === this.selectedEventId
         );
 
         if (eventIndex !== -1) {
-          this.events[eventIndex].title = this.selectedEventTitle;
-          this.events[eventIndex].contents = this.selectedEventContents;
-          this.events[eventIndex].start = new Date(
-            `${this.selectedDate} ${this.selectedEventStartTime}`
-          ).toISOString();
-          this.events[eventIndex].end = new Date(
-            `${this.selectedDate} ${this.selectedEventEndTime}`
-          ).toISOString();
+          // 必要なデータを直接構築
+          const updatedEvent = {
+            activityId: this.selectedEventId, // ここで正しいIDを使用
+            userId: this.userId,
+            date: this.selectedDate,
+            start: this.selectedEventStartTime,
+            end: this.selectedEventEndTime,
+            title: this.selectedEventTitle,
+            contents: this.selectedEventContents,
+          };
 
-          // 必要に応じてAPIに更新を反映
-          const updatedEvent = this.events[eventIndex];
+          console.log("Updated Event Data:", updatedEvent); // デバッグログ
+
           apiFacade
             .updateActivity(updatedEvent)
             .then(() => {
