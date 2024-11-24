@@ -11,7 +11,6 @@
         :special-hours="specialHours"
         :events="events"
         class="vuecal--blue-theme vuecal--date-picker demo"
-        xsmall
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
@@ -195,7 +194,7 @@ export default {
       this.selectedEventContents = "";
       this.selectedEventStartTime = "";
       this.selectedEventEndTime = "";
-      this.selectedDate = "";
+      this.selectedDate = new Date().toISOString().split("T")[0];
       this.isEdit = false;
       this.createDialog = true;
     },
@@ -308,25 +307,24 @@ export default {
       }
     },
     async deleteEvent(selectedEventId) {
-      try {
-        const eventId = this.selectedEventId;
-        console.log(eventId);
+      const eventId = this.selectedEventId;
+      console.log(eventId);
 
-        // API呼び出しでイベントを削除
-        await apiFacade.deleteActivity(eventId);
-
-        // 一覧を再取得して画面を更新
-        await this.fetchActivities();
-
-        console.log("イベントを削除しました。");
-
-        // ダイアログを閉じる
-        this.editDialog = false;
-      } catch (error) {
-        console.error("イベントの削除中にエラーが発生しました:", error);
-        alert("イベントの削除に失敗しました。");
-      }
+      // API呼び出しでイベントを削除
+      await apiFacade
+        .deleteActivity(eventId)
+        .then(() => {
+          return this.fetchActivities(); // 成功したら再取得して一覧を更新
+        })
+        .then(() => {
+          this.editDialog = false; // ダイアログを閉じる
+        })
+        .catch((error) => {
+          console.error("イベントの削除中にエラーが発生しました", error); // エラーハンドリング
+          alert("イベントの削除に失敗しました。");
+        });
     },
+
     // 時間をHH:mm形式に変換して格納
     formatTime(timeObj, type) {
       if (timeObj && timeObj.hours !== undefined) {
