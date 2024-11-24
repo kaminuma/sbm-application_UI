@@ -82,6 +82,20 @@ const apiFacade = {
       throw error; // エラーをスロー
     }
   },
+  async updateActivity(activity) {
+    try {
+      console.log("Sending update request:", activity); // デバッグログを確認
+      // PUTリクエストで更新
+      const response = await axios.put(
+        `${API_BASE_URL}/activities/${activity.activityId}`,
+        activity
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating activity:", error);
+      throw error;
+    }
+  },
   async deleteActivity(activityId) {
     try {
       const response = await axios.delete(
