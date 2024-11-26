@@ -66,3 +66,15 @@ jobs:
           script: |
             sudo nginx -t
             sudo systemctl reload nginx
+     
+      # 権限を戻す
+      - name: Reset permissions
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SECRET_KEY }}
+          script: |
+            sudo chmod -R 755 /srv/sbm/ui
+            sudo chown -R ${{ secrets.USER }}:${{ secrets.USER }} /srv/sbm/ui
+
