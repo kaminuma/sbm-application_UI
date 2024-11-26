@@ -54,7 +54,6 @@ jobs:
           remote_host: ${{ secrets.HOST }}
           remote_user: ${{ secrets.USER }}
           remote_key: ${{ secrets.SECRET_KEY }}
-          remote_port: 22
 
       # 7. サーバーを再起動（Nginxリロード）
       - name: Restart Nginx
