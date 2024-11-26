@@ -2,7 +2,7 @@ import axios from "axios";
 
 // 環境変数からAPIのベースURLを設定
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://13.211.29.238/:8080";
+  import.meta.env.VITE_API_BASE_URL || "http://13.211.29.238:8080";
 
 // トークンの設定
 const setAuthToken = () => {
