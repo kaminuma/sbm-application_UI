@@ -25,8 +25,8 @@ jobs:
       - name: Configure environment variables
         run: |
           # 既存の値を置き換える
-          sed -i "s|^VITE_API_BASE_URL=.*|VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}|" env
-          sed -i "s|^VITE_BASE_URL=.*|VITE_BASE_URL=${{ secrets.BASE_URL }}|" env
+          sed -i "s|^VITE_API_BASE_URL=.*|VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}|" .env
+          sed -i "s|^VITE_BASE_URL=.*|VITE_BASE_URL=${{ secrets.BASE_URL }}|" .env
 
       # 4. 依存関係のインストール
       - name: Install dependencies
