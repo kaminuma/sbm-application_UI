@@ -378,8 +378,8 @@ body {
 
 .custom-dialog .v-card {
   height: auto;
-  max-height: 90vh;
-  min-height: 800px; /* 高さを約300px増加 */
+  max-height: 80vh;
+  min-height: 800px;
   border-radius: 16px;
 }
 
@@ -418,11 +418,6 @@ body {
 @media (max-width: 600px) {
   .content-container {
     padding: 10px;
-  }
-
-  .custom-dialog .v-card {
-    height: auto;
-    max-height: 90vh;
   }
 }
 </style>
