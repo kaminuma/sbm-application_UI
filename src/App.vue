@@ -15,6 +15,8 @@
 <script>
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
+import { mapActions } from "vuex";
+import { setAuthToken } from "./services/authUtils";
 
 export default {
   components: {
@@ -27,7 +29,16 @@ export default {
       showMenu: true,
     };
   },
+  created() {
+    const token = localStorage.getItem("token");
+    if (token) {
+      this.setAuthentication(true); // Vuexに認証状態を設定
+      setAuthToken(); // Axiosにトークンを設定
+    }
+  },
   methods: {
+    ...mapActions(["setAuthentication"]),
+
     toggleSidebar() {
       this.isSidebarOpen = !this.isSidebarOpen;
     },
