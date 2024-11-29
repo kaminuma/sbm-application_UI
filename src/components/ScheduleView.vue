@@ -509,7 +509,7 @@ body {
 /* スナックバーの実装（本実装したら削除）ここから */
 
 .snackbar-message {
-  margin-left: 40px; /* アイコンとの間隔を広げる */
+  margin-left: 12px; /* アイコンとの間隔を広げる */
   font-weight: 550;
   font-size: 16px;
   display: flex;
