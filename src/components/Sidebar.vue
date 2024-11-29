@@ -56,6 +56,10 @@ export default {
   cursor: pointer;
 }
 
+.sidebar-text {
+  flex: 1; /* 文字が幅に応じて調整されるように */
+}
+
 .sidebar-list {
   list-style-type: none;
   padding: 0;
@@ -90,7 +94,13 @@ export default {
 
 @media (max-width: 600px) {
   .sidebar {
-    width: 200px;
+    width: 200px; /* スマホでは幅を狭く */
+  }
+  .sidebar-item a {
+    font-size: 14px; /* 文字サイズをさらに小さく */
+  }
+  .sidebar-icon {
+    font-size: 18px; /* アイコンサイズを調整 */
   }
 }
 </style>
