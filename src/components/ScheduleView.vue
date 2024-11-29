@@ -44,9 +44,14 @@
               class="input-rounded"
             ></v-textarea>
             <br />
+            <!-- 「日時」タイトルの追加 -->
+            <div class="datetime-label">
+              <span>日時</span>
+            </div>
             <div class="date-time-picker">
               <VueDatePicker
-                placeholder="日付"
+                teleport="body"
+                placeholder="日付を選択"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
@@ -54,19 +59,21 @@
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventStartTime"
-                placeholder="開始時刻"
+                placeholder="開始時刻を選択"
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventEndTime"
-                placeholder="終了時刻"
+                placeholder="終了時刻を選択"
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
@@ -116,30 +123,39 @@
               class="input-rounded"
             ></v-textarea>
             <br />
+            <!-- 「日時」タイトルの追加 -->
+            <div class="datetime-label">
+              <span>日時</span>
+            </div>
             <div class="date-time-picker">
               <VueDatePicker
-                placeholder="日付"
+                teleport="body"
+                placeholder="日付を選択"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
+              <!-- format="HH:mm"はデータバインディングの形式を指定　変更時気を付ける -->
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventStartTime"
-                placeholder="開始時刻"
+                placeholder="開始時刻を選択"
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
+              <!-- format="HH:mm"はデータバインディングの形式を指定 変更時気を付ける-->
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventEndTime"
-                placeholder="終了時刻"
+                placeholder="終了時刻を選択"
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
@@ -388,14 +404,21 @@ body {
 
 .custom-dialog .v-card {
   height: auto;
-  max-height: calc(100vh - 20px); /* スマートフォンでも画面に収まるように調整 */
+  max-height: calc(100vh - 20px); /* スマホ用 */
   border-radius: 16px;
-  overflow-y: auto; /* スクロール可能にする */
+  overflow-y: visible; /* 修正: auto から visible に変更 */
+}
+
+.datetime-label {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
 }
 
 .date-time-picker {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 縦並びに戻す */
   gap: 10px;
 }
 
@@ -425,9 +448,22 @@ body {
   color: #00695c;
 }
 
-@media (max-width: 600px) {
+/* PC向けのスタイルを追加 */
+@media (min-width: 1024px) {
+  /* ブレークポイントは必要に応じて調整 */
+  .custom-dialog .v-card {
+    max-height: calc(100vh - 100px); /* PC用にmax-heightを増やす */
+    height: 80vh; /* 必要に応じて固定高さを設定 */
+  }
+
+  /* オプション: PC向けにパディングを増やす */
   .content-container {
-    padding: 10px;
+    padding: 40px;
+  }
+
+  /* ポップアップのz-indexを調整 */
+  .vue-datepicker-popper {
+    z-index: 10000 !important; /* 必要に応じて調整 */
   }
 }
 </style>
