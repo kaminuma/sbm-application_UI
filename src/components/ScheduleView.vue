@@ -388,9 +388,9 @@ body {
 
 .custom-dialog .v-card {
   height: auto;
-  max-height: 80vh;
-  min-height: 800px;
+  max-height: calc(100vh - 20px); /* スマートフォンでも画面に収まるように調整 */
   border-radius: 16px;
+  overflow-y: auto; /* スクロール可能にする */
 }
 
 .date-time-picker {
