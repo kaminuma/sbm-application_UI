@@ -5,6 +5,13 @@
         <v-btn color="primary" @click="newCreate" class="btn-rounded">
           新規記録
         </v-btn>
+        <v-btn
+          color="secondary"
+          @click="showAnalysisToast"
+          class="btn-rounded ml-4"
+        >
+          生活記録分析
+        </v-btn>
       </div>
       <vue-cal
         :disable-views="['years', 'year', 'month']"
@@ -18,6 +25,29 @@
         :transitions="false"
         @event-click="handleDateClick"
       ></vue-cal>
+
+      <!-- /* スナックバーの実装（本実装したら削除）ここから */-->
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="3000"
+        top
+        right
+        color="purple-accent-1"
+        dark
+        transition="slide-down-transition"
+      >
+        <v-icon left color="white">mdi-information</v-icon>
+        <span class="snackbar-message">
+          この機能は今後実装予定です！
+          <span class="coming-soon">Coming Soon</span>
+        </span>
+        <template v-slot:action="{ attrs }">
+          <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
+            閉じる
+          </v-btn>
+        </template>
+      </v-snackbar>
+      <!-- /* スナックバーの実装（本実装したら削除）ここまで */-->
 
       <!-- 新規イベント作成ダイアログ -->
       <v-dialog
@@ -228,6 +258,7 @@ export default {
       selectedDate: "",
       dataPicker: "",
       selectedEventId: null,
+      snackbar: false,
     };
   },
   created() {
@@ -369,6 +400,12 @@ export default {
         }
       }
     },
+
+    /* スナックバーの実装（本実装したら削除）ここから */
+    showAnalysisToast() {
+      this.snackbar = true;
+    },
+    /* スナックバーの実装（本実装したら削除）ここまで */
   },
 };
 </script>
@@ -467,4 +504,55 @@ body {
     z-index: 10000 !important; /* 必要に応じて調整 */
   }
 }
+
+/* 既存のスタイルはそのまま維持 */
+/* スナックバーの実装（本実装したら削除）ここから */
+
+.snackbar-message {
+  margin-left: 40px; /* アイコンとの間隔を広げる */
+  font-weight: 550;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* 「Coming Soon」メッセージのスタイルとアニメーション */
+.coming-soon {
+  margin-left: 8px;
+  color: #2608be; /* ポップな色に変更 */
+  opacity: 0;
+  animation: slide-in 1s forwards;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* カスタムトランジションの定義 */
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-down-transition-enter-active {
+  animation: slide-down 0.5s forwards;
+}
+
+.slide-down-transition-leave-active {
+  animation: slide-down 0.5s reverse forwards;
+}
+/* スナックバーの実装（本実装したら削除）ここまで */
 </style>
