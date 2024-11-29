@@ -19,7 +19,12 @@
       ></vue-cal>
 
       <!-- 新規イベント作成ダイアログ -->
-      <v-dialog v-model="createDialog" max-width="500" class="custom-dialog">
+      <v-dialog
+        v-model="createDialog"
+        max-width="500"
+        class="custom-dialog"
+        scrollable
+      >
         <v-card>
           <v-card-title class="headline">新規イベントを登録</v-card-title>
           <v-card-text>
@@ -86,7 +91,12 @@
       </v-dialog>
 
       <!-- イベント編集ダイアログ -->
-      <v-dialog v-model="editDialog" max-width="500" class="custom-dialog">
+      <v-dialog
+        v-model="editDialog"
+        max-width="500"
+        class="custom-dialog"
+        scrollable
+      >
         <v-card>
           <v-card-title class="headline">イベントを更新</v-card-title>
           <v-card-text>
