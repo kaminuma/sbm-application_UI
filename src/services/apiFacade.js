@@ -1,17 +1,11 @@
 import axios from "axios";
+import { saveAuthToken, setAuthToken } from "./authUtils";
 
 // 環境変数からAPIのベースURLを設定
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// トークンの設定
-const setAuthToken = () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common["Authorization"]; // トークンがない場合はヘッダーを削除
-  }
-};
+// アプリ起動時にトークンを設定
+setAuthToken();
 
 const apiFacade = {
   // ユーザー登録のメソッド
@@ -32,9 +26,8 @@ const apiFacade = {
       })
       .then((response) => {
         if (response.status === 200) {
-          // 成功した場合、トークンをローカルストレージに保存
-          localStorage.setItem("token", response.data.token);
-          setAuthToken();
+          // 成功した場合、トークンを保存
+          saveAuthToken(response.data.token);
           return response.data;
         } else {
           throw new Error("Login failed");
@@ -45,6 +38,8 @@ const apiFacade = {
         throw error;
       });
   },
+
+  // Excelファイルアップロード
   async uploadExcelFile(formData) {
     try {
       const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
@@ -58,34 +53,38 @@ const apiFacade = {
       throw error;
     }
   },
+
+  // ユーザーの活動データを取得
   async getActivities(userId) {
     try {
       const response = await axios.get(`${API_BASE_URL}/activities`, {
         params: { userId },
       });
       if (response.status === 200) {
-        return response.data; // 活動データを返す
+        return response.data;
       } else {
         throw new Error("Failed to fetch activities");
       }
     } catch (error) {
       console.error("API Error:", error);
-      throw error; // エラーをスロー
+      throw error;
     }
   },
+
+  // 新しい活動データを作成
   async createActivity(activity) {
     try {
       const response = await axios.post(`${API_BASE_URL}/activities`, activity);
-      return response.data; // APIからのレスポンスを返す
+      return response.data;
     } catch (error) {
       console.error("Error creating activity:", error);
-      throw error; // エラーをスロー
+      throw error;
     }
   },
+
+  // 活動データを更新
   async updateActivity(activity) {
     try {
-      console.log("Sending update request:", activity); // デバッグログを確認
-      // PUTリクエストで更新
       const response = await axios.put(
         `${API_BASE_URL}/activities/${activity.activityId}`,
         activity
@@ -96,6 +95,8 @@ const apiFacade = {
       throw error;
     }
   },
+
+  // 活動データを削除
   async deleteActivity(activityId) {
     try {
       const response = await axios.delete(
@@ -104,7 +105,7 @@ const apiFacade = {
       return response.data;
     } catch (error) {
       console.error("Error deleting activity:", error);
-      throw error; // 呼び出し元にエラーを伝播
+      throw error;
     }
   },
 };

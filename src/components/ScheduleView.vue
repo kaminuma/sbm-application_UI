@@ -5,10 +5,18 @@
         <v-btn color="primary" @click="newCreate" class="btn-rounded">
           新規記録
         </v-btn>
+        <v-btn
+          color="secondary"
+          @click="showAnalysisToast"
+          class="btn-rounded ml-4"
+        >
+          生活記録分析
+        </v-btn>
       </div>
       <vue-cal
         :disable-views="['years', 'year', 'month']"
-        :time-from="7 * 60"
+        small
+        :time-from="0 * 60"
         :time-to="24 * 60"
         :events="events"
         class="vuecal--custom-theme"
@@ -17,6 +25,29 @@
         :transitions="false"
         @event-click="handleDateClick"
       ></vue-cal>
+
+      <!-- /* スナックバーの実装（本実装したら削除）ここから */-->
+      <v-snackbar
+        v-model="snackbar"
+        :timeout="3000"
+        top
+        right
+        color="purple-accent-1"
+        dark
+        transition="slide-down-transition"
+      >
+        <v-icon left color="white">mdi-information</v-icon>
+        <span class="snackbar-message">
+          この機能は今後実装予定です！
+          <span class="coming-soon">Coming Soon</span>
+        </span>
+        <template v-slot:action="{ attrs }">
+          <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
+            閉じる
+          </v-btn>
+        </template>
+      </v-snackbar>
+      <!-- /* スナックバーの実装（本実装したら削除）ここまで */-->
 
       <!-- 新規イベント作成ダイアログ -->
       <v-dialog
@@ -44,9 +75,14 @@
               class="input-rounded"
             ></v-textarea>
             <br />
+            <!-- 「日時」タイトルの追加 -->
+            <div class="datetime-label">
+              <span>日時</span>
+            </div>
             <div class="date-time-picker">
               <VueDatePicker
-                placeholder="日付"
+                teleport="body"
+                placeholder="日付を選択"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
@@ -54,19 +90,21 @@
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventStartTime"
-                placeholder="開始時刻"
+                placeholder="開始時刻を選択"
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventEndTime"
-                placeholder="終了時刻"
+                placeholder="終了時刻を選択"
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
@@ -116,30 +154,39 @@
               class="input-rounded"
             ></v-textarea>
             <br />
+            <!-- 「日時」タイトルの追加 -->
+            <div class="datetime-label">
+              <span>日時</span>
+            </div>
             <div class="date-time-picker">
               <VueDatePicker
-                placeholder="日付"
+                teleport="body"
+                placeholder="日付を選択"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
+              <!-- format="HH:mm"はデータバインディングの形式を指定　変更時気を付ける -->
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventStartTime"
-                placeholder="開始時刻"
+                placeholder="開始時刻を選択"
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
               />
+              <!-- format="HH:mm"はデータバインディングの形式を指定 変更時気を付ける-->
               <VueDatePicker
+                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventEndTime"
-                placeholder="終了時刻"
+                placeholder="終了時刻を選択"
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
@@ -211,6 +258,7 @@ export default {
       selectedDate: "",
       dataPicker: "",
       selectedEventId: null,
+      snackbar: false,
     };
   },
   created() {
@@ -352,6 +400,12 @@ export default {
         }
       }
     },
+
+    /* スナックバーの実装（本実装したら削除）ここから */
+    showAnalysisToast() {
+      this.snackbar = true;
+    },
+    /* スナックバーの実装（本実装したら削除）ここまで */
   },
 };
 </script>
@@ -388,14 +442,21 @@ body {
 
 .custom-dialog .v-card {
   height: auto;
-  max-height: calc(100vh - 20px); /* スマートフォンでも画面に収まるように調整 */
+  max-height: calc(100vh - 20px); /* スマホ用 */
   border-radius: 16px;
-  overflow-y: auto; /* スクロール可能にする */
+  overflow-y: visible; /* 修正: auto から visible に変更 */
+}
+
+.datetime-label {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
 }
 
 .date-time-picker {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* 縦並びに戻す */
   gap: 10px;
 }
 
@@ -425,9 +486,73 @@ body {
   color: #00695c;
 }
 
-@media (max-width: 600px) {
+/* PC向けのスタイルを追加 */
+@media (min-width: 1024px) {
+  /* ブレークポイントは必要に応じて調整 */
+  .custom-dialog .v-card {
+    max-height: calc(100vh - 100px); /* PC用にmax-heightを増やす */
+    height: 80vh; /* 必要に応じて固定高さを設定 */
+  }
+
+  /* オプション: PC向けにパディングを増やす */
   .content-container {
-    padding: 10px;
+    padding: 40px;
+  }
+
+  /* ポップアップのz-indexを調整 */
+  .vue-datepicker-popper {
+    z-index: 10000 !important; /* 必要に応じて調整 */
   }
 }
+
+/* 既存のスタイルはそのまま維持 */
+/* スナックバーの実装（本実装したら削除）ここから */
+
+.snackbar-message {
+  margin-left: 40px; /* アイコンとの間隔を広げる */
+  font-weight: 550;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* 「Coming Soon」メッセージのスタイルとアニメーション */
+.coming-soon {
+  margin-left: 8px;
+  color: #2608be; /* ポップな色に変更 */
+  opacity: 0;
+  animation: slide-in 1s forwards;
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* カスタムトランジションの定義 */
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-down-transition-enter-active {
+  animation: slide-down 0.5s forwards;
+}
+
+.slide-down-transition-leave-active {
+  animation: slide-down 0.5s reverse forwards;
+}
+/* スナックバーの実装（本実装したら削除）ここまで */
 </style>

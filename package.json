@@ -17,7 +17,8 @@
     "vue-cal": "^4.10.0",
     "vue-router": "^4.4.5",
     "vuetify": "^3.7.0-beta.1",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
