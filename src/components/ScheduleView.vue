@@ -1,16 +1,17 @@
 <template>
-  <v-app>
-    <v-main>
-      <div>
-        <v-btn color="primary" @click="newCreate">新規記録</v-btn>
+  <v-main>
+    <div class="content-container">
+      <div class="button-container">
+        <v-btn color="primary" @click="newCreate" class="btn-rounded">
+          新規記録
+        </v-btn>
       </div>
       <vue-cal
         :disable-views="['years', 'year', 'month']"
         :time-from="7 * 60"
         :time-to="24 * 60"
-        :special-hours="specialHours"
         :events="events"
-        class="vuecal--blue-theme vuecal--date-picker demo"
+        class="vuecal--custom-theme"
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
@@ -18,7 +19,7 @@
       ></vue-cal>
 
       <!-- 新規イベント作成ダイアログ -->
-      <v-dialog v-model="createDialog" max-width="400" class="custom-dialog">
+      <v-dialog v-model="createDialog" max-width="500" class="custom-dialog">
         <v-card>
           <v-card-title class="headline">新規イベントを登録</v-card-title>
           <v-card-text>
@@ -26,25 +27,27 @@
               v-model="selectedEventTitle"
               label="イベントタイトル"
               placeholder="タイトルを入力"
+              outlined
+              class="input-rounded"
             ></v-text-field>
             <v-textarea
               v-model="selectedEventContents"
               label="イベント詳細"
               placeholder="詳細を入力"
               rows="3"
+              outlined
+              class="input-rounded"
             ></v-textarea>
             <br />
-            <div>
+            <div class="date-time-picker">
               <VueDatePicker
                 placeholder="日付"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
+                :input-props="{ outlined: true, class: 'input-rounded' }"
               />
-            </div>
-            <br />
-            <div>
               <VueDatePicker
                 time-picker
                 disable-time-range-validation
@@ -52,10 +55,8 @@
                 placeholder="開始時刻"
                 type="time"
                 format="HH:mm"
+                :input-props="{ outlined: true, class: 'input-rounded' }"
               />
-            </div>
-            <br />
-            <div>
               <VueDatePicker
                 time-picker
                 disable-time-range-validation
@@ -63,21 +64,29 @@
                 placeholder="終了時刻"
                 type="time"
                 format="HH:mm"
+                :input-props="{ outlined: true, class: 'input-rounded' }"
               />
             </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="saveEvent">保存</v-btn>
-            <v-btn color="primary" text @click="createDialog = false"
-              >閉じる</v-btn
+            <v-btn color="primary" text @click="saveEvent" class="btn-rounded">
+              保存
+            </v-btn>
+            <v-btn
+              color="grey"
+              text
+              @click="createDialog = false"
+              class="btn-rounded"
             >
+              閉じる
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
       <!-- イベント編集ダイアログ -->
-      <v-dialog v-model="editDialog" max-width="400" class="custom-dialog">
+      <v-dialog v-model="editDialog" max-width="500" class="custom-dialog">
         <v-card>
           <v-card-title class="headline">イベントを更新</v-card-title>
           <v-card-text>
@@ -85,25 +94,27 @@
               v-model="selectedEventTitle"
               label="イベントタイトル"
               placeholder="タイトルを入力"
+              outlined
+              class="input-rounded"
             ></v-text-field>
             <v-textarea
               v-model="selectedEventContents"
               label="イベント詳細"
               placeholder="詳細を入力"
               rows="3"
+              outlined
+              class="input-rounded"
             ></v-textarea>
             <br />
-            <div>
+            <div class="date-time-picker">
               <VueDatePicker
                 placeholder="日付"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
+                :input-props="{ outlined: true, class: 'input-rounded' }"
               />
-            </div>
-            <br />
-            <div>
               <VueDatePicker
                 time-picker
                 disable-time-range-validation
@@ -112,10 +123,8 @@
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
+                :input-props="{ outlined: true, class: 'input-rounded' }"
               />
-            </div>
-            <br />
-            <div>
               <VueDatePicker
                 time-picker
                 disable-time-range-validation
@@ -124,23 +133,41 @@
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
+                :input-props="{ outlined: true, class: 'input-rounded' }"
               />
             </div>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="saveEvent(event)">更新</v-btn>
-            <v-btn color="error" text @click="deleteEvent(selectedEventId)"
-              >削除</v-btn
+            <v-btn
+              color="primary"
+              text
+              @click="saveEvent(event)"
+              class="btn-rounded"
             >
-            <v-btn color="primary" text @click="editDialog = false"
-              >閉じる</v-btn
+              更新
+            </v-btn>
+            <v-btn
+              color="error"
+              text
+              @click="deleteEvent(selectedEventId)"
+              class="btn-rounded"
             >
+              削除
+            </v-btn>
+            <v-btn
+              color="grey"
+              text
+              @click="editDialog = false"
+              class="btn-rounded"
+            >
+              閉じる
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-main>
-  </v-app>
+    </div>
+  </v-main>
 </template>
 
 <script>
@@ -158,7 +185,7 @@ export default {
   },
   computed: {
     userId() {
-      return this.$store.state.userId; // VuexストアからuserIdを取得
+      return this.$store.state.userId;
     },
   },
   data() {
@@ -166,14 +193,14 @@ export default {
       events: [],
       createDialog: false,
       editDialog: false,
-      isEdit: false, // このフラグは削除しても良いですが、元のコードを維持するため残しています
+      isEdit: false,
       selectedEventTitle: "",
       selectedEventContents: "",
       selectedEventStartTime: "",
       selectedEventEndTime: "",
       selectedDate: "",
       dataPicker: "",
-      selectedEventId: null, // 編集時にイベントのIDを保持
+      selectedEventId: null,
     };
   },
   created() {
@@ -189,7 +216,6 @@ export default {
       }
     },
     newCreate() {
-      // 新規作成用フィールドの初期化
       this.selectedEventTitle = "";
       this.selectedEventContents = "";
       this.selectedEventStartTime = "";
@@ -200,20 +226,17 @@ export default {
     },
     handleDateClick(event) {
       if (event) {
-        // タイトルと詳細を設定
         this.selectedEventTitle = event.title;
         this.selectedEventContents = event.contents;
-        this.selectedEventId = event.activityId; // イベントのIDを保存
+        this.selectedEventId = event.activityId;
 
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
 
-        // 年・月・日を取得
         const year = eventStart.getFullYear();
-        const month = String(eventStart.getMonth() + 1).padStart(2, "0"); // 月は0始まりなので+1
+        const month = String(eventStart.getMonth() + 1).padStart(2, "0");
         const day = String(eventStart.getDate()).padStart(2, "0");
 
-        // yyyy-MM-dd 形式
         const startDateStr = `${year}-${month}-${day}`;
 
         this.selectedDate = startDateStr;
@@ -224,43 +247,30 @@ export default {
           return `${hours}:${minutes}`;
         };
 
-        const startTimeStr = eventFormatTime(eventStart); // 開始時間
-        const endTimeStr = eventFormatTime(eventEnd); // 終了時間
-
-        this.selectedEventStartTime = startTimeStr;
-        this.selectedEventEndTime = endTimeStr;
+        this.selectedEventStartTime = eventFormatTime(eventStart);
+        this.selectedEventEndTime = eventFormatTime(eventEnd);
 
         this.isEdit = true;
-        this.editDialog = true; // 編集ダイアログを表示
+        this.editDialog = true;
       } else {
-        // 新規イベントの初期化
         this.selectedEventTitle = "";
         this.selectedEventContents = "";
         this.selectedDate = "";
-        this.selectedDate = "";
-        this.selectedEventTitle = "";
-        this.selectedEventContents = "";
-        this.selectedDate = "";
-        this.selectedEventTitle = "";
-        this.selectedEventContents = "";
         this.selectedEventStartTime = "";
         this.selectedEventEndTime = "";
         this.isEdit = false;
-        this.createDialog = true; // 新規作成ダイアログを表示
+        this.createDialog = true;
       }
     },
     saveEvent(event) {
       if (this.isEdit) {
-        console.log("isEdit:", this.isEdit); // 確認ポイント
-        // 更新処理
         const eventIndex = this.events.findIndex(
           (event) => event.activityId === this.selectedEventId
         );
 
         if (eventIndex !== -1) {
-          // 必要なデータを直接構築
           const updatedEvent = {
-            activityId: this.selectedEventId, // ここで正しいIDを使用
+            activityId: this.selectedEventId,
             userId: this.userId,
             date: this.selectedDate,
             start: this.selectedEventStartTime,
@@ -268,8 +278,6 @@ export default {
             title: this.selectedEventTitle,
             contents: this.selectedEventContents,
           };
-
-          console.log("Updated Event Data:", updatedEvent); // デバッグログ
 
           apiFacade
             .updateActivity(updatedEvent)
@@ -282,7 +290,6 @@ export default {
         }
         this.editDialog = false;
       } else {
-        // 登録処理
         this.formatTime(this.selectedEventStartTime, "start");
         this.formatTime(this.selectedEventEndTime, "end");
         const eventData = {
@@ -296,44 +303,38 @@ export default {
         apiFacade
           .createActivity(eventData)
           .then(() => {
-            return this.fetchActivities(); // 成功したら再取得して一覧を更新
+            return this.fetchActivities();
           })
           .then(() => {
-            this.createDialog = false; // ダイアログを閉じる
+            this.createDialog = false;
           })
           .catch((error) => {
-            console.error("Error adding event:", error); // エラーハンドリング
+            console.error("Error adding event:", error);
           });
       }
     },
     async deleteEvent(selectedEventId) {
       const eventId = this.selectedEventId;
-      console.log(eventId);
 
-      // API呼び出しでイベントを削除
       await apiFacade
         .deleteActivity(eventId)
         .then(() => {
-          return this.fetchActivities(); // 成功したら再取得して一覧を更新
+          return this.fetchActivities();
         })
         .then(() => {
-          this.editDialog = false; // ダイアログを閉じる
+          this.editDialog = false;
         })
         .catch((error) => {
-          console.error("イベントの削除中にエラーが発生しました", error); // エラーハンドリング
+          console.error("イベントの削除中にエラーが発生しました", error);
           alert("イベントの削除に失敗しました。");
         });
     },
-
-    // 時間をHH:mm形式に変換して格納
     formatTime(timeObj, type) {
       if (timeObj && timeObj.hours !== undefined) {
-        // HH:mm形式にフォーマット
         const hours = String(timeObj.hours).padStart(2, "0");
         const minutes = String(timeObj.minutes).padStart(2, "0");
         const formattedTime = `${hours}:${minutes}`;
 
-        // API用に変換された時間を格納
         if (type === "start") {
           this.selectedEventStartTime = formattedTime;
         } else if (type === "end") {
@@ -346,10 +347,82 @@ export default {
 </script>
 
 <style scoped>
-.v-calendar {
-  height: 400px; /* カレンダーの高さ */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+body {
+  background-color: #f0f4f8;
+  font-family: "Poppins", sans-serif;
 }
+
+.v-application {
+  background-color: #f0f4f8;
+}
+
+.content-container {
+  padding: 20px;
+}
+
+.button-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.btn-rounded {
+  border-radius: 24px;
+  font-weight: 600;
+}
+
+.input-rounded .v-input__control {
+  border-radius: 8px;
+}
+
 .custom-dialog .v-card {
-  height: 80vh;
+  height: auto;
+  max-height: 90vh;
+  min-height: 800px; /* 高さを約300px増加 */
+  border-radius: 16px;
+}
+
+.date-time-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.vuecal--custom-theme {
+  --vuecal-color-primary: #00bfa5;
+  --vuecal-color-secondary: #a7ffeb;
+  --vuecal-background: #f0f4f8;
+  --vuecal-border-radius: 8px;
+  --vuecal-event-border-radius: 8px;
+  --vuecal-font-family: "Poppins", sans-serif;
+}
+
+.vuecal--custom-theme .vuecal__header {
+  background-color: #a7ffeb;
+  color: #00695c;
+}
+
+.vuecal--custom-theme .vuecal__event {
+  border-radius: 8px;
+}
+
+.vuecal--custom-theme .vuecal__event-title {
+  color: #00695c;
+}
+
+.vuecal--custom-theme .vuecal__time {
+  color: #00695c;
+}
+
+@media (max-width: 600px) {
+  .content-container {
+    padding: 10px;
+  }
+
+  .custom-dialog .v-card {
+    height: auto;
+    max-height: 90vh;
+  }
 }
 </style>

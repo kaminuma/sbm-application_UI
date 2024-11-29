@@ -1,59 +1,96 @@
 <template>
-  <div class="sidebar">
+  <transition name="slide">
+    <div v-if="isOpen" class="sidebar">
+      <div class="close-btn" @click="$emit('close-sidebar')">
+        <v-icon>mdi-close</v-icon>
+      </div>
       <ul class="sidebar-list">
-          <li class="sidebar-item">
-                <router-link to="/schedule">スケジュール表示</router-link>
-          </li>
-          <li class="sidebar-item">
-                  <router-link to="/upload">一括アップロード</router-link>
-          </li>
+        <li class="sidebar-item">
+          <router-link to="/schedule" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-calendar</v-icon>
+            <span>スケジュール表示</span>
+          </router-link>
+        </li>
+        <li class="sidebar-item">
+          <router-link to="/upload" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-upload</v-icon>
+            <span>一括アップロード</span>
+          </router-link>
+        </li>
+        <!-- 他のメニュー項目を追加 -->
       </ul>
-  </div>
+    </div>
+  </transition>
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
-
 export default {
-  name: 'Sidebar',
-      setup() {
-          const router = useRouter();
-          
-          const navigateTo = (routeName) => {
-              router.push({ name: routeName });
-          };
-
-          return {
-              navigateTo,
-          };
-      },
-  };
+  name: "Sidebar",
+  props: {
+    isOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
 </script>
 
 <style scoped>
 .sidebar {
-  background-color: #f9e79f; /* 薄い黄色 */
-  width: 200px; /* 横幅300px */
-  height: 100vh; /* 高さをブラウザのビューポートに合わせる */
-  display: flex; /* フレックスボックスで配置 */
-  flex-direction: column; /* 縦に配置 */
+  background-color: #ffffff;
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  z-index: 1000;
+  overflow-y: auto;
+  left: 0;
+  top: 0;
+  padding-top: 60px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
 }
 
 .sidebar-list {
-  list-style-type: none; /* リストのデフォルトスタイルを解除 */
-  padding: 0; /* パディングをリセット */
-  margin: 0; /* マージンをリセット */
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sidebar-item {
-  height: 50px; /* 各項目の高さを50pxに設定 */
-  display: flex; /* フレックスボックスで配置 */
-  align-items: center; /* 縦中央揃え */
-  padding: 0 20px; /* 左右にパディングを追加 */
-  cursor: pointer; /* ホバー時にカーソルをポインタに変更 */
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-item a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #333333;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.sidebar-icon {
+  margin-right: 16px;
 }
 
 .sidebar-item:hover {
-  background-color: #e0e0e0; /* ホバー時の背景色 */
+  background-color: #f0f4f8;
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    width: 200px;
+  }
 }
 </style>
