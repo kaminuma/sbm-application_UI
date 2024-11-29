@@ -8,7 +8,8 @@
       </div>
       <vue-cal
         :disable-views="['years', 'year', 'month']"
-        :time-from="7 * 60"
+        small
+        :time-from="0 * 60"
         :time-to="24 * 60"
         :events="events"
         class="vuecal--custom-theme"
