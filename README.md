@@ -82,7 +82,7 @@ SBM Application UI　設計コンセプト
 - **JWT**: 認証トークン管理
 - **Cypress**: E2Eテスト（※予定）
 - **AWS**: デプロイ環境（EC2、RDS）
-- **GitHub Actions: CI/CDパイプライン管理
+- **GitHub Actions**: CI/CDパイプライン管理
 ---
 
 ## 🚀 開発者向け　local環境起動方法
