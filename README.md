@@ -1,21 +1,163 @@
-# sbm-application-UI
-**【Description】**
-Self-Balanced Memory application UI
+# SBM Application UI
 
-This application provides a "Self-Balanced Memory" aimed at reflecting on and recording daily life. Users can manage their schedules in bulk and also import records created in Excel or spreadsheets. With this feature, users can update or delete their entries on the web based on the imported information, allowing for more efficient management of daily life. This repository is for the API that supports this functionality.
+[![Beta Release](https://img.shields.io/badge/release-beta-blue)](https://github.com/kaminuma/sbm-application_UI/releases)
 
-This repository is for that UI
+SBM Application UI　設計コンセプト
+
+生活記録やスケジュールの管理、生活振り返り分析機能を備えた
+使いやすいインターフェースを目指しています。
+- 自分の生活記録を整理・管理したい方  
+- データを基にした行動分析に興味がある方  
+- 日々のスケジュールを簡単に設定し、管理したい方  
+- Vue.jsやフロントエンド技術に触れてみたい開発者  
+
+## API 
+### https://github.com/kaminuma/sbm-application_API
+
+## 🌐 テスト用 Beta 環境
+
+テスト環境は以下のURLからアクセスできます：
+
+**[テスト用環境はこちら](http://13.211.29.238)**
+
+### 🚧 現在の状況
+
+- **この環境は開発中のBeta版です**  
+  現在、実装途中の機能やデザインが含まれており、一部の動作や表示が最終版と異なる場合があります。
+
+- **データリセットの可能性**  
+  テスト環境では、不定期にデータが初期化される場合がありますのでご了承ください。
+
+---
+
+### ⚠️ 注意事項
+
+- **秘密情報の入力はお控えください**  
+  テスト環境は開発中のため、セキュリティ機能の実装や設定が十分ではない部分があります。
+
+  **個人情報や機密性の高い情報の入力は行わないようお願いいたします。**
+
+- **SSL未対応環境**  
+  本テスト環境はSSL化（https）されていないため、通信内容が暗号化されておりません。
+  そのため、公開Wi-Fiなど信頼性の低いネットワークでの使用は控えてください。
+
+- **動作保証について**  
+  テスト環境での動作は安定性を保証するものではありません。
+  **本番環境ではない**ことをご留意ください。
+
+- **フィードバックのお願い**  
+  発見されたバグ、不具合、改善点については、
+  GitHubの[Issues](https://github.com/kaminuma/sbm-application_UI/issues)からお知らせいただけると幸いです。
+
+---
+
+### 📅 Beta版リリース日
+# SBMアプリケーション UI  
+バージョン: **v0.1.0-beta**  
+ベータ版リリース日: 2024年11月30日  
+
+このバージョンは開発中のベータ版です。 
+
+本番環境リリース（v1.0.0）予定となっています。
 
 
 
-**【日本語の説明】**
-Self-Balanced Memory アプリケーション UI
+## 📋 主な特徴
 
-このアプリケーションは、日々の生活を振り返り記録することを目的とした「セルフバランスドメモリー」を提供します。ユーザーはスケジュールを一括管理できるだけでなく、Excelやスプレッドシートで作成した記録をインポートすることもできます。この機能を利用することで、インポートした情報に基づいてウェブ上のエントリーを更新または削除することができ、日々の生活をより効率的に管理できるようになります。このリポジトリは、その機能をサポートするためのUI側です。
+- **生活記録の管理**: 日々の記録を簡単に追加、編集、削除可能。
+- **カレンダー表示**: 直感的なイベント管理ができるVue Calを採用。
+- **分析機能**: 生活記録データを基に視覚的な分析が可能。（※現在開発中）
+- **レスポンシブデザイン**: スマートフォンやタブレットでも快適に利用可能。
+- **認証機能**: JWTトークンを活用したセキュアな認証プロセス。
+
+---
+
+## 🛠️ 使用技術
+
+- **Vue.js 3**: フロントエンドフレームワーク
+- **Vuetify 3**: UIコンポーネントライブラリ
+- **Vue Router**: ルーティング管理
+- **Axios**: API通信
+- **JWT**: 認証トークン管理
+- **Cypress**: E2Eテスト（※予定）
+
+---
+
+## 🚀 開発者向け　local環境起動方法
+
+### 必要条件
+
+- Node.js（推奨バージョン: 16.x以上）
+- npm または yarn
+
+### 💻 セットアップ手順
+
+### 環境変数設定
+
+ローカル環境での動作には、.env ファイルが必要です。以下の手順で設定してください。
+
+プロジェクトルートにある .env.example を .envファイルを作成してにコピーします。
+
+必要に応じて値を設定してください。
+
+.env ファイルは .gitignore に追加されているため、リモートにはプッシュされません。
+
+環境変数の設定例：（.env.exampleは下記内容と同じです）
+
+### .envファイル設定
+以下の内容をルートディレクトリに `.env` ファイルとして記載してください。
+```plaintext
+VITE_BASE_URL=/
+VITE_API_BASE_URL=http://localhost:8080
+```
+<br>
+
+### 設定後に以下のコマンドを順に実行してください
+
+```bash
+git clone https://github.com/kaminuma/sbm-application_UI.git
+cd sbm-application_UI
+npm install
+npm run dev
+```
 
 
-# Vue 3 + Vite
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+### ブラウザで以下のURLを開いてください：
+http://localhost:5173/
+
+---
+### 🔐 認証機能
+
+このプロジェクトでは、JWTトークンを活用してユーザー認証を行います。
+
+---
+
+### 🛡️ 現在の課題
+
+- **生活記録分析機能**  
+  ボタンは実装されていますが、分析ロジックが未実装のため、要件定義とバックエンド連携が必要です。
+  
+  AIによる分析機能を予定しており、API側からの実装となります。
+
+- **JWT認証の改善**  
+  トークンリフレッシュとログインリダイレクト機能の最適化。
+
+  **注意** 現在トークンの有効期限が切れると403が返ってくるだけになっているため、修正が必要です。
+
+- **レスポンシブデザイン**  
+  さらなるスマートフォン対応を目指して微調整中。
+
+---
+
+### 📖 今後の予定
+
+- 生活記録分析機能の完成
+- E2Eテストの導入（Cypress）
+- デザイン統一のためのスタイルガイド作成
+
+---
+
+### 📧 問い合わせ
+バグ報告や機能リクエストは、Issuesをご利用ください。
