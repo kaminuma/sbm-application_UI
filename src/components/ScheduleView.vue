@@ -211,7 +211,7 @@
             <v-btn
               color="error"
               text
-              @click="deleteEvent(selectedEventId)"
+              @click="openDeleteConfirm(event)"
               class="btn-rounded"
             >
               削除
@@ -226,6 +226,26 @@
             </v-btn>
           </v-card-actions>
         </v-card>
+        <!-- 削除確認ダイアログ -->
+        <v-dialog v-model="showDeleteConfirm" max-width="400">
+          <v-card>
+            <v-card-title class="headline"
+              >本当に削除してよろしいですか？</v-card-title
+            >
+            <v-card-text>
+              「{{
+                this.selectedEventTitle
+              }}」の記録を本当に削除してよろしいですか？
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="cancelDelete">キャンセル</v-btn>
+              <v-btn color="red" text @click="deleteEvent(selectedEventId)"
+                >削除</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-dialog>
     </div>
   </v-main>
@@ -263,6 +283,8 @@ export default {
       dataPicker: "",
       selectedEventId: null,
       snackbar: false,
+      showDeleteConfirm: false, // 確認ダイアログの表示状態
+      eventToDelete: null, // 削除対象のイベント情報s
     };
   },
   created() {
@@ -384,6 +406,7 @@ export default {
           return this.fetchActivities();
         })
         .then(() => {
+          this.showDeleteConfirm = false;
           this.editDialog = false;
         })
         .catch((error) => {
@@ -404,25 +427,23 @@ export default {
         }
       }
     },
+    /**
+     * 削除確認ダイアログを開く
+     */
+    openDeleteConfirm(event) {
+      this.showDeleteConfirm = true; // ダイアログを表示
+    },
 
+    /**
+     * 削除をキャンセルする
+     */
+    cancelDelete() {
+      this.showDeleteConfirm = false; // ダイアログを非表示
+      this.eventToDelete = null; // 削除対象のイベントをリセット
+    },
     /* スナックバーの実装（本実装したら削除）ここから */
     showAnalysisToast() {
       this.snackbar = true;
-    },
-
-    /* フォーカス管理 */
-    handleDatePickerClose() {
-      this.$nextTick(() => {
-        // フォーカスを解除
-        if (this.$refs.selectedEventTitle) {
-          this.$refs.selectedEventTitle.blur();
-        } else {
-          document.activeElement.blur();
-        }
-      });
-    },
-    handleDatePickerSelect() {
-      this.handleDatePickerClose();
     },
   },
 };
