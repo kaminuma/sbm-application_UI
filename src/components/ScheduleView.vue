@@ -90,9 +90,7 @@
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
-                :menu-props="getMenuProps('create')"
-                @close="handleDatePickerClose"
-                @select="handleDatePickerSelect"
+                teleport-center
               />
               <VueDatePicker
                 time-picker
@@ -102,9 +100,7 @@
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
-                :menu-props="getMenuProps('create')"
-                @close="handleDatePickerClose"
-                @select="handleDatePickerSelect"
+                teleport-center
               />
               <VueDatePicker
                 time-picker
@@ -114,9 +110,7 @@
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
-                :menu-props="getMenuProps('create')"
-                @close="handleDatePickerClose"
-                @select="handleDatePickerSelect"
+                teleport-center
               />
             </div>
           </v-card-text>
@@ -178,9 +172,7 @@
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
-                :menu-props="getMenuProps('edit')"
-                @close="handleDatePickerClose"
-                @select="handleDatePickerSelect"
+                teleport-center
               />
               <VueDatePicker
                 time-picker
@@ -191,9 +183,7 @@
                 model-type="HH:mm"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
-                :menu-props="getMenuProps('edit')"
-                @close="handleDatePickerClose"
-                @select="handleDatePickerSelect"
+                teleport-center
               />
               <VueDatePicker
                 time-picker
@@ -204,9 +194,7 @@
                 model-type="HH:mm"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
-                :menu-props="getMenuProps('edit')"
-                @close="handleDatePickerClose"
-                @select="handleDatePickerSelect"
+                teleport-center
               />
             </div>
           </v-card-text>
@@ -436,32 +424,6 @@ export default {
     handleDatePickerSelect() {
       this.handleDatePickerClose();
     },
-
-    /* menu-props の取得 */
-    getMenuProps(dialogType) {
-      const dialogRef =
-        dialogType === "create"
-          ? this.$refs.createDialogRef
-          : this.$refs.editDialogRef;
-      return {
-        modifiers: [
-          {
-            name: "preventOverflow",
-            options: {
-              boundary: dialogRef ? dialogRef.$el : "viewport",
-              padding: 8,
-            },
-          },
-          {
-            name: "flip",
-            options: {
-              fallbackPlacements: ["top", "bottom"],
-            },
-          },
-        ],
-        strategy: "absolute", // ポップアップを絶対配置
-      };
-    },
   },
 };
 </script>
@@ -582,8 +544,8 @@ body {
   .custom-dialog .v-card {
     display: flex;
     flex-direction: column;
-    height: 95vh; /* スマホ用に高さを増やす */
-    max-height: 95vh; /* スマホ用に最大高さを増やす */
+    height: 90vh; /* スマホ用に高さを増やす */
+    max-height: 90vh; /* スマホ用に最大高さを増やす */
   }
 
   .vue-datepicker-popper {
