@@ -54,12 +54,15 @@
         v-model="createDialog"
         max-width="500"
         class="custom-dialog"
-        scrollable
+        persistent
+        disable-autofocus
+        ref="createDialogRef"
       >
         <v-card>
           <v-card-title class="headline">新規イベントを登録</v-card-title>
           <v-card-text>
             <v-text-field
+              ref="selectedEventTitle"
               v-model="selectedEventTitle"
               label="イベントタイトル"
               placeholder="タイトルを入力"
@@ -81,16 +84,17 @@
             </div>
             <div class="date-time-picker">
               <VueDatePicker
-                teleport="body"
                 placeholder="日付を選択"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
+                :menu-props="getMenuProps('create')"
+                @close="handleDatePickerClose"
+                @select="handleDatePickerSelect"
               />
               <VueDatePicker
-                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventStartTime"
@@ -98,9 +102,11 @@
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
+                :menu-props="getMenuProps('create')"
+                @close="handleDatePickerClose"
+                @select="handleDatePickerSelect"
               />
               <VueDatePicker
-                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventEndTime"
@@ -108,6 +114,9 @@
                 type="time"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
+                :menu-props="getMenuProps('create')"
+                @close="handleDatePickerClose"
+                @select="handleDatePickerSelect"
               />
             </div>
           </v-card-text>
@@ -133,12 +142,15 @@
         v-model="editDialog"
         max-width="500"
         class="custom-dialog"
-        scrollable
+        persistent
+        disable-autofocus
+        ref="editDialogRef"
       >
         <v-card>
           <v-card-title class="headline">イベントを更新</v-card-title>
           <v-card-text>
             <v-text-field
+              ref="selectedEventTitle"
               v-model="selectedEventTitle"
               label="イベントタイトル"
               placeholder="タイトルを入力"
@@ -160,17 +172,17 @@
             </div>
             <div class="date-time-picker">
               <VueDatePicker
-                teleport="body"
                 placeholder="日付を選択"
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
+                :menu-props="getMenuProps('edit')"
+                @close="handleDatePickerClose"
+                @select="handleDatePickerSelect"
               />
-              <!-- format="HH:mm"はデータバインディングの形式を指定　変更時気を付ける -->
               <VueDatePicker
-                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventStartTime"
@@ -179,10 +191,11 @@
                 model-type="HH:mm"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
+                :menu-props="getMenuProps('edit')"
+                @close="handleDatePickerClose"
+                @select="handleDatePickerSelect"
               />
-              <!-- format="HH:mm"はデータバインディングの形式を指定 変更時気を付ける-->
               <VueDatePicker
-                teleport="body"
                 time-picker
                 disable-time-range-validation
                 v-model="selectedEventEndTime"
@@ -191,6 +204,9 @@
                 model-type="HH:mm"
                 format="HH:mm"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
+                :menu-props="getMenuProps('edit')"
+                @close="handleDatePickerClose"
+                @select="handleDatePickerSelect"
               />
             </div>
           </v-card-text>
@@ -405,7 +421,47 @@ export default {
     showAnalysisToast() {
       this.snackbar = true;
     },
-    /* スナックバーの実装（本実装したら削除）ここまで */
+
+    /* フォーカス管理 */
+    handleDatePickerClose() {
+      this.$nextTick(() => {
+        // フォーカスを解除
+        if (this.$refs.selectedEventTitle) {
+          this.$refs.selectedEventTitle.blur();
+        } else {
+          document.activeElement.blur();
+        }
+      });
+    },
+    handleDatePickerSelect() {
+      this.handleDatePickerClose();
+    },
+
+    /* menu-props の取得 */
+    getMenuProps(dialogType) {
+      const dialogRef =
+        dialogType === "create"
+          ? this.$refs.createDialogRef
+          : this.$refs.editDialogRef;
+      return {
+        modifiers: [
+          {
+            name: "preventOverflow",
+            options: {
+              boundary: dialogRef ? dialogRef.$el : "viewport",
+              padding: 8,
+            },
+          },
+          {
+            name: "flip",
+            options: {
+              fallbackPlacements: ["top", "bottom"],
+            },
+          },
+        ],
+        strategy: "absolute", // ポップアップを絶対配置
+      };
+    },
   },
 };
 </script>
@@ -442,9 +498,9 @@ body {
 
 .custom-dialog .v-card {
   height: auto;
-  max-height: calc(100vh - 20px); /* スマホ用 */
+  max-height: calc(100vh - 20px); /* スマホ用の最大高さを増やす */
   border-radius: 16px;
-  overflow-y: visible; /* 修正: auto から visible に変更 */
+  overflow-y: auto; /* スクロール可能に */
 }
 
 .datetime-label {
@@ -501,7 +557,41 @@ body {
 
   /* ポップアップのz-indexを調整 */
   .vue-datepicker-popper {
-    z-index: 10000 !important; /* 必要に応じて調整 */
+    position: absolute !important; /* ダイアログ内に表示 */
+    z-index: 10000;
+    max-height: 80vh; /* 高さを制限 */
+    overflow: auto !important;
+    width: 90vw !important;
+  }
+}
+
+/* スマートフォン向けのポップアップ調整 */
+@media (max-width: 600px) {
+  .vue-datepicker-popper {
+    width: 100% !important; /* 幅を100%に設定 */
+    max-height: 80vh !important; /* 高さを80vhに制限 */
+    overflow: auto !important; /* スクロール可能に */
+    box-sizing: border-box; /* パディングやボーダーを含めたサイズ計算 */
+    left: 0 !important; /* 左寄せ */
+    right: 0 !important; /* 右寄せ */
+    top: auto !important; /* 上寄せを無効化 */
+    bottom: 0 !important; /* 下寄せ */
+  }
+
+  /* ダイアログ内のポップアップを下部に固定し、高さを広く設定 */
+  .custom-dialog .v-card {
+    display: flex;
+    flex-direction: column;
+    height: 90vh; /* スマホ用に高さを増やす */
+    max-height: 90vh; /* スマホ用に最大高さを増やす */
+  }
+
+  .vue-datepicker-popper {
+    position: absolute !important; /* 絶対位置に設定 */
+    width: 100% !important; /* 幅を100%に設定 */
+    max-height: 80vh !important; /* 高さを80vhに制限 */
+    overflow: auto !important; /* スクロール可能に */
+    box-sizing: border-box;
   }
 }
 
