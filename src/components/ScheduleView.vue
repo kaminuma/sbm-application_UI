@@ -582,8 +582,8 @@ body {
   .custom-dialog .v-card {
     display: flex;
     flex-direction: column;
-    height: 90vh; /* スマホ用に高さを増やす */
-    max-height: 90vh; /* スマホ用に最大高さを増やす */
+    height: 95vh; /* スマホ用に高さを増やす */
+    max-height: 95vh; /* スマホ用に最大高さを増やす */
   }
 
   .vue-datepicker-popper {
