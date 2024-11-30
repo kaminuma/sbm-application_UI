@@ -460,9 +460,9 @@ body {
 
 .custom-dialog .v-card {
   height: auto;
-  max-height: calc(100vh - 20px); /* スマホ用の最大高さを増やす */
+  max-height: auto;
   border-radius: 16px;
-  overflow-y: auto; /* スクロール可能に */
+  overflow-y: auto;
 }
 
 .datetime-label {
@@ -474,7 +474,7 @@ body {
 
 .date-time-picker {
   display: flex;
-  flex-direction: column; /* 縦並びに戻す */
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -508,8 +508,7 @@ body {
 @media (min-width: 1024px) {
   /* ブレークポイントは必要に応じて調整 */
   .custom-dialog .v-card {
-    max-height: calc(100vh - 100px); /* PC用にmax-heightを増やす */
-    height: 80vh; /* 必要に応じて固定高さを設定 */
+    max-height: auto; /* PC用にmax-heightを増やす */
   }
 
   /* オプション: PC向けにパディングを増やす */
@@ -521,7 +520,7 @@ body {
   .vue-datepicker-popper {
     position: absolute !important; /* ダイアログ内に表示 */
     z-index: 10000;
-    max-height: 80vh; /* 高さを制限 */
+    max-height: auto; /* 高さをautoに*/
     overflow: auto !important;
     width: 90vw !important;
   }
@@ -531,29 +530,22 @@ body {
 @media (max-width: 600px) {
   .vue-datepicker-popper {
     width: 100% !important; /* 幅を100%に設定 */
-    max-height: 80vh !important; /* 高さを80vhに制限 */
+    max-height: auto !important; /* 高さをautoに */
     overflow: auto !important; /* スクロール可能に */
     box-sizing: border-box; /* パディングやボーダーを含めたサイズ計算 */
     left: 0 !important; /* 左寄せ */
     right: 0 !important; /* 右寄せ */
     top: auto !important; /* 上寄せを無効化 */
     bottom: 0 !important; /* 下寄せ */
+    position: absolute !important; /* 絶対位置に設定 */
   }
 
   /* ダイアログ内のポップアップを下部に固定し、高さを広く設定 */
   .custom-dialog .v-card {
     display: flex;
     flex-direction: column;
-    height: 90vh; /* スマホ用に高さを増やす */
-    max-height: 90vh; /* スマホ用に最大高さを増やす */
-  }
-
-  .vue-datepicker-popper {
-    position: absolute !important; /* 絶対位置に設定 */
-    width: 100% !important; /* 幅を100%に設定 */
-    max-height: 80vh !important; /* 高さを80vhに制限 */
-    overflow: auto !important; /* スクロール可能に */
-    box-sizing: border-box;
+    height: 80vh; /* スマホ用に高さを増やす */
+    max-height: 80vh; /* スマホ用に最大高さを増やす */
   }
 }
 
