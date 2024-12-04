@@ -11,7 +11,7 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="username"
-            :rules="[rules.required]"
+            :rules="[rules.required, rules.usernameMin]"
             label="Username"
             required
           ></v-text-field>
@@ -23,7 +23,7 @@
           ></v-text-field>
           <v-text-field
             v-model="password"
-            :rules="[rules.required, rules.min]"
+            :rules="[rules.required, rules.passwordMin]"
             label="Password"
             type="password"
             required
@@ -40,9 +40,9 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn @click="submit" color="primary">{{
-          isLogin ? "Login" : "Register"
-        }}</v-btn>
+        <v-btn :disabled="!valid" @click="submit" color="primary">
+          {{ isLogin ? "Login" : "Register" }}
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="toggleLogin">{{
           isLogin ? "Switch to Register" : "Switch to Login"
@@ -68,9 +68,14 @@ export default {
       valid: false,
       isLogin: true,
       rules: {
-        required: (value) => !!value || "Required.",
-        min: (v) => (v && v.length >= 8) || "Minimum 8 characters",
-        matchPassword: (v) => v === this.password || "Passwords must match",
+        required: (value) => !!value || "必須項目です。",
+        usernameMin: (v) =>
+          (v && v.length >= 2) || "最低2文字以上で入力してください。",
+        passwordMin: (v) =>
+          (v && v.length >= 8) ||
+          "パスワードは最低8文字以上で入力してください。",
+        matchPassword: (v) =>
+          v === this.password || "パスワードが一致しません。",
       },
     };
   },
@@ -105,7 +110,7 @@ export default {
             this.$store.dispatch("login", userId);
             this.$router.push("/schedule"); // 認証後にスケジュール画面へ遷移
           } catch (error) {
-            alert("Invalid credentials");
+            alert("無効な認証情報です");
             console.error("Login error:", error);
           }
         } else {
@@ -120,10 +125,12 @@ export default {
               this.email,
               this.password
             );
-            alert("Registration successful! Please log in.");
+            alert("登録が完了しました！ログインしてください。");
             this.toggleLogin(); // 登録後はログイン画面に切り替え
           } catch (error) {
-            alert("Registration failed. Please try again.");
+            alert(
+              "登録に失敗しました。\n別のIDをお試しいただくか、もう一度お試しください。"
+            );
           }
         }
       }

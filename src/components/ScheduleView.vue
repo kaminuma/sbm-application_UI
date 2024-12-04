@@ -64,6 +64,7 @@
             <v-text-field
               ref="selectedEventTitle"
               v-model="selectedEventTitle"
+              :rules="[rules.required]"
               label="イベントタイトル"
               placeholder="タイトルを入力"
               outlined
@@ -88,6 +89,7 @@
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
+                :rules="[rules.required]"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
                 teleport-center
@@ -99,6 +101,7 @@
                 placeholder="開始時刻を選択"
                 type="time"
                 format="HH:mm"
+                :rules="[rules.required]"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
                 teleport-center
               />
@@ -109,6 +112,7 @@
                 placeholder="終了時刻を選択"
                 type="time"
                 format="HH:mm"
+                :rules="[rules.required]"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
                 teleport-center
               />
@@ -116,7 +120,13 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="saveEvent" class="btn-rounded">
+            <v-btn
+              color="primary"
+              text
+              @click="saveEvent"
+              :disabled="!isFormValid()"
+              class="btn-rounded"
+            >
               保存
             </v-btn>
             <v-btn
@@ -147,6 +157,7 @@
               ref="selectedEventTitle"
               v-model="selectedEventTitle"
               label="イベントタイトル"
+              :rules="[rules.required]"
               placeholder="タイトルを入力"
               outlined
               class="input-rounded"
@@ -170,6 +181,7 @@
                 v-model="selectedDate"
                 format="yyyy/MM/dd"
                 model-type="yyyy-MM-dd"
+                :rules="[rules.required]"
                 :enable-time-picker="false"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
                 teleport-center
@@ -182,6 +194,7 @@
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
+                :rules="[rules.required]"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
                 teleport-center
               />
@@ -193,6 +206,7 @@
                 type="time"
                 model-type="HH:mm"
                 format="HH:mm"
+                :rules="[rules.required]"
                 :input-props="{ outlined: true, class: 'input-rounded' }"
                 teleport-center
               />
@@ -204,6 +218,7 @@
               color="primary"
               text
               @click="saveEvent(event)"
+              :disabled="!isFormValid()"
               class="btn-rounded"
             >
               更新
@@ -284,13 +299,24 @@ export default {
       selectedEventId: null,
       snackbar: false,
       showDeleteConfirm: false, // 確認ダイアログの表示状態
-      eventToDelete: null, // 削除対象のイベント情報s
+      eventToDelete: null, // 削除対象のイベント情報
+      rules: {
+        required: (value) => !!value || "必須項目です。",
+      },
     };
   },
   created() {
     this.fetchActivities();
   },
   methods: {
+    isFormValid() {
+      return (
+        (this.selectedEventTitle?.length || 0) > 0 &&
+        !!this.selectedDate &&
+        !!this.selectedEventStartTime &&
+        !!this.selectedEventEndTime
+      );
+    },
     async fetchActivities() {
       try {
         const activities = await apiFacade.getActivities(this.userId);
