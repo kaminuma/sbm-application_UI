@@ -11,19 +11,20 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             v-model="username"
-            :rules="[rules.required]"
+            :rules="[rules.required, rules.usernameMin]"
             label="Username"
             required
           ></v-text-field>
           <v-text-field
             v-if="!isLogin"
             v-model="email"
+            :rules="[rules.required]"
             label="Email"
             required
           ></v-text-field>
           <v-text-field
             v-model="password"
-            :rules="[rules.required, rules.min]"
+            :rules="[rules.required, rules.passwordMin]"
             label="Password"
             type="password"
             required
@@ -40,9 +41,9 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn @click="submit" color="primary">{{
-          isLogin ? "Login" : "Register"
-        }}</v-btn>
+        <v-btn :disabled="!valid" @click="submit" color="primary">
+          {{ isLogin ? "Login" : "Register" }}
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="toggleLogin">{{
           isLogin ? "Switch to Register" : "Switch to Login"
@@ -69,8 +70,9 @@ export default {
       isLogin: true,
       rules: {
         required: (value) => !!value || "Required.",
-        min: (v) => (v && v.length >= 8) || "Minimum 8 characters",
-        matchPassword: (v) => v === this.password || "Passwords must match",
+        usernameMin: (v) => (v && v.length >= 2) || "Minimum 2 characters.",
+        passwordMin: (v) => (v && v.length >= 8) || "Minimum 8 characters.",
+        matchPassword: (v) => v === this.password || "Passwords must match.",
       },
     };
   },
