@@ -64,7 +64,7 @@
             <v-text-field
               ref="selectedEventTitle"
               v-model="selectedEventTitle"
-              :rules="[rules.required, rules.titleMin]"
+              :rules="[rules.required]"
               label="イベントタイトル"
               placeholder="タイトルを入力"
               outlined
@@ -157,7 +157,7 @@
               ref="selectedEventTitle"
               v-model="selectedEventTitle"
               label="イベントタイトル"
-              :rules="[rules.required, rules.titleMin]"
+              :rules="[rules.required]"
               placeholder="タイトルを入力"
               outlined
               class="input-rounded"
@@ -301,8 +301,7 @@ export default {
       showDeleteConfirm: false, // 確認ダイアログの表示状態
       eventToDelete: null, // 削除対象のイベント情報
       rules: {
-        required: (value) => !!value || "Required.",
-        titleMin: (v) => (v && v.length >= 1) || "Minimum 1 character.",
+        required: (value) => !!value || "必須項目です。",
       },
     };
   },
