@@ -3,6 +3,7 @@ import store from "../store";
 import ScheduleView from "../components/ScheduleView.vue";
 import UploadView from "../components/UploadView.vue";
 import Auth from "../components/Auth.vue";
+import AnalyzeView from "../components/AnalyzeView.vue";
 
 const routes = [
   {
@@ -20,6 +21,12 @@ const routes = [
     path: "/upload",
     name: "UploadView",
     component: UploadView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/analyze",
+    name: "AnalyzeView",
+    component: AnalyzeView,
     meta: { requiresAuth: true },
   },
   {
