@@ -17,6 +17,12 @@
             <span>一括アップロード</span>
           </router-link>
         </li>
+        <li class="sidebar-item">
+          <router-link to="/analyze" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-chart-bar</v-icon>
+            <span>生活記録分析</span>
+          </router-link>
+        </li>
         <!-- 他のメニュー項目を追加 -->
       </ul>
     </div>

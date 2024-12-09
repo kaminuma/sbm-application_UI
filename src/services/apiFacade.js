@@ -108,6 +108,26 @@ const apiFacade = {
       throw error;
     }
   },
+  // ユーザーの分析データを取得
+  async getAnalysisData({ userId, startDate, endDate }) {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/analyze`, {
+        params: {
+          userId,
+          startDate,
+          endDate,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error("Failed to fetch analysis data");
+      }
+    } catch (error) {
+      console.error("Error fetching analysis data:", error);
+      throw error;
+    }
+  },
 };
 
 export default apiFacade;
