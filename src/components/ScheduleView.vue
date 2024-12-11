@@ -294,6 +294,8 @@ export default {
       selectedEventContents: "",
       selectedEventStartTime: "",
       selectedEventEndTime: "",
+      selectedAddEventStartTime: "",
+      selectedAddEventEndTime: "",
       selectedDate: "",
       dataPicker: "",
       selectedEventId: null,
@@ -310,12 +312,35 @@ export default {
   },
   methods: {
     isFormValid() {
-      return (
+      if (
         (this.selectedEventTitle?.length || 0) > 0 &&
         !!this.selectedDate &&
         !!this.selectedEventStartTime &&
         !!this.selectedEventEndTime
-      );
+      ) {
+        let startTime = this.selectedEventStartTime;
+        let endTime = this.selectedEventEndTime;
+
+        // オブジェクト比較になるので以下のように変換
+        // もし { hours: number, minutes: number } の形式で来る場合
+        if (typeof startTime === "object" && startTime.hours !== undefined) {
+          startTime = `${String(startTime.hours).padStart(2, "0")}:${String(
+            startTime.minutes
+          ).padStart(2, "0")}`;
+        }
+        if (typeof endTime === "object" && endTime.hours !== undefined) {
+          endTime = `${String(endTime.hours).padStart(2, "0")}:${String(
+            endTime.minutes
+          ).padStart(2, "0")}`;
+        }
+
+        // "HH:mm"形式の文字列同士なら文字列比較で問題ない
+        if (endTime <= startTime) {
+          return false;
+        }
+        return true;
+      }
+      return false;
     },
     async fetchActivities() {
       try {
@@ -405,8 +430,8 @@ export default {
         const eventData = {
           userId: this.userId,
           date: this.selectedDate,
-          start: this.selectedEventStartTime,
-          end: this.selectedEventEndTime,
+          start: this.selectedAddEventStartTime,
+          end: this.selectedAddEventEndTime,
           title: this.selectedEventTitle,
           contents: this.selectedEventContents,
         };
@@ -447,9 +472,9 @@ export default {
         const formattedTime = `${hours}:${minutes}`;
 
         if (type === "start") {
-          this.selectedEventStartTime = formattedTime;
+          this.selectedAddEventStartTime = formattedTime;
         } else if (type === "end") {
-          this.selectedEventEndTime = formattedTime;
+          this.selectedAddEventEndTime = formattedTime;
         }
       }
     },
