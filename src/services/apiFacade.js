@@ -1,32 +1,35 @@
-import axios from "axios";
+import { apiClient } from "../api/interceptor";
 import { saveAuthToken, setAuthToken } from "./authUtils";
+import router from "../router"; // プロジェクト構成に合わせて調整
 
-// 環境変数からAPIのベースURLを設定
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// 403ステータス返却時のレスポンスインターセプター
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 403) {
+      console.error("トークンの有効期限が切れています。リダイレクトします。");
+      alert(
+        "トークンの有効期限がきれています。再度ログインしなおしてください。"
+      );
+      router.push("/"); // ログインページへ遷移
+    }
+    return Promise.reject(error);
+  }
+);
 
 // アプリ起動時にトークンを設定
 setAuthToken();
 
 const apiFacade = {
-  // ユーザー登録のメソッド
   registerUser(username, email, password) {
-    return axios.post(`${API_BASE_URL}/auth/register`, {
-      username,
-      password,
-      email,
-    });
+    return apiClient.post("/auth/register", { username, password, email });
   },
 
-  // ユーザーログインのメソッド
   loginUser(username, password) {
-    return axios
-      .post(`${API_BASE_URL}/auth/login`, {
-        username,
-        password,
-      })
+    return apiClient
+      .post("/auth/login", { username, password })
       .then((response) => {
         if (response.status === 200) {
-          // 成功した場合、トークンを保存
           saveAuthToken(response.data.token);
           return response.data;
         } else {
@@ -39,93 +42,48 @@ const apiFacade = {
       });
   },
 
-  // Excelファイルアップロード
   async uploadExcelFile(formData) {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error uploading Excel file:", error);
-      throw error;
-    }
+    const response = await apiClient.post("/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
   },
 
-  // ユーザーの活動データを取得
   async getActivities(userId) {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/activities`, {
-        params: { userId },
-      });
-      if (response.status === 200) {
-        return response.data;
-      } else {
-        throw new Error("Failed to fetch activities");
-      }
-    } catch (error) {
-      console.error("API Error:", error);
-      throw error;
+    const response = await apiClient.get("/activities", { params: { userId } });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch activities");
     }
   },
 
-  // 新しい活動データを作成
   async createActivity(activity) {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/activities`, activity);
-      return response.data;
-    } catch (error) {
-      console.error("Error creating activity:", error);
-      throw error;
-    }
+    const response = await apiClient.post("/activities", activity);
+    return response.data;
   },
 
-  // 活動データを更新
   async updateActivity(activity) {
-    try {
-      const response = await axios.put(
-        `${API_BASE_URL}/activities/${activity.activityId}`,
-        activity
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error updating activity:", error);
-      throw error;
-    }
+    const response = await apiClient.put(
+      `/activities/${activity.activityId}`,
+      activity
+    );
+    return response.data;
   },
 
-  // 活動データを削除
   async deleteActivity(activityId) {
-    try {
-      const response = await axios.delete(
-        `${API_BASE_URL}/activities/${activityId}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error deleting activity:", error);
-      throw error;
-    }
+    const response = await apiClient.delete(`/activities/${activityId}`);
+    return response.data;
   },
-  // ユーザーの分析データを取得
+
   async getAnalysisData({ userId, startDate, endDate }) {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/analyze`, {
-        params: {
-          userId,
-          startDate,
-          endDate,
-        },
-      });
-      if (response.status === 200) {
-        return response.data;
-      } else {
-        throw new Error("Failed to fetch analysis data");
-      }
-    } catch (error) {
-      console.error("Error fetching analysis data:", error);
-      throw error;
+    const response = await apiClient.get("/analyze", {
+      params: { userId, startDate, endDate },
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to fetch analysis data");
     }
   },
 };
