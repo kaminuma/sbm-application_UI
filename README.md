@@ -164,3 +164,6 @@ http://localhost:5173/
 ### 📧 問い合わせ
 
 バグ報告や機能リクエストは、Issues をご利用ください。
+
+## 📜 License
+This project is licensed under the **Apache License 2.0**.
