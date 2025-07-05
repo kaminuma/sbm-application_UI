@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { ref } from 'vue';
 import apiFacade from '../services/apiFacade';
 
 export default {
