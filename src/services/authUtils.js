@@ -4,8 +4,10 @@ export const setAuthToken = () => {
   const token = localStorage.getItem("token");
   if (token) {
     apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    console.log('Auth token set successfully');
   } else {
     delete apiClient.defaults.headers.common["Authorization"];
+    console.log('No auth token found, headers cleared');
   }
 };
 

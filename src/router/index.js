@@ -4,6 +4,7 @@ import ScheduleView from "../components/ScheduleView.vue";
 import UploadView from "../components/UploadView.vue";
 import Auth from "../components/Auth.vue";
 import AnalyzeView from "../components/AnalyzeView.vue";
+import MoodView from "../components/MoodView.vue";
 
 const routes = [
   {
@@ -27,6 +28,12 @@ const routes = [
     path: "/analyze",
     name: "AnalyzeView",
     component: AnalyzeView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/mood",
+    name: "MoodView",
+    component: MoodView,
     meta: { requiresAuth: true },
   },
   {
