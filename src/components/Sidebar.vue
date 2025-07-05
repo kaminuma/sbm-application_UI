@@ -23,6 +23,12 @@
             <span>生活記録分析</span>
           </router-link>
         </li>
+        <li class="sidebar-item">
+          <router-link to="/mood" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-emoticon-happy</v-icon>
+            <span>気分記録</span>
+          </router-link>
+        </li>
         <!-- 他のメニュー項目を追加 -->
       </ul>
     </div>

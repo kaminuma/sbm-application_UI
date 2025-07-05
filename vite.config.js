@@ -8,6 +8,7 @@ export default defineConfig({
       BASE_URL: process.env.VITE_BASE_URL, // 環境変数を定義
     },
   },
+  envPrefix: 'VITE_',
   test: {
     globals: true,
     environment: 'jsdom',

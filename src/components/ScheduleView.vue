@@ -2,17 +2,64 @@
   <v-main>
     <div class="content-container">
       <div class="button-container">
-        <v-btn color="primary" @click="newCreate" class="btn-rounded">
-          新規記録
-        </v-btn>
-        <v-btn
-          color="secondary"
-          @click="showAnalysisToast"
-          class="btn-rounded ml-4"
-        >
-          生活記録分析
-        </v-btn>
+        <div class="button-group">
+          <h4 class="button-group-title">記録</h4>
+          <div class="button-group-content">
+            <v-btn color="primary" @click="newCreate" class="btn-rounded">
+              新規記録
+            </v-btn>
+            <v-btn
+              color="success"
+              @click="openMoodDialogForToday"
+              class="btn-rounded ml-4"
+            >
+              気分を記録
+            </v-btn>
+          </div>
+        </div>
+        
+        <div class="button-group">
+          <h4 class="button-group-title">分析</h4>
+          <div class="button-group-content">
+            <v-btn
+              color="secondary"
+              @click="showAnalysisToast"
+              class="btn-rounded"
+            >
+              生活記録分析
+            </v-btn>
+          </div>
+        </div>
       </div>
+
+      <!-- 気分記録履歴セクション：最近の気分記録を表示 -->
+      <div class="mood-history-section">
+        <h3>最近の気分記録</h3>
+        <!-- 気分記録がない場合の空状態表示 -->
+        <div v-if="moodRecords.length === 0" class="empty-mood-state">
+          <v-icon size="48" color="grey">mdi-emoticon-neutral</v-icon>
+          <p>まだ気分記録がありません</p>
+          <v-btn color="primary" @click="newCreate" class="btn-rounded">
+            気分を記録
+          </v-btn>
+        </div>
+        <!-- 気分記録がある場合の履歴リスト表示 -->
+        <div v-else class="mood-history-list">
+          <div
+            v-for="mood in recentMoodRecords"
+            :key="mood.date"
+            class="mood-history-item"
+          >
+            <div class="mood-date">{{ formatDisplayDate(mood.date) }}</div>
+            <div class="mood-display">
+              <span class="mood-emoji-display">{{ getMoodEmoji(mood.mood) }}</span>
+              <span class="mood-label-display">{{ getMoodLabel(mood.mood) }}</span>
+            </div>
+            <div v-if="mood.note" class="mood-note">{{ mood.note }}</div>
+          </div>
+        </div>
+      </div>
+
       <vue-cal
         :disable-views="['years', 'year', 'month']"
         small
@@ -24,30 +71,23 @@
         hide-view-selector
         :transitions="false"
         @event-click="handleDateClick"
-      ></vue-cal>
-
-      <!-- /* スナックバーの実装（本実装したら削除）ここから */-->
-      <v-snackbar
-        v-model="snackbar"
-        :timeout="3000"
-        top
-        right
-        color="purple-accent-1"
-        dark
-        transition="slide-down-transition"
+        @cell-click="handleCellClick"
       >
-        <v-icon left color="white">mdi-information</v-icon>
-        <span class="snackbar-message">
-          この機能は今後実装予定です！
-          <span class="coming-soon">Coming Soon</span>
-        </span>
-        <template v-slot:action="{ attrs }">
-          <v-btn color="white" text v-bind="attrs" @click="snackbar = false">
-            閉じる
-          </v-btn>
+        <!-- カスタムセルテンプレート：カレンダーの各日付セルをカスタマイズ -->
+        <template #cell="{ cell }">
+          <div class="vuecal__cell-content">
+            <!-- 日付番号の表示 -->
+            <div class="vuecal__cell-date">{{ cell.date.getDate() }}</div>
+            
+            <!-- 気分記録がある場合のアイコン表示 -->
+            <div v-if="getMoodForDate(formatDateForMood(cell.date))" class="mood-indicator">
+              <span class="mood-emoji-small">
+                {{ getMoodEmoji(getMoodForDate(formatDateForMood(cell.date)).mood) }}
+              </span>
+            </div>
+          </div>
         </template>
-      </v-snackbar>
-      <!-- /* スナックバーの実装（本実装したら削除）ここまで */-->
+      </vue-cal>
 
       <!-- 新規イベント作成ダイアログ -->
       <v-dialog
@@ -262,6 +302,63 @@
           </v-card>
         </v-dialog>
       </v-dialog>
+
+      <!-- 気分記録ダイアログ -->
+      <v-dialog v-model="showMoodDialog" max-width="500" persistent>
+        <v-card>
+          <v-card-title class="headline">{{ selectedMoodDate }}の気分を記録</v-card-title>
+          <v-card-text>
+            <v-form ref="moodForm" v-model="moodFormValid">
+              <!-- 日付表示 -->
+              <div class="selected-date-display">
+                <v-icon left>mdi-calendar</v-icon>
+                <span>{{ formatDisplayDate(selectedMoodDate) }}</span>
+              </div>
+
+              <!-- 気分評価 -->
+              <div class="mood-rating-section">
+                <label class="mood-label">気分評価</label>
+                <div class="mood-emoji-container">
+                  <div
+                    v-for="mood in moodOptions"
+                    :key="mood.value"
+                    class="mood-emoji-item"
+                    :class="{ 'selected': selectedMood === mood.value }"
+                    @click="selectedMood = mood.value"
+                  >
+                    <div class="mood-emoji">{{ mood.emoji }}</div>
+                    <div class="mood-text">{{ mood.label }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- メモ -->
+              <v-textarea
+                v-model="moodNote"
+                label="メモ（任意）"
+                placeholder="その日の気分についてメモを残しましょう"
+                rows="3"
+                outlined
+                class="input-rounded mt-4"
+              ></v-textarea>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="grey" text @click="closeMoodDialog" class="btn-rounded">
+              キャンセル
+            </v-btn>
+            <v-btn
+              color="primary"
+              @click="saveMood"
+              :disabled="!isMoodFormValid"
+              class="btn-rounded"
+            >
+              保存
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </v-main>
 </template>
@@ -283,6 +380,15 @@ export default {
     userId() {
       return this.$store.state.userId;
     },
+    isMoodFormValid() {
+      return this.selectedMood !== null;
+    },
+    recentMoodRecords() {
+      // 最新5件の気分記録を返す
+      return this.moodRecords
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+    },
   },
   data() {
     return {
@@ -299,16 +405,30 @@ export default {
       selectedDate: "",
       dataPicker: "",
       selectedEventId: null,
-      snackbar: false,
       showDeleteConfirm: false, // 確認ダイアログの表示状態
       eventToDelete: null, // 削除対象のイベント情報
       rules: {
         required: (value) => !!value || "必須項目です。",
       },
+      // 気分記録関連の状態管理
+      showMoodDialog: false, // 気分記録ダイアログの表示状態
+      moodFormValid: false, // 気分記録フォームのバリデーション状態
+      selectedMood: null, // 選択された気分値（1-5）
+      moodNote: "", // 気分記録のメモ
+      selectedMoodDate: "", // 選択された日付
+      moodRecords: [], // 全気分記録の配列
+      moodOptions: [
+        { value: 1, emoji: "😢", label: "とても悪い" },
+        { value: 2, emoji: "😕", label: "悪い" },
+        { value: 3, emoji: "😐", label: "普通" },
+        { value: 4, emoji: "🙂", label: "良い" },
+        { value: 5, emoji: "😄", label: "とても良い" },
+      ],
     };
   },
   created() {
     this.fetchActivities();
+    this.fetchMoodRecords();
   },
   methods: {
     isFormValid() {
@@ -350,6 +470,19 @@ export default {
         console.error("Error fetching activities:", error);
       }
     },
+    /**
+     * 気分記録をAPIから取得する
+     * 取得したデータはmoodRecordsに保存される
+     */
+    async fetchMoodRecords() {
+      try {
+        const response = await apiFacade.getMoodRecords(this.userId);
+        this.moodRecords = response.moodRecords || [];
+      } catch (error) {
+        console.error("Error fetching mood records:", error);
+        this.moodRecords = [];
+      }
+    },
     newCreate() {
       this.selectedEventTitle = "";
       this.selectedEventContents = "";
@@ -387,15 +520,19 @@ export default {
 
         this.isEdit = true;
         this.editDialog = true;
-      } else {
-        this.selectedEventTitle = "";
-        this.selectedEventContents = "";
-        this.selectedDate = "";
-        this.selectedEventStartTime = "";
-        this.selectedEventEndTime = "";
-        this.isEdit = false;
-        this.createDialog = true;
       }
+    },
+
+    handleCellClick(cell) {
+      // 日付セルをクリックした時の処理
+      const clickedDate = cell.date;
+      const year = clickedDate.getFullYear();
+      const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
+      const day = String(clickedDate.getDate()).padStart(2, "0");
+      const dateStr = `${year}-${month}-${day}`;
+      
+      this.selectedMoodDate = dateStr;
+      this.openMoodDialog(dateStr);
     },
     saveEvent(event) {
       if (this.isEdit) {
@@ -492,9 +629,168 @@ export default {
       this.showDeleteConfirm = false; // ダイアログを非表示
       this.eventToDelete = null; // 削除対象のイベントをリセット
     },
-    /* スナックバーの実装（本実装したら削除）ここから */
     showAnalysisToast() {
-      this.snackbar = true;
+      this.$router.push('/analyze');
+    },
+
+    // 気分記録関連のメソッド
+    /**
+     * 気分記録ダイアログを開く
+     * 指定された日付の既存記録があれば編集モード、なければ新規作成モード
+     * @param {string} dateStr - YYYY-MM-DD形式の日付文字列
+     */
+    async openMoodDialog(dateStr) {
+      this.selectedMoodDate = dateStr;
+      
+      try {
+        // 既存の気分記録を取得して、指定日付の記録を検索
+        const userId = this.$store.state.userId;
+        const response = await apiFacade.getMoodRecords(userId);
+        const moodRecords = response.moodRecords || [];
+        const existingMood = moodRecords.find(mood => mood.date === dateStr);
+        
+        if (existingMood) {
+          // 既存の記録がある場合は編集モードでフォームを初期化
+          this.selectedMood = existingMood.mood;
+          this.moodNote = existingMood.note || "";
+        } else {
+          // 新規記録モードでフォームをリセット
+          this.selectedMood = null;
+          this.moodNote = "";
+        }
+        
+        this.showMoodDialog = true;
+      } catch (error) {
+        console.error("気分記録の読み込みに失敗:", error);
+        alert("気分記録の読み込みに失敗しました。");
+      }
+    },
+    /**
+     * 今日の日付で気分記録ダイアログを開く
+     * ボタンクリック時に呼び出される
+     */
+    openMoodDialogForToday() {
+      // 今日の日付をYYYY-MM-DD形式で取得
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      const todayStr = `${year}-${month}-${day}`;
+      
+      // 今日の日付で気分記録ダイアログを開く
+      this.openMoodDialog(todayStr);
+    },
+
+    /**
+     * 気分値に対応する絵文字を取得する
+     * @param {number} mood - 気分値（1-5）
+     * @returns {string} 対応する絵文字
+     */
+    getMoodEmoji(mood) {
+      const moodOption = this.moodOptions.find(option => option.value === mood);
+      return moodOption ? moodOption.emoji : "😐";
+    },
+
+    /**
+     * 気分値に対応するラベルを取得する
+     * @param {number} mood - 気分値（1-5）
+     * @returns {string} 対応するラベル
+     */
+    getMoodLabel(mood) {
+      const moodOption = this.moodOptions.find(option => option.value === mood);
+      return moodOption ? moodOption.label : "不明";
+    },
+
+    /**
+     * 指定された日付の気分記録を取得する
+     * @param {string} dateStr - YYYY-MM-DD形式の日付文字列
+     * @returns {Object|null} 気分記録オブジェクト、見つからない場合はnull
+     */
+    getMoodForDate(dateStr) {
+      return this.moodRecords.find(mood => mood.date === dateStr);
+    },
+
+    /**
+     * DateオブジェクトをYYYY-MM-DD形式の文字列に変換する
+     * @param {Date} date - 変換するDateオブジェクト
+     * @returns {string} YYYY-MM-DD形式の日付文字列
+     */
+    formatDateForMood(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+
+    /**
+     * 日付文字列を日本語形式で表示用にフォーマットする
+     * @param {string} dateStr - YYYY-MM-DD形式の日付文字列
+     * @returns {string} 日本語形式の日付文字列
+     */
+    formatDisplayDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("ja-JP", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long"
+      });
+    },
+
+    /**
+     * 気分記録ダイアログを閉じる
+     * フォームをリセットしてダイアログを非表示にする
+     */
+    closeMoodDialog() {
+      this.showMoodDialog = false;
+      this.resetMoodForm();
+    },
+
+    /**
+     * 気分記録フォームをリセットする
+     * 選択された気分とメモをクリアする
+     */
+    resetMoodForm() {
+      this.selectedMood = null;
+      this.moodNote = "";
+    },
+
+    /**
+     * 気分記録を保存する
+     * 既存の記録がある場合は更新、ない場合は新規作成
+     */
+    async saveMood() {
+      if (!this.selectedMood) return;
+
+      const moodData = {
+        date: this.selectedMoodDate,
+        mood: this.selectedMood,
+        note: this.moodNote,
+        userId: this.$store.state.userId,
+      };
+
+      try {
+        // 既存の記録があるかチェックして、更新か新規作成かを決定
+        const userId = this.$store.state.userId;
+        const response = await apiFacade.getMoodRecords(userId);
+        const moodRecords = response.moodRecords || [];
+        const existingMood = moodRecords.find(mood => mood.date === this.selectedMoodDate);
+
+        if (existingMood) {
+          // 既存の記録がある場合は更新
+          await apiFacade.updateMoodRecord(moodData);
+        } else {
+          // 既存の記録がない場合は新規作成
+          await apiFacade.createMoodRecord(moodData);
+        }
+
+        this.closeMoodDialog();
+        await this.fetchMoodRecords(); // 気分記録を再取得して表示を更新
+        alert("気分記録を保存しました！");
+      } catch (error) {
+        console.error("気分記録の保存に失敗:", error);
+        alert("気分記録の保存に失敗しました。");
+      }
     },
   },
 };
@@ -518,7 +814,33 @@ body {
 
 .button-container {
   margin-bottom: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-group-title {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.button-group-content {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .btn-rounded {
@@ -622,53 +944,209 @@ body {
 }
 
 /* 既存のスタイルはそのまま維持 */
-/* スナックバーの実装（本実装したら削除）ここから */
 
-.snackbar-message {
-  margin-left: 12px; /* アイコンとの間隔を広げる */
-  font-weight: 550;
-  font-size: 16px;
+/* 気分記録ダイアログのスタイル */
+.selected-date-display {
   display: flex;
   align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
 }
 
-/* 「Coming Soon」メッセージのスタイルとアニメーション */
-.coming-soon {
-  margin-left: 8px;
-  color: #2608be; /* ポップな色に変更 */
-  opacity: 0;
-  animation: slide-in 1s forwards;
+/* 気分記録ダイアログのスタイル */
+.mood-rating-section {
+  margin-bottom: 20px;
 }
 
-@keyframes slide-in {
-  from {
-    transform: translateX(20px);
-    opacity: 0;
+.mood-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #333;
+}
+
+.mood-emoji-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mood-emoji-item {
+  flex: 1;
+  text-align: center;
+  padding: 15px 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mood-emoji-item:hover {
+  border-color: #2196f3;
+  background-color: #f5f5f5;
+}
+
+.mood-emoji-item.selected {
+  border-color: #2196f3;
+  background-color: #e3f2fd;
+}
+
+.mood-emoji {
+  font-size: 2rem;
+  margin-bottom: 5px;
+}
+
+.mood-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* カレンダーセル内の気分記録アイコン */
+.vuecal__cell-content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px;
+}
+
+.vuecal__cell-date {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.mood-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 10;
+}
+
+.mood-emoji-small {
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  padding: 2px;
+  display: block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .mood-emoji-container {
+    flex-wrap: wrap;
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
+  
+  .mood-emoji-item {
+    flex: 1 1 calc(50% - 5px);
+  }
+  
+  .mood-emoji-small {
+    font-size: 0.7rem;
   }
 }
 
-/* カスタムトランジションの定義 */
-@keyframes slide-down {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+/* 気分記録履歴セクション */
+.mood-history-section {
+  margin-top: 30px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.slide-down-transition-enter-active {
-  animation: slide-down 0.5s forwards;
+.mood-history-section h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
-.slide-down-transition-leave-active {
-  animation: slide-down 0.5s reverse forwards;
+.empty-mood-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
 }
-/* スナックバーの実装（本実装したら削除）ここまで */
+
+.empty-mood-state p {
+  margin: 15px 0;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.mood-history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mood-history-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 15px;
+}
+
+.mood-history-item:last-child {
+  border-bottom: none;
+}
+
+.mood-date {
+  min-width: 120px;
+  font-weight: 600;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.mood-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.mood-emoji-display {
+  font-size: 1.2rem;
+}
+
+.mood-label-display {
+  font-weight: 500;
+  color: #333;
+}
+
+.mood-note {
+  flex: 2;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .mood-history-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .mood-display {
+    width: 100%;
+  }
+  
+  .mood-note {
+    width: 100%;
+  }
+}
 </style>
