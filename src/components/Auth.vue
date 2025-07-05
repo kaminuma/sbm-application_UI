@@ -127,7 +127,6 @@
 
 <script>
 import apiFacade from "../services/apiFacade";
-import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -164,8 +163,7 @@ export default {
   setup() {
     const router = useRouter();
     const store = useStore();
-    const isAuthenticated = computed(() => store.state.isAuthenticated);
-    return { router, store, isAuthenticated };
+    return { router, store };
   },
   methods: {
     toggleLogin() {
