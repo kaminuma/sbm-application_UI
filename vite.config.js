@@ -9,4 +9,14 @@ export default defineConfig({
     },
   },
   envPrefix: 'VITE_',
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.js'],
+    mockReset: true,
+    css: false,
+    deps: {
+      inline: ['vuetify']
+    }
+  },
 });
