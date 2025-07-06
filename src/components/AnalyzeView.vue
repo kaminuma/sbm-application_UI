@@ -1,5 +1,10 @@
 <template>
   <div class="analyze-container">
+    <!-- ヘッダーセクション -->
+    <div class="analyze-header">
+      <h2>📊 生活記録分析</h2>
+    </div>
+    
     <div v-if="loading" class="loading-screen">
       <div class="loading-content">
         <div class="spinner"></div>
@@ -239,6 +244,23 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.analyze-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.analyze-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  font-family: "Poppins", sans-serif;
 }
 
 .filter-section {
