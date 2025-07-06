@@ -3,7 +3,7 @@
     <div class="content-container">
       <div class="button-container">
         <div class="button-group">
-          <h4 class="button-group-title">記録</h4>
+          <h4 class="button-group-title">📝 記録</h4>
           <div class="button-group-content">
             <v-btn color="primary" @click="newCreate" class="btn-rounded">
               新規記録
@@ -19,7 +19,7 @@
         </div>
         
         <div class="button-group">
-          <h4 class="button-group-title">分析</h4>
+          <h4 class="button-group-title">📊 分析</h4>
           <div class="button-group-content">
             <v-btn
               color="secondary"
