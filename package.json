@@ -10,9 +10,15 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "build:android": "npm run build && npx cap sync && npx cap build android",
+    "build:android:release": "npm run build && npx cap sync && npx cap build android --release",
+    "sync:android": "npx cap sync",
+    "open:android": "npx cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
     "@mdi/font": "^7.4.47",
     "@vuepic/vue-datepicker": "^9.0.3",
     "axios": "^1.7.7",
@@ -29,11 +35,13 @@
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "^6.0.0",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vitest/coverage-v8": "^1.6.1",
     "@vitest/ui": "^1.6.1",
     "@vue/test-utils": "^2.4.6",
     "jsdom": "^23.2.0",
+    "typescript": "^5.8.3",
     "vite": "^5.4.8",
     "vitest": "^1.6.1"
   }
