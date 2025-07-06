@@ -177,6 +177,32 @@ describe('MoodView.vue', () => {
       expect(distribution.find(d => d.mood === 4).count).toBe(2)
       expect(distribution.find(d => d.mood === 5).count).toBe(1)
     })
+
+    it('moodDistributionが降順（5→1）でソートされる', () => {
+      wrapper.vm.recentMoods = [
+        { mood: 1 },
+        { mood: 3 },
+        { mood: 5 },
+        { mood: 2 },
+        { mood: 4 }
+      ]
+      
+      const distribution = wrapper.vm.moodDistribution
+      
+      // ソート順序をチェック（5→4→3→2→1）
+      expect(distribution[0].mood).toBe(5) // 最初が5
+      expect(distribution[1].mood).toBe(4) // 2番目が4
+      expect(distribution[2].mood).toBe(3) // 3番目が3
+      expect(distribution[3].mood).toBe(2) // 4番目が2
+      expect(distribution[4].mood).toBe(1) // 最後が1
+      
+      // カウント数も確認
+      expect(distribution[0].count).toBe(1) // 5が1回
+      expect(distribution[1].count).toBe(1) // 4が1回
+      expect(distribution[2].count).toBe(1) // 3が1回
+      expect(distribution[3].count).toBe(1) // 2が1回
+      expect(distribution[4].count).toBe(1) // 1が1回
+    })
   })
 
   describe('気分記録の編集', () => {
