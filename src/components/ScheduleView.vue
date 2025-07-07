@@ -110,6 +110,24 @@
               outlined
               class="input-rounded"
             ></v-text-field>
+            <v-select
+              v-model="selectedCategory"
+              :items="categoryList"
+              label="カテゴリ"
+              :rules="[rules.required]"
+              outlined
+              class="input-rounded"
+              required
+            ></v-select>
+            <v-text-field
+              v-if="selectedCategory === 'その他'"
+              v-model="selectedCategorySub"
+              label="サブカテゴリ（必須）"
+              :rules="[rules.required]"
+              outlined
+              class="input-rounded"
+              required
+            ></v-text-field>
             <v-textarea
               v-model="selectedEventContents"
               label="イベント詳細"
@@ -201,6 +219,24 @@
               placeholder="タイトルを入力"
               outlined
               class="input-rounded"
+            ></v-text-field>
+            <v-select
+              v-model="selectedCategory"
+              :items="categoryList"
+              label="カテゴリ"
+              :rules="[rules.required]"
+              outlined
+              class="input-rounded"
+              required
+            ></v-select>
+            <v-text-field
+              v-if="selectedCategory === 'その他'"
+              v-model="selectedCategorySub"
+              label="サブカテゴリ（必須）"
+              :rules="[rules.required]"
+              outlined
+              class="input-rounded"
+              required
             ></v-text-field>
             <v-textarea
               v-model="selectedEventContents"
@@ -424,6 +460,23 @@ export default {
         { value: 4, emoji: "🙂", label: "良い" },
         { value: 5, emoji: "😄", label: "とても良い" },
       ],
+      selectedCategory: '',
+      selectedCategorySub: '',
+      categoryList: [
+        '運動',
+        '仕事',
+        '学習',
+        '趣味',
+        '食事',
+        '睡眠',
+        '買い物',
+        '娯楽',
+        '休憩',
+        '家事',
+        '通院',
+        '散歩',
+        'その他',
+      ],
     };
   },
   created() {
@@ -489,6 +542,8 @@ export default {
       this.selectedEventStartTime = "";
       this.selectedEventEndTime = "";
       this.selectedDate = new Date().toISOString().split("T")[0];
+      this.selectedCategory = "";
+      this.selectedCategorySub = "";
       this.isEdit = false;
       this.createDialog = true;
     },
@@ -497,27 +552,22 @@ export default {
         this.selectedEventTitle = event.title;
         this.selectedEventContents = event.contents;
         this.selectedEventId = event.activityId;
-
+        this.selectedCategory = event.category;
+        this.selectedCategorySub = event.categorySub || event.category_sub || '';
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
-
         const year = eventStart.getFullYear();
         const month = String(eventStart.getMonth() + 1).padStart(2, "0");
         const day = String(eventStart.getDate()).padStart(2, "0");
-
         const startDateStr = `${year}-${month}-${day}`;
-
         this.selectedDate = startDateStr;
-
         const eventFormatTime = (date) => {
           const hours = String(date.getHours()).padStart(2, "0");
           const minutes = String(date.getMinutes()).padStart(2, "0");
           return `${hours}:${minutes}`;
         };
-
         this.selectedEventStartTime = eventFormatTime(eventStart);
         this.selectedEventEndTime = eventFormatTime(eventEnd);
-
         this.isEdit = true;
         this.editDialog = true;
       }
@@ -549,6 +599,8 @@ export default {
             end: this.selectedEventEndTime,
             title: this.selectedEventTitle,
             contents: this.selectedEventContents,
+            category: this.selectedCategory,
+            categorySub: this.selectedCategory === 'その他' ? this.selectedCategorySub : '',
           };
 
           apiFacade
@@ -561,6 +613,7 @@ export default {
             });
         }
         this.editDialog = false;
+        // 編集時はカテゴリ・サブカテゴリをリセットしない
       } else {
         this.formatTime(this.selectedEventStartTime, "start");
         this.formatTime(this.selectedEventEndTime, "end");
@@ -571,6 +624,8 @@ export default {
           end: this.selectedAddEventEndTime,
           title: this.selectedEventTitle,
           contents: this.selectedEventContents,
+          category: this.selectedCategory,
+          categorySub: this.selectedCategory === 'その他' ? this.selectedCategorySub : '',
         };
         apiFacade
           .createActivity(eventData)
@@ -579,6 +634,9 @@ export default {
           })
           .then(() => {
             this.createDialog = false;
+            // 新規作成時のみカテゴリ・サブカテゴリをリセット
+            this.selectedCategory = '';
+            this.selectedCategorySub = '';
           })
           .catch((error) => {
             console.error("Error adding event:", error);
