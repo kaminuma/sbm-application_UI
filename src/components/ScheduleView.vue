@@ -489,7 +489,8 @@ export default {
         (this.selectedEventTitle?.length || 0) > 0 &&
         !!this.selectedDate &&
         !!this.selectedEventStartTime &&
-        !!this.selectedEventEndTime
+        !!this.selectedEventEndTime &&
+        !!this.selectedCategory // カテゴリ必須チェックを追加
       ) {
         let startTime = this.selectedEventStartTime;
         let endTime = this.selectedEventEndTime;

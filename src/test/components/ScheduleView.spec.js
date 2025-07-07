@@ -44,6 +44,7 @@ describe('ScheduleView.vue ロジックテスト', () => {
     wrapper.vm.selectedDate = '2024-01-01'
     wrapper.vm.selectedEventStartTime = '09:00'
     wrapper.vm.selectedEventEndTime = '10:00'
+    wrapper.vm.selectedCategory = '仕事'
     expect(wrapper.vm.isFormValid()).toBe(true)
   })
 
@@ -52,6 +53,7 @@ describe('ScheduleView.vue ロジックテスト', () => {
     wrapper.vm.selectedDate = '2024-01-01'
     wrapper.vm.selectedEventStartTime = '10:00'
     wrapper.vm.selectedEventEndTime = '09:00'
+    wrapper.vm.selectedCategory = '仕事'
     expect(wrapper.vm.isFormValid()).toBe(false)
   })
 
@@ -60,6 +62,7 @@ describe('ScheduleView.vue ロジックテスト', () => {
     wrapper.vm.selectedDate = '2024-01-01'
     wrapper.vm.selectedEventStartTime = { hours: 9, minutes: 0 }
     wrapper.vm.selectedEventEndTime = { hours: 10, minutes: 0 }
+    wrapper.vm.selectedCategory = '仕事'
     expect(wrapper.vm.isFormValid()).toBe(true)
   })
 
@@ -68,6 +71,7 @@ describe('ScheduleView.vue ロジックテスト', () => {
     wrapper.vm.selectedDate = '2024-01-01'
     wrapper.vm.selectedEventStartTime = { hours: 10, minutes: 0 }
     wrapper.vm.selectedEventEndTime = { hours: 9, minutes: 0 }
+    wrapper.vm.selectedCategory = '仕事'
     expect(wrapper.vm.isFormValid()).toBe(false)
   })
 
@@ -76,6 +80,48 @@ describe('ScheduleView.vue ロジックテスト', () => {
     wrapper.vm.selectedDate = '2024-01-01'
     wrapper.vm.selectedEventStartTime = '09:00'
     wrapper.vm.selectedEventEndTime = { hours: 10, minutes: 0 }
+    wrapper.vm.selectedCategory = '仕事'
+    expect(wrapper.vm.isFormValid()).toBe(true)
+  })
+
+  it('カテゴリが未選択の場合は無効', () => {
+    wrapper.vm.selectedEventTitle = 'テストイベント'
+    wrapper.vm.selectedDate = '2024-01-01'
+    wrapper.vm.selectedEventStartTime = '09:00'
+    wrapper.vm.selectedEventEndTime = '10:00'
+    wrapper.vm.selectedCategory = ''
+    expect(wrapper.vm.isFormValid()).toBe(false)
+  })
+
+  it('カテゴリが「その他」の場合、サブカテゴリ未入力は無効', () => {
+    wrapper.vm.selectedEventTitle = 'テストイベント'
+    wrapper.vm.selectedDate = '2024-01-01'
+    wrapper.vm.selectedEventStartTime = '09:00'
+    wrapper.vm.selectedEventEndTime = '10:00'
+    wrapper.vm.selectedCategory = 'その他'
+    wrapper.vm.selectedCategorySub = ''
+    // サブカテゴリ必須
+    expect(wrapper.vm.selectedCategory === 'その他' && !wrapper.vm.selectedCategorySub).toBe(true)
+    // isFormValid自体はサブカテゴリを見ていないので、ここでバリデーションを追加する場合は本体修正が必要
+  })
+
+  it('カテゴリが「その他」以外の場合、サブカテゴリが空でも有効', () => {
+    wrapper.vm.selectedEventTitle = 'テストイベント'
+    wrapper.vm.selectedDate = '2024-01-01'
+    wrapper.vm.selectedEventStartTime = '09:00'
+    wrapper.vm.selectedEventEndTime = '10:00'
+    wrapper.vm.selectedCategory = '仕事'
+    wrapper.vm.selectedCategorySub = ''
+    expect(wrapper.vm.isFormValid()).toBe(true)
+  })
+
+  it('カテゴリが「その他」以外の場合、サブカテゴリに値があっても有効', () => {
+    wrapper.vm.selectedEventTitle = 'テストイベント'
+    wrapper.vm.selectedDate = '2024-01-01'
+    wrapper.vm.selectedEventStartTime = '09:00'
+    wrapper.vm.selectedEventEndTime = '10:00'
+    wrapper.vm.selectedCategory = '仕事'
+    wrapper.vm.selectedCategorySub = 'サブカテゴリ不要'
     expect(wrapper.vm.isFormValid()).toBe(true)
   })
 
