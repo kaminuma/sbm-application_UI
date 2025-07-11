@@ -1,7 +1,7 @@
 <template>
   <div class="mood-view">
     <div class="mood-header">
-      <h2>気分記録</h2>
+      <h2>📝 気分記録</h2>
       <v-btn color="primary" @click="showMoodDialog = true" class="btn-rounded">
         気分を記録
       </v-btn>
@@ -255,10 +255,12 @@ export default {
         distribution[mood.mood]++;
       });
       
-      return Object.entries(distribution).map(([mood, count]) => ({
-        mood: parseInt(mood),
-        count
-      }));
+      return Object.entries(distribution)
+        .map(([mood, count]) => ({
+          mood: parseInt(mood),
+          count
+        }))
+        .sort((a, b) => b.mood - a.mood); // 降順（5→1）にソート
     },
     weeklyMoodData() {
       // 選択された期間の気分データを生成

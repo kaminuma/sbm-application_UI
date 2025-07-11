@@ -80,6 +80,7 @@ SBM Application UI 　設計コンセプト
 - **Cypress**: E2E テスト（※予定）
 - **AWS**: デプロイ環境（EC2、RDS）
 - **GitHub Actions**: CI/CD パイプライン管理
+- **Capacitor**: モバイルアプリ開発（Android）
 
 ---
 
@@ -89,6 +90,7 @@ SBM Application UI 　設計コンセプト
 
 - Node.js（推奨バージョン: 16.x 以上）
 - npm または yarn
+- Android Studio（Androidアプリ開発用）
 
 ### 💻 セットアップ手順
 
@@ -158,6 +160,124 @@ http://localhost:5173/
 - 生活記録分析機能の完成
 - E2E テストの導入（Cypress）
 - デザイン統一のためのスタイルガイド作成
+
+---
+
+## 📱 Androidアプリ開発
+
+### 機能
+
+- 📅 スケジュール管理
+- 😊 気分記録
+- 📊 生活分析
+- 📤 データアップロード
+- 🔐 ユーザー認証
+- 🔄 オフライン対応
+
+### Androidアプリのビルド
+
+#### 初回セットアップ
+
+```bash
+# Capacitorの初期化
+npx cap init
+
+# Androidプラットフォームの追加
+npx cap add android
+```
+
+#### ビルド手順
+
+##### 方法1: 自動ビルドスクリプト（推奨）
+
+```bash
+# ビルドスクリプトに実行権限を付与
+chmod +x build-android.sh
+
+# Androidアプリをビルド
+./build-android.sh
+```
+
+##### 方法2: 手動ビルド
+
+```bash
+# 1. Vue.jsアプリのビルド
+npm run build
+
+# 2. Capacitorの同期
+npx cap sync
+
+# 3. Androidアプリのビルド
+npx cap build android --release
+```
+
+#### 生成されるファイル
+
+ビルドが成功すると、以下のファイルが生成されます：
+
+- `android/app/build/outputs/apk/release/app-release.apk` - APKファイル
+- `android/app/build/outputs/bundle/release/app-release.aab` - AABファイル（Google Play用）
+
+#### Android端末でのインストール
+
+1. APKファイルをAndroid端末に転送
+2. 端末の設定で「未知のソース」を許可
+3. APKファイルをタップしてインストール
+
+### 開発コマンド
+
+```bash
+# Android関連
+npm run build:android          # 開発用ビルド
+npm run build:android:release  # リリース用ビルド
+npm run sync:android           # Capacitor同期
+npm run open:android           # Android Studioで開く
+```
+
+### プロジェクト構造
+
+```
+sbm-application_UI/
+├── src/
+│   ├── components/         # Vueコンポーネント
+│   ├── views/             # ページコンポーネント
+│   ├── services/          # APIサービス
+│   ├── utils/             # ユーティリティ
+│   ├── config/            # 設定ファイル
+│   └── main.js            # エントリーポイント
+├── android/               # Capacitor生成（ビルド後）
+├── public/                # 静的ファイル
+├── src/test/              # テストファイル
+├── capacitor.config.ts    # Capacitor設定
+├── build-android.sh       # ビルドスクリプト
+└── package.json
+```
+
+### デプロイ
+
+#### Androidアプリ
+
+1. リリースビルドの実行
+2. 生成されたAPK/AABファイルをGoogle Play Consoleにアップロード
+3. ストア審査の完了を待つ
+
+### トラブルシューティング
+
+#### Androidビルドエラー
+
+```bash
+# Androidプロジェクトのクリーン
+cd android
+./gradlew clean
+./gradlew build
+```
+
+#### Capacitor同期エラー
+
+```bash
+# 強制同期
+npx cap sync --force
+```
 
 ---
 
