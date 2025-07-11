@@ -3,7 +3,7 @@
   "appName": "SBM Application",
   "webDir": "dist",
   "server": {
-    "androidScheme": "http"
+    "androidScheme": "https"
   },
   "android": {
     "buildOptions": {
