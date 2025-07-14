@@ -490,7 +490,8 @@ export default {
         !!this.selectedDate &&
         !!this.selectedEventStartTime &&
         !!this.selectedEventEndTime &&
-        !!this.selectedCategory // カテゴリ必須チェックを追加
+        !!this.selectedCategory &&
+        (this.selectedCategory !== 'その他' || (this.selectedCategory === 'その他' && !!this.selectedCategorySub))
       ) {
         let startTime = this.selectedEventStartTime;
         let endTime = this.selectedEventEndTime;
