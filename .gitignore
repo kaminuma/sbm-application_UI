@@ -35,3 +35,5 @@ android/capacitor-cordova-android-plugins/build/
 
 # Android 全体を無視（開発中のみ）
 android/
+
+.cursorrules
