@@ -70,8 +70,10 @@
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
-        @click="handleCellClick" 
+        @header-date-click="handleCellClick"
         @event-click="handleDateClick"
+        @view-change="setupHeaderDateClicks"
+        @click-on-date="onDateChanged"
       >
       </vue-cal>
 
@@ -469,6 +471,12 @@ export default {
     this.fetchActivities();
     this.fetchMoodRecords();
   },
+  mounted() {
+    // Vue-Cal v5のヘッダー日付にクリックイベントを直接追加
+    this.$nextTick(() => {
+      this.setupHeaderDateClicks();
+    });
+  },
   methods: {
     isFormValid() {
       if (
@@ -648,21 +656,27 @@ export default {
     },
 
     handleCellClick(cellData) {
-      // Vue-Cal v5では、cellDataはオブジェクトで、cell（セル情報）とcursor（カーソル情報）を含む
-      // { e: DOMEvent, cell: CellObject, cursor: CursorObject } の形式になっている
-      const cell = cellData.cell || cellData; // Vue-Cal v5なら.cellから、それ以外はそのまま
-      
-      // 日付セルをクリックした時の処理
-      if (!cell || !cell.date) return;
-      
-      console.log('Cell clicked:', cell); // デバッグ用
-      
-      const clickedDate = cell.date;
-      const year = clickedDate.getFullYear();
-      const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-      const day = String(clickedDate.getDate()).padStart(2, "0");
+      // ヘッダークリック時はDate型、セルクリック時はcellオブジェクト
+      let dateObj;
+
+      if (cellData instanceof Date) {
+        // ヘッダークリック
+        dateObj = cellData;
+        console.log('Header date clicked:', dateObj);
+      } else if (cellData && cellData.cell && cellData.cell.date) {
+        // セルクリック
+        dateObj = cellData.cell.date;
+        console.log('Cell clicked:', cellData.cell);
+      } else {
+        // 不正なデータ
+        return;
+      }
+
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
-      
+
       this.selectedMoodDate = dateStr;
       this.openMoodDialog(dateStr);
     },
@@ -973,6 +987,59 @@ export default {
       
       return `${hours}:${minutes}`;
     },
+    
+    /**
+     * Vue-Cal v5のヘッダー日付要素にクリックイベントを追加する
+     * カレンダーレンダリング後に呼び出される
+     */
+    setupHeaderDateClicks() {
+      // ヘッダー日付要素を取得
+      const weekdayElements = document.querySelectorAll('.vuecal--custom-theme .vuecal__weekday');
+      
+      if (weekdayElements.length > 0) {
+        console.log('Vue-Cal weekday headers found:', weekdayElements.length);
+        
+        // 各ヘッダー日付要素にクリックイベントを追加
+        weekdayElements.forEach((element, index) => {
+          element.addEventListener('click', (e) => {
+            // インデックスに基づいて日付を取得（週の初日から順に）
+            const weekStart = this.getWeekStartDate();
+            const clickDate = new Date(weekStart);
+            clickDate.setDate(weekStart.getDate() + index);
+            
+            console.log('Header date clicked:', clickDate);
+            this.handleCellClick(clickDate);
+            
+            // イベントの伝播を止める
+            e.stopPropagation();
+          }, { capture: true }); // キャプチャフェーズでイベントを処理
+        });
+      } else {
+        console.warn('Vue-Cal weekday headers not found');
+      }
+    },
+    
+    /**
+     * 現在表示されている週の開始日を取得
+     * @returns {Date} 週の開始日
+     */
+    getWeekStartDate() {
+      // 現在選択されている日付から週の開始日を計算
+      const date = this.selectedDate ? new Date(this.selectedDate) : new Date();
+      const day = date.getDay(); // 0:日曜, 1:月曜, ...
+      const diff = date.getDate() - day;
+      return new Date(date.setDate(diff));
+    },
+    
+    /**
+     * 日付変更時に呼び出される
+     * ヘッダークリックイベントを再設定する
+     */
+    onDateChanged() {
+      this.$nextTick(() => {
+        this.setupHeaderDateClicks();
+      });
+    },
   },
 };
 </script>
@@ -1078,29 +1145,32 @@ body {
 .vuecal--custom-theme .vuecal__time {
   color: #00695c;
 }
-
-/* カスタムセルテンプレート用のスタイル */
-.vuecal--custom-theme .vuecal__event {
-  margin: 3px 0;
-  padding: 5px;
-  font-size: 12px;
-  cursor: pointer;
-  border-left: 3px solid;
-  text-align: left;
+.vuecal--custom-theme .vuecal__weekday-date {
+  cursor: pointer !important;
+  display: inline-block !important;
+  padding: 6px 12px !important;
+  background: #eef !important;
+  border-radius: 4px !important;
+  transition: background 0.2s !important;
+  pointer-events: auto !important;
 }
 
-.vuecal--custom-theme .vuecal__event-title {
-  font-weight: 600;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.vuecal--custom-theme .vuecal__weekday-date:hover {
+  background: #c7d2fe !important;
 }
-
-.vuecal--custom-theme .vuecal__cell-content {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+/* ヘッダーセル全体をクリック可能に見せる */
+.vuecal--custom-theme .vuecal__weekday {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: background 0.2s !important;
+  border-radius: 6px !important;
+}
+/* 選択状態のセルのデフォルト背景色を無効化 */
+.vuecal__cell--selected,
+.vuecal__weekday--selected {
+  background: none !important;
+  box-shadow: none !important;
+  /* 必要に応じてborderやcolorもリセット */
 }
 
 /* PC向けのスタイルを追加 */
