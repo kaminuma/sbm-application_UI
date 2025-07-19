@@ -77,10 +77,10 @@
         <template #cell="{ cell }">
           <div class="vuecal__cell-content">
             <!-- 日付番号の表示 -->
-            <div class="vuecal__cell-date">{{ cell.date.getDate() }}</div>
+            <div class="vuecal__cell-date">{{ cell.date && cell.date.getDate ? cell.date.getDate() : (cell.formattedDate || cell.day || cell.content || '') }}</div>
             
             <!-- 気分記録がある場合のアイコン表示 -->
-            <div v-if="getMoodForDate(formatDateForMood(cell.date))" class="mood-indicator">
+            <div v-if="cell.date && getMoodForDate(formatDateForMood(cell.date))" class="mood-indicator">
               <span class="mood-emoji-small">
                 {{ getMoodEmoji(getMoodForDate(formatDateForMood(cell.date)).mood) }}
               </span>
@@ -576,7 +576,13 @@ export default {
     },
 
     handleCellClick(cell) {
+      // Debug: Check what properties are available in cell object
+      console.log('Cell object:', cell);
+      console.log('Cell properties:', Object.keys(cell));
+      
       // 日付セルをクリックした時の処理
+      if (!cell.date) return;
+      
       const clickedDate = cell.date;
       const year = clickedDate.getFullYear();
       const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
@@ -776,6 +782,7 @@ export default {
      * @returns {string} YYYY-MM-DD形式の日付文字列
      */
     formatDateForMood(date) {
+      if (!date || !date.getFullYear) return '';
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
