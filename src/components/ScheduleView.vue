@@ -400,9 +400,9 @@
 </template>
 
 <script>
-import VueCal from "vue-cal";
+import { VueCal } from "vue-cal";
 import apiFacade from "../services/apiFacade";
-import "vue-cal/dist/vuecal.css";
+import "vue-cal/style.css";
 import "vuetify/dist/vuetify.min.css";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
