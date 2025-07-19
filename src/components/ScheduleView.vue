@@ -76,8 +76,9 @@
         <!-- カスタムセルテンプレート：カレンダーの各日付セルをカスタマイズ -->
         <template #cell="{ cell }">
           <div class="vuecal__cell-content">
-            <!-- 日付番号の表示 -->
-            <div class="vuecal__cell-date">{{ cell.date && cell.date.getDate ? cell.date.getDate() : (cell.formattedDate || cell.day || cell.content || '') }}</div>
+            <!-- In vue-cal v5, use cell.content if available, otherwise fallback to date extraction -->
+            <div class="vuecal__cell-date" v-if="cell.content">{{ cell.content }}</div>
+            <div class="vuecal__cell-date" v-else-if="cell.date && cell.date.getDate">{{ cell.date.getDate() }}</div>
             
             <!-- 気分記録がある場合のアイコン表示 -->
             <div v-if="cell.date && getMoodForDate(formatDateForMood(cell.date))" class="mood-indicator">
@@ -576,10 +577,6 @@ export default {
     },
 
     handleCellClick(cell) {
-      // Debug: Check what properties are available in cell object
-      console.log('Cell object:', cell);
-      console.log('Cell properties:', Object.keys(cell));
-      
       // 日付セルをクリックした時の処理
       if (!cell.date) return;
       
