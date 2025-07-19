@@ -70,7 +70,8 @@
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
-        @click="handleCellClick" 
+        @date-click="handleCellClick"
+        @cell-click="handleCellClick" 
         @event-click="handleDateClick"
       >
       </vue-cal>
@@ -616,20 +617,22 @@ export default {
       this.isEdit = false;
       this.createDialog = true;
     },
-    handleDateClick(eventData) {
-      // Vue-Cal v5では、eventDataはオブジェクトで、event（カレンダーイベントデータ）を含む
-      // { e: DOMEvent, event: CalendarEvent, ... } の形式になっている
-      const event = eventData.event || eventData; // Vue-Cal v5なら.eventから、それ以外はそのまま
+    handleDateClick(event, jsEvent) {
+      // Defensive programming: handle null or undefined eventData
+      if (!event) return;
       
-      if (event) {
-        console.log('Event clicked:', event); // デバッグ用
-        this.selectedEventTitle = event.title;
-        this.selectedEventContents = event.contents || event.content; // Vue-Cal v5ではcontentとして提供される場合がある
-        this.selectedEventId = event.activityId;
-        this.selectedCategory = event.category;
-        this.selectedCategorySub = event.categorySub || event.category_sub || '';
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
+      // Vue-Cal v5では、eventは直接イベントオブジェクトまたは { event, ... } の構造
+      const calendarEvent = event.event || event; // Vue-Cal v5なら.eventから、それ以外はそのまま
+      
+      if (calendarEvent) {
+        console.log('Event clicked:', calendarEvent); // デバッグ用
+        this.selectedEventTitle = calendarEvent.title;
+        this.selectedEventContents = calendarEvent.contents || calendarEvent.content; // Vue-Cal v5ではcontentとして提供される場合がある
+        this.selectedEventId = calendarEvent.activityId;
+        this.selectedCategory = calendarEvent.category;
+        this.selectedCategorySub = calendarEvent.categorySub || calendarEvent.category_sub || '';
+        const eventStart = new Date(calendarEvent.start);
+        const eventEnd = new Date(calendarEvent.end);
         const year = eventStart.getFullYear();
         const month = String(eventStart.getMonth() + 1).padStart(2, "0");
         const day = String(eventStart.getDate()).padStart(2, "0");
@@ -647,17 +650,37 @@ export default {
       }
     },
 
-    handleCellClick(cellData) {
-      // Vue-Cal v5では、cellDataはオブジェクトで、cell（セル情報）とcursor（カーソル情報）を含む
-      // { e: DOMEvent, cell: CellObject, cursor: CursorObject } の形式になっている
-      const cell = cellData.cell || cellData; // Vue-Cal v5なら.cellから、それ以外はそのまま
+    handleCellClick(date, jsEvent) {
+      // Vue-Cal v5's @date-click event provides date directly as first parameter
+      // Defensive programming: handle null or undefined date
+      if (!date) return;
       
-      // 日付セルをクリックした時の処理
-      if (!cell || !cell.date) return;
+      console.log('Date clicked:', date); // デバッグ用
       
-      console.log('Cell clicked:', cell); // デバッグ用
+      let clickedDate = date;
       
-      const clickedDate = cell.date;
+      // If date is a string, convert to Date object
+      if (typeof date === 'string') {
+        clickedDate = new Date(date);
+      }
+      
+      // If it's not a Date object, try to extract from data structure
+      if (!(clickedDate instanceof Date)) {
+        // Check if it's an object with date property (fallback for older versions)
+        if (date && date.date) {
+          clickedDate = date.date;
+        } else {
+          console.warn('Invalid date in handleCellClick:', date);
+          return;
+        }
+      }
+      
+      // Ensure we have a valid Date object
+      if (!(clickedDate instanceof Date) || isNaN(clickedDate.getTime())) {
+        console.warn('Could not parse date in handleCellClick:', date);
+        return;
+      }
+      
       const year = clickedDate.getFullYear();
       const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
       const day = String(clickedDate.getDate()).padStart(2, "0");
