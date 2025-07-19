@@ -70,9 +70,8 @@
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
-        @date-click="handleCellClick"
-        @cell-click="handleCellClick" 
         @event-click="handleDateClick"
+        @cell-click="handleCellClick"
       >
       </vue-cal>
 
@@ -280,7 +279,7 @@
             <v-btn
               color="primary"
               text
-              @click="saveEvent()"
+              @click="saveEvent(event)"
               :disabled="!isFormValid()"
               class="btn-rounded"
             >
@@ -289,7 +288,7 @@
             <v-btn
               color="error"
               text
-              @click="openDeleteConfirm()"
+              @click="openDeleteConfirm(event)"
               class="btn-rounded"
             >
               削除
@@ -521,54 +520,15 @@ export default {
           let startDate = activity.start;
           let endDate = activity.end;
           
-          // 日付の文字列を整形
-          // 日付形式が "YYYY-MM-DD HH:MM:SS" または "YYYY-MM-DD" のどちらかで扱う
+          // If dates are strings, convert to Date objects
           if (typeof startDate === 'string') {
-            if (startDate.includes('T') || startDate.includes(' ')) {
-              // ISO形式またはスペース区切りの日時文字列
-              startDate = new Date(startDate);
-            } else {
-              // 日付のみの場合は時刻部分を追加
-              const [dateStr, timeStr] = startDate.split(' ');
-              if (!timeStr) {
-                startDate = new Date(`${dateStr}T00:00:00`);
-              } else {
-                startDate = new Date(startDate);
-              }
-            }
+            startDate = new Date(startDate);
           }
-          
           if (typeof endDate === 'string') {
-            if (endDate.includes('T') || endDate.includes(' ')) {
-              // ISO形式またはスペース区切りの日時文字列
-              endDate = new Date(endDate);
-            } else {
-              // 日付のみの場合は時刻部分を追加
-              const [dateStr, timeStr] = endDate.split(' ');
-              if (!timeStr) {
-                endDate = new Date(`${dateStr}T00:00:00`);
-              } else {
-                endDate = new Date(endDate);
-              }
-            }
+            endDate = new Date(endDate);
           }
           
-          // Dateオブジェクトでなければ変換
-          if (!(startDate instanceof Date)) startDate = new Date(startDate);
-          if (!(endDate instanceof Date)) endDate = new Date(endDate);
-          
-          // 正しくDateオブジェクトに変換できたか確認
-          if (isNaN(startDate.getTime())) {
-            console.error(`Invalid start date for activity: ${activity.activityId}, date: ${activity.start}`);
-            startDate = new Date(); // エラー時はデフォルト値を使用
-          }
-          if (isNaN(endDate.getTime())) {
-            console.error(`Invalid end date for activity: ${activity.activityId}, date: ${activity.end}`);
-            endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // エラー時はスタート+1時間
-          }
-          
-          // Vue-Cal v5用のイベントオブジェクト
-          const event = {
+          return {
             // vue-cal v5 expects these specific properties
             start: startDate,
             end: endDate,
@@ -581,13 +541,9 @@ export default {
             categorySub: activity.categorySub || activity.category_sub || '',
             contents: activity.contents // Keep for backward compatibility
           };
-          
-          console.log('Transformed event:', event); // デバッグ用
-          return event;
         });
         
         this.events = transformedEvents;
-        console.log('All events after transform:', this.events); // デバッグ用
       } catch (error) {
         console.error("Error fetching activities:", error);
         this.events = []; // Set empty array on error
@@ -617,22 +573,15 @@ export default {
       this.isEdit = false;
       this.createDialog = true;
     },
-    handleDateClick(event, jsEvent) {
-      // Defensive programming: handle null or undefined eventData
-      if (!event) return;
-      
-      // Vue-Cal v5では、eventは直接イベントオブジェクトまたは { event, ... } の構造
-      const calendarEvent = event.event || event; // Vue-Cal v5なら.eventから、それ以外はそのまま
-      
-      if (calendarEvent) {
-        console.log('Event clicked:', calendarEvent); // デバッグ用
-        this.selectedEventTitle = calendarEvent.title;
-        this.selectedEventContents = calendarEvent.contents || calendarEvent.content; // Vue-Cal v5ではcontentとして提供される場合がある
-        this.selectedEventId = calendarEvent.activityId;
-        this.selectedCategory = calendarEvent.category;
-        this.selectedCategorySub = calendarEvent.categorySub || calendarEvent.category_sub || '';
-        const eventStart = new Date(calendarEvent.start);
-        const eventEnd = new Date(calendarEvent.end);
+    handleDateClick(event) {
+      if (event) {
+        this.selectedEventTitle = event.title;
+        this.selectedEventContents = event.contents;
+        this.selectedEventId = event.activityId;
+        this.selectedCategory = event.category;
+        this.selectedCategorySub = event.categorySub || event.category_sub || '';
+        const eventStart = new Date(event.start);
+        const eventEnd = new Date(event.end);
         const year = eventStart.getFullYear();
         const month = String(eventStart.getMonth() + 1).padStart(2, "0");
         const day = String(eventStart.getDate()).padStart(2, "0");
@@ -650,37 +599,11 @@ export default {
       }
     },
 
-    handleCellClick(date, jsEvent) {
-      // Vue-Cal v5's @date-click event provides date directly as first parameter
-      // Defensive programming: handle null or undefined date
-      if (!date) return;
+    handleCellClick(cell) {
+      // 日付セルをクリックした時の処理
+      if (!cell.date) return;
       
-      console.log('Date clicked:', date); // デバッグ用
-      
-      let clickedDate = date;
-      
-      // If date is a string, convert to Date object
-      if (typeof date === 'string') {
-        clickedDate = new Date(date);
-      }
-      
-      // If it's not a Date object, try to extract from data structure
-      if (!(clickedDate instanceof Date)) {
-        // Check if it's an object with date property (fallback for older versions)
-        if (date && date.date) {
-          clickedDate = date.date;
-        } else {
-          console.warn('Invalid date in handleCellClick:', date);
-          return;
-        }
-      }
-      
-      // Ensure we have a valid Date object
-      if (!(clickedDate instanceof Date) || isNaN(clickedDate.getTime())) {
-        console.warn('Could not parse date in handleCellClick:', date);
-        return;
-      }
-      
+      const clickedDate = cell.date;
       const year = clickedDate.getFullYear();
       const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
       const day = String(clickedDate.getDate()).padStart(2, "0");
@@ -956,46 +879,6 @@ export default {
         alert("気分記録の保存に失敗しました。");
       }
     },
-    
-    /**
-     * カテゴリごとに異なる色を返す
-     * @param {string} category - カテゴリ名
-     * @returns {string} - カテゴリの色（CSS色コード）
-     */
-    getCategoryColor(category) {
-      const colorMap = {
-        '運動': '#4CAF50',
-        '仕事': '#2196F3',
-        '学習': '#9C27B0',
-        '趣味': '#FF9800',
-        '食事': '#F44336',
-        '睡眠': '#3F51B5',
-        '買い物': '#00BCD4',
-        '娯楽': '#E91E63',
-        '休憩': '#8BC34A',
-        '家事': '#795548',
-        '通院': '#607D8B',
-        '散歩': '#CDDC39',
-        'その他': '#9E9E9E'
-      };
-      
-      return colorMap[category] || '#9E9E9E';
-    },
-    
-    /**
-     * イベントの開始時間や終了時間を時刻表示用にフォーマットする
-     * @param {Date} date - フォーマットする時間
-     * @returns {string} - HH:MM形式の時間文字列
-     */
-    formatEventTime(date) {
-      if (!date) return '';
-      
-      const dateObj = new Date(date);
-      const hours = String(dateObj.getHours()).padStart(2, "0");
-      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-      
-      return `${hours}:${minutes}`;
-    },
   },
 };
 </script>
@@ -1100,30 +983,6 @@ body {
 
 .vuecal--custom-theme .vuecal__time {
   color: #00695c;
-}
-
-/* カスタムセルテンプレート用のスタイル */
-.vuecal--custom-theme .vuecal__event {
-  margin: 3px 0;
-  padding: 5px;
-  font-size: 12px;
-  cursor: pointer;
-  border-left: 3px solid;
-  text-align: left;
-}
-
-.vuecal--custom-theme .vuecal__event-title {
-  font-weight: 600;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.vuecal--custom-theme .vuecal__cell-content {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
 }
 
 /* PC向けのスタイルを追加 */
