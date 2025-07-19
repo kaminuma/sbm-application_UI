@@ -521,9 +521,47 @@ export default {
     async fetchActivities() {
       try {
         const activities = await apiFacade.getActivities(this.userId);
-        this.events = activities;
+        
+        // Handle case where activities is undefined or not an array
+        if (!activities || !Array.isArray(activities)) {
+          console.warn("Activities is not an array or is undefined:", activities);
+          this.events = [];
+          return;
+        }
+        
+        // Transform activities to vue-cal v5 event format
+        const transformedEvents = activities.map(activity => {
+          // Handle date conversion more robustly
+          let startDate = activity.start;
+          let endDate = activity.end;
+          
+          // If dates are strings, convert to Date objects
+          if (typeof startDate === 'string') {
+            startDate = new Date(startDate);
+          }
+          if (typeof endDate === 'string') {
+            endDate = new Date(endDate);
+          }
+          
+          return {
+            // vue-cal v5 expects these specific properties
+            start: startDate,
+            end: endDate,
+            title: activity.title,
+            content: activity.contents, // Note: vue-cal uses 'content', API returns 'contents'
+            
+            // Keep original properties for our custom functionality
+            activityId: activity.activityId,
+            category: activity.category,
+            categorySub: activity.categorySub || activity.category_sub || '',
+            contents: activity.contents // Keep for backward compatibility
+          };
+        });
+        
+        this.events = transformedEvents;
       } catch (error) {
         console.error("Error fetching activities:", error);
+        this.events = []; // Set empty array on error
       }
     },
     /**
