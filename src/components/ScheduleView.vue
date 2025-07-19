@@ -70,8 +70,8 @@
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
+        @click="handleCellClick" 
         @event-click="handleDateClick"
-        @cell-click="handleCellClick"
       >
       </vue-cal>
 
@@ -279,7 +279,7 @@
             <v-btn
               color="primary"
               text
-              @click="saveEvent(event)"
+              @click="saveEvent()"
               :disabled="!isFormValid()"
               class="btn-rounded"
             >
@@ -288,7 +288,7 @@
             <v-btn
               color="error"
               text
-              @click="openDeleteConfirm(event)"
+              @click="openDeleteConfirm()"
               class="btn-rounded"
             >
               削除
@@ -520,15 +520,54 @@ export default {
           let startDate = activity.start;
           let endDate = activity.end;
           
-          // If dates are strings, convert to Date objects
+          // 日付の文字列を整形
+          // 日付形式が "YYYY-MM-DD HH:MM:SS" または "YYYY-MM-DD" のどちらかで扱う
           if (typeof startDate === 'string') {
-            startDate = new Date(startDate);
-          }
-          if (typeof endDate === 'string') {
-            endDate = new Date(endDate);
+            if (startDate.includes('T') || startDate.includes(' ')) {
+              // ISO形式またはスペース区切りの日時文字列
+              startDate = new Date(startDate);
+            } else {
+              // 日付のみの場合は時刻部分を追加
+              const [dateStr, timeStr] = startDate.split(' ');
+              if (!timeStr) {
+                startDate = new Date(`${dateStr}T00:00:00`);
+              } else {
+                startDate = new Date(startDate);
+              }
+            }
           }
           
-          return {
+          if (typeof endDate === 'string') {
+            if (endDate.includes('T') || endDate.includes(' ')) {
+              // ISO形式またはスペース区切りの日時文字列
+              endDate = new Date(endDate);
+            } else {
+              // 日付のみの場合は時刻部分を追加
+              const [dateStr, timeStr] = endDate.split(' ');
+              if (!timeStr) {
+                endDate = new Date(`${dateStr}T00:00:00`);
+              } else {
+                endDate = new Date(endDate);
+              }
+            }
+          }
+          
+          // Dateオブジェクトでなければ変換
+          if (!(startDate instanceof Date)) startDate = new Date(startDate);
+          if (!(endDate instanceof Date)) endDate = new Date(endDate);
+          
+          // 正しくDateオブジェクトに変換できたか確認
+          if (isNaN(startDate.getTime())) {
+            console.error(`Invalid start date for activity: ${activity.activityId}, date: ${activity.start}`);
+            startDate = new Date(); // エラー時はデフォルト値を使用
+          }
+          if (isNaN(endDate.getTime())) {
+            console.error(`Invalid end date for activity: ${activity.activityId}, date: ${activity.end}`);
+            endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // エラー時はスタート+1時間
+          }
+          
+          // Vue-Cal v5用のイベントオブジェクト
+          const event = {
             // vue-cal v5 expects these specific properties
             start: startDate,
             end: endDate,
@@ -541,9 +580,13 @@ export default {
             categorySub: activity.categorySub || activity.category_sub || '',
             contents: activity.contents // Keep for backward compatibility
           };
+          
+          console.log('Transformed event:', event); // デバッグ用
+          return event;
         });
         
         this.events = transformedEvents;
+        console.log('All events after transform:', this.events); // デバッグ用
       } catch (error) {
         console.error("Error fetching activities:", error);
         this.events = []; // Set empty array on error
@@ -573,10 +616,15 @@ export default {
       this.isEdit = false;
       this.createDialog = true;
     },
-    handleDateClick(event) {
+    handleDateClick(eventData) {
+      // Vue-Cal v5では、eventDataはオブジェクトで、event（カレンダーイベントデータ）を含む
+      // { e: DOMEvent, event: CalendarEvent, ... } の形式になっている
+      const event = eventData.event || eventData; // Vue-Cal v5なら.eventから、それ以外はそのまま
+      
       if (event) {
+        console.log('Event clicked:', event); // デバッグ用
         this.selectedEventTitle = event.title;
-        this.selectedEventContents = event.contents;
+        this.selectedEventContents = event.contents || event.content; // Vue-Cal v5ではcontentとして提供される場合がある
         this.selectedEventId = event.activityId;
         this.selectedCategory = event.category;
         this.selectedCategorySub = event.categorySub || event.category_sub || '';
@@ -599,9 +647,15 @@ export default {
       }
     },
 
-    handleCellClick(cell) {
+    handleCellClick(cellData) {
+      // Vue-Cal v5では、cellDataはオブジェクトで、cell（セル情報）とcursor（カーソル情報）を含む
+      // { e: DOMEvent, cell: CellObject, cursor: CursorObject } の形式になっている
+      const cell = cellData.cell || cellData; // Vue-Cal v5なら.cellから、それ以外はそのまま
+      
       // 日付セルをクリックした時の処理
-      if (!cell.date) return;
+      if (!cell || !cell.date) return;
+      
+      console.log('Cell clicked:', cell); // デバッグ用
       
       const clickedDate = cell.date;
       const year = clickedDate.getFullYear();
@@ -879,6 +933,46 @@ export default {
         alert("気分記録の保存に失敗しました。");
       }
     },
+    
+    /**
+     * カテゴリごとに異なる色を返す
+     * @param {string} category - カテゴリ名
+     * @returns {string} - カテゴリの色（CSS色コード）
+     */
+    getCategoryColor(category) {
+      const colorMap = {
+        '運動': '#4CAF50',
+        '仕事': '#2196F3',
+        '学習': '#9C27B0',
+        '趣味': '#FF9800',
+        '食事': '#F44336',
+        '睡眠': '#3F51B5',
+        '買い物': '#00BCD4',
+        '娯楽': '#E91E63',
+        '休憩': '#8BC34A',
+        '家事': '#795548',
+        '通院': '#607D8B',
+        '散歩': '#CDDC39',
+        'その他': '#9E9E9E'
+      };
+      
+      return colorMap[category] || '#9E9E9E';
+    },
+    
+    /**
+     * イベントの開始時間や終了時間を時刻表示用にフォーマットする
+     * @param {Date} date - フォーマットする時間
+     * @returns {string} - HH:MM形式の時間文字列
+     */
+    formatEventTime(date) {
+      if (!date) return '';
+      
+      const dateObj = new Date(date);
+      const hours = String(dateObj.getHours()).padStart(2, "0");
+      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+      
+      return `${hours}:${minutes}`;
+    },
   },
 };
 </script>
@@ -983,6 +1077,30 @@ body {
 
 .vuecal--custom-theme .vuecal__time {
   color: #00695c;
+}
+
+/* カスタムセルテンプレート用のスタイル */
+.vuecal--custom-theme .vuecal__event {
+  margin: 3px 0;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  border-left: 3px solid;
+  text-align: left;
+}
+
+.vuecal--custom-theme .vuecal__event-title {
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vuecal--custom-theme .vuecal__cell-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* PC向けのスタイルを追加 */
