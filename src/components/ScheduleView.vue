@@ -61,7 +61,7 @@
       </div>
 
       <vue-cal
-        :disable-views="['years', 'year', 'month']"
+        :views="['day', 'week', 'month']"
         small
         :time-from="0 * 60"
         :time-to="24 * 60"
