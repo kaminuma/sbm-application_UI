@@ -73,21 +73,6 @@
         @event-click="handleDateClick"
         @cell-click="handleCellClick"
       >
-        <!-- カスタムセルテンプレート：カレンダーの各日付セルをカスタマイズ -->
-        <template #cell="{ cell }">
-          <div class="vuecal__cell-content">
-            <!-- In vue-cal v5, use cell.content if available, otherwise fallback to date extraction -->
-            <div class="vuecal__cell-date" v-if="cell.content">{{ cell.content }}</div>
-            <div class="vuecal__cell-date" v-else-if="cell.date && cell.date.getDate">{{ cell.date.getDate() }}</div>
-            
-            <!-- 気分記録がある場合のアイコン表示 -->
-            <div v-if="cell.date && getMoodForDate(formatDateForMood(cell.date))" class="mood-indicator">
-              <span class="mood-emoji-small">
-                {{ getMoodEmoji(getMoodForDate(formatDateForMood(cell.date)).mood) }}
-              </span>
-            </div>
-          </div>
-        </template>
       </vue-cal>
 
       <!-- 新規イベント作成ダイアログ -->
