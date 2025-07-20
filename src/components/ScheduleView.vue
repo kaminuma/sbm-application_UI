@@ -74,7 +74,7 @@
         @event-click="handleDateClick"
         @view-change="setupHeaderDateClicks"
         @click-on-date="onDateChanged"
-        @ready="setupHeaderDateClicks"
+        @ready="handleReady"
         @next="setupHeaderDateClicks"
         @previous="setupHeaderDateClicks"
         @today="setupHeaderDateClicks"
@@ -398,6 +398,7 @@ import "vue-cal/style.css";
 import "vuetify/dist/vuetify.min.css";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { scrollTo } from "vuetify/lib/composables/goto.mjs";
 
 export default {
   components: {
@@ -1023,6 +1024,19 @@ export default {
      * Vue-Cal v5のヘッダー日付要素にクリックイベントを追加する
      * カレンダーレンダリング後や表示変更時に呼び出される
      */
+    // Vue-Cal v5 @readyイベントのハンドラ
+    handleReady({ view }) {
+      // 現在の時刻にスクロール
+      if (view && typeof view.scrollToCurrentTime === 'function') {
+        view.scrollToCurrentTime();
+      } else {
+        console.warn('scrollToCurrentTime is not available');
+      }
+      
+      // ヘッダー日付クリックの設定も行う
+      this.setupHeaderDateClicks();
+    },
+    
     setupHeaderDateClicks() {
       // DOM更新を待つために少し遅延させる
       setTimeout(() => {
