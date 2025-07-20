@@ -8,3 +8,20 @@ export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
 });
+
+// リクエストインターセプター：すべてのリクエスト前に実行される
+apiClient.interceptors.request.use(
+  (config) => {
+    // リクエストの詳細情報をログに出力
+    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, {
+      params: config.params,
+      headers: config.headers,
+      data: config.data
+    });
+    return config;
+  },
+  (error) => {
+    console.error('APIリクエスト送信前のエラー:', error);
+    return Promise.reject(error);
+  }
+);
