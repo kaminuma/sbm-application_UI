@@ -574,6 +574,26 @@ export default {
             endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // エラー時はスタート+1時間
           }
           
+          // カテゴリに基づく背景色の定義
+          const categoryColors = {
+            '運動': { bg: '#e0f7fa', text: '#01579b' },
+            '仕事': { bg: '#e3f2fd', text: '#0d47a1' },
+            '学習': { bg: '#f3e5f5', text: '#4a148c' },
+            '趣味': { bg: '#fff3e0', text: '#e65100' },
+            '食事': { bg: '#ffebee', text: '#b71c1c' },
+            '睡眠': { bg: '#e8eaf6', text: '#1a237e' },
+            '買い物': { bg: '#e0f2f1', text: '#004d40' },
+            '娯楽': { bg: '#fce4ec', text: '#880e4f' },
+            '休憩': { bg: '#f1f8e9', text: '#33691e' },
+            '家事': { bg: '#efebe9', text: '#3e2723' },
+            '通院': { bg: '#eceff1', text: '#263238' },
+            '散歩': { bg: '#f9fbe7', text: '#827717' },
+            'その他': { bg: '#f5f5f5', text: '#212121' }
+          };
+          
+          // カテゴリに対応する色を取得
+          const colorSet = categoryColors[activity.category] || { bg: '#f5f5f5', text: '#212121' };
+          
           // Vue-Cal v5用のイベントオブジェクト
           const event = {
             // vue-cal v5 expects these specific properties
@@ -586,15 +606,19 @@ export default {
             activityId: activity.activityId,
             category: activity.category,
             categorySub: activity.categorySub || activity.category_sub || '',
-            contents: activity.contents // Keep for backward compatibility
+            contents: activity.contents, // Keep for backward compatibility
+            
+            // 直接スタイルを適用 (Vue-Cal v5のdynamic colors機能)
+            backgroundColor: colorSet.bg,
+            color: colorSet.text,
+            
+            // カテゴリごとのサイドバー表示用にクラスを設定
+            class: `category-${activity.category}`
           };
-          
-          console.log('Transformed event:', event); // デバッグ用
           return event;
         });
         
         this.events = transformedEvents;
-        console.log('All events after transform:', this.events); // デバッグ用
       } catch (error) {
         console.error("Error fetching activities:", error);
         this.events = []; // Set empty array on error
@@ -946,31 +970,6 @@ export default {
         console.error("気分記録の保存に失敗:", error);
         alert("気分記録の保存に失敗しました。");
       }
-    },
-    
-    /**
-     * カテゴリごとに異なる色を返す
-     * @param {string} category - カテゴリ名
-     * @returns {string} - カテゴリの色（CSS色コード）
-     */
-    getCategoryColor(category) {
-      const colorMap = {
-        '運動': '#4CAF50',
-        '仕事': '#2196F3',
-        '学習': '#9C27B0',
-        '趣味': '#FF9800',
-        '食事': '#F44336',
-        '睡眠': '#3F51B5',
-        '買い物': '#00BCD4',
-        '娯楽': '#E91E63',
-        '休憩': '#8BC34A',
-        '家事': '#795548',
-        '通院': '#607D8B',
-        '散歩': '#CDDC39',
-        'その他': '#9E9E9E'
-      };
-      
-      return colorMap[category] || '#9E9E9E';
     },
     
     /**
@@ -1423,5 +1422,18 @@ body {
   .mood-note {
     width: 100%;
   }
+}
+
+/* カレンダーイベントの基本スタイル */
+.vuecal__event {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Vue-Cal カスタムテーマの追加調整 */
+.vuecal--custom-theme .vuecal__event:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
