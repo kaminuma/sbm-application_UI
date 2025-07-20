@@ -1246,7 +1246,64 @@ export default {
               year: weekStart.getFullYear(),
               month: weekStart.getMonth(),
               startDate: weekStart,
-              weekDates: weekDates
+              weekDates: weekDates,
+              hasWeekDates: true,
+              weekDatesLength: weekDates.length
+            };
+          }
+        }
+        
+        // 単一月の週の形式 "August 11-17, 2025" の処理
+        const singleMonthMatch = titleText.match(/([A-Za-z]+)\s+(\d+)-(\d+),\s+(\d{4})/);
+        if (singleMonthMatch && singleMonthMatch.length >= 5) {
+          console.log('🔄 単一月の週のフォーマットを検出:', singleMonthMatch);
+          
+          const month = this.getMonthNumberFromName(singleMonthMatch[1]);
+          const startDay = parseInt(singleMonthMatch[2], 10);
+          const endDay = parseInt(singleMonthMatch[3], 10);
+          const year = parseInt(singleMonthMatch[4], 10);
+          
+          console.log(`🗓️ 解析結果: 月=${month+1}, 開始日=${startDay}, 終了日=${endDay}, 年=${year}`);
+          
+          if (!isNaN(month) && !isNaN(startDay) && !isNaN(endDay) && !isNaN(year)) {
+            // 実際の週の開始日を決定する
+            const firstDisplayedDay = new Date(year, month, startDay);
+            let weekStart;
+            
+            // ヘッダーに表示されている最初の日の曜日を取得
+            const firstDayOfWeek = firstDisplayedDay.getDay(); // 0=日曜, 1=月曜, ...
+            
+            if (firstDayOfWeek === 0) {
+              // 日曜日から始まる週の場合、そのまま使用
+              weekStart = new Date(firstDisplayedDay);
+            } else if (firstDayOfWeek === 1) {
+              // 月曜日から始まる週の場合、そのまま使用
+              weekStart = new Date(firstDisplayedDay);
+            } else {
+              // それ以外の場合、表示されている週の日曜日を計算
+              weekStart = new Date(firstDisplayedDay);
+              weekStart.setDate(startDay - firstDayOfWeek);
+            }
+            
+            console.log('📅 単一月の週の開始日:', weekStart);
+            
+            const weekDates = Array.from({ length: 7 }, (_, i) => {
+              const date = new Date(weekStart);
+              date.setDate(weekStart.getDate() + i);
+              return date;
+            });
+            
+            console.log('📆 単一月の週の日付:', 
+              weekDates.map(date => date.toISOString().split('T')[0])
+            );
+            
+            return {
+              year: weekStart.getFullYear(),
+              month: month,
+              startDate: weekStart,
+              weekDates: weekDates,
+              hasWeekDates: true,
+              weekDatesLength: weekDates.length
             };
           }
         }
@@ -1275,7 +1332,9 @@ export default {
         year: currentDate.getFullYear(),
         month: currentDate.getMonth(),
         startDate: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
-        weekDates: null // 週の日付が特定できない場合はnull
+        weekDates: null, // 週の日付が特定できない場合はnull
+        hasWeekDates: false,
+        weekDatesLength: 0
       };
     },
     
