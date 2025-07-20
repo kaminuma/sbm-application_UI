@@ -1138,7 +1138,7 @@ export default {
         } catch (error) {
           console.error('Error setting up header date clicks:', error);
         }
-      }, 100); // 100ms遅延させてDOM更新を待つ
+      });
     },
     
     /**
