@@ -579,6 +579,21 @@ export default {
             endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // エラー時はスタート+1時間
           }
           
+          // 無効なデータのチェック: 終了時刻が開始時刻より前の場合
+          if (endDate < startDate) {
+            console.warn('無効なイベントデータを検出:', {
+              activityId: activity.activityId,
+              title: activity.title,
+              start: activity.start,
+              end: activity.end,
+              startDate: startDate.toISOString(),
+              endDate: endDate.toISOString(),
+              reason: '終了時刻が開始時刻より前になっています'
+            });
+            // 無効なデータはnullを返す
+            return null;
+          }
+          
           // カテゴリに基づく背景色の定義
           const categoryColors = {
             '運動': { bg: '#e0f7fa', text: '#01579b' },
@@ -623,7 +638,11 @@ export default {
           return event;
         });
         
-        this.events = transformedEvents;
+        // 無効なデータ（null）をフィルタリング
+        const validEvents = transformedEvents.filter(event => event !== null);
+        console.log(`全${activities.length}件中、有効なイベント: ${validEvents.length}件、無効なイベント: ${activities.length - validEvents.length}件`);
+        
+        this.events = validEvents;
       } catch (error) {
         console.error("Error fetching activities:", error);
         this.events = []; // Set empty array on error
