@@ -330,7 +330,7 @@
       <!-- 気分記録ダイアログ -->
       <v-dialog v-model="showMoodDialog" max-width="500" persistent>
         <v-card>
-          <v-card-title class="headline">{{ selectedMoodDate }}の気分を記録</v-card-title>
+          <v-card-title class="headline">{{ formatDisplayDate(selectedMoodDate) }}の気分を記録</v-card-title>
           <v-card-text>
             <v-form ref="moodForm" v-model="moodFormValid">
               <!-- 日付表示 -->
@@ -693,14 +693,24 @@ export default {
         console.log('Cell clicked:', cellData.cell);
       } else {
         // 不正なデータ
+        console.error('Invalid cell data:', cellData);
         return;
       }
 
+      // 日付が有効かどうか確認
+      if (isNaN(dateObj.getTime())) {
+        console.error('Invalid date object:', dateObj);
+        return;
+      }
+
+      // 現在のカレンダー表示状態に合わせて日付を補正
+      // (既に修正済みなので、このまま使用)
       const year = dateObj.getFullYear();
       const month = String(dateObj.getMonth() + 1).padStart(2, "0");
       const day = String(dateObj.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
 
+      console.log(`Converting date: ${dateObj} to string: ${dateStr}`);
       this.selectedMoodDate = dateStr;
       this.openMoodDialog(dateStr);
     },
@@ -995,19 +1005,71 @@ export default {
       // ヘッダー日付要素を取得
       const weekdayElements = document.querySelectorAll('.vuecal--custom-theme .vuecal__weekday');
       
+      // 直接Vue-Calから現在表示されている日付の範囲を取得
+      const vuecalElement = document.querySelector('.vuecal');
+      let startDate = null;
+      
+      // Vue-Cal要素からデータ属性を使って現在の日付を取得
+      if (vuecalElement && vuecalElement.__vue__) {
+        startDate = vuecalElement.__vue__.view.startDate;
+        console.log('Vue-Cal start date:', startDate);
+      }
+      
       if (weekdayElements.length > 0) {
         console.log('Vue-Cal weekday headers found:', weekdayElements.length);
         
         // 各ヘッダー日付要素にクリックイベントを追加
         weekdayElements.forEach((element, index) => {
           element.addEventListener('click', (e) => {
-            // インデックスに基づいて日付を取得（週の初日から順に）
-            const weekStart = this.getWeekStartDate();
-            const clickDate = new Date(weekStart);
-            clickDate.setDate(weekStart.getDate() + index);
-            
-            console.log('Header date clicked:', clickDate);
-            this.handleCellClick(clickDate);
+            try {
+              // 要素から日付テキストを取得
+              const dateText = element.querySelector('.vuecal__weekday-date')?.innerText || '';
+              console.log('Clicked on weekday element with text:', dateText);
+              
+              // カレンダー要素から直接日付を取得
+              const vuecalInstance = document.querySelector('.vuecal')?.__vue__;
+              let clickDate;
+              
+              if (vuecalInstance && vuecalInstance.view && vuecalInstance.view.startDate) {
+                // Vue-Calインスタンスから週の開始日を取得
+                const weekStart = new Date(vuecalInstance.view.startDate);
+                
+                // 今選択しているindexに基づいて日付を取得
+                clickDate = new Date(weekStart);
+                clickDate.setDate(weekStart.getDate() + index);
+                console.log(`Using Vue-Cal instance: weekStart=${weekStart}, index=${index}, clickDate=${clickDate}`);
+              } else {
+                // テキストから日付を取得（フォールバック）
+                if (dateText && !isNaN(parseInt(dateText))) {
+                  const dayOfMonth = parseInt(dateText);
+                  // 現在のVue-Calの表示月を使用する
+                  // カレンダー内のセルから日付オブジェクトを取得できるか試みる
+                  const dateCell = document.querySelector('.vuecal__cell--today');
+                  let year = new Date().getFullYear();
+                  let month = new Date().getMonth();
+                  
+                  if (dateCell && dateCell.__vue__ && dateCell.__vue__.data) {
+                    year = dateCell.__vue__.data.date.getFullYear();
+                    month = dateCell.__vue__.data.date.getMonth();
+                  }
+                  
+                  clickDate = new Date(year, month, dayOfMonth);
+                  console.log(`Using text date: year=${year}, month=${month}, day=${dayOfMonth}, clickDate=${clickDate}`);
+                } else {
+                  // どうしても取得できない場合は現在の日付を使用
+                  clickDate = new Date();
+                  console.warn('Failed to get date from element, using current date:', clickDate);
+                }
+              }
+              
+              console.log('Final header date clicked:', clickDate, 'Date text:', dateText);
+              this.handleCellClick(clickDate);
+            } catch (error) {
+              console.error('Error in weekday click handler:', error);
+              // エラーが発生した場合は今日の日付を使用
+              const today = new Date();
+              this.handleCellClick(today);
+            }
             
             // イベントの伝播を止める
             e.stopPropagation();
@@ -1025,9 +1087,14 @@ export default {
     getWeekStartDate() {
       // 現在選択されている日付から週の開始日を計算
       const date = this.selectedDate ? new Date(this.selectedDate) : new Date();
+      console.log(this.selectedDates)
       const day = date.getDay(); // 0:日曜, 1:月曜, ...
-      const diff = date.getDate() - day;
-      return new Date(date.setDate(diff));
+      const diff = date.getDate() - day; // 週の開始日（日曜日）を計算
+      
+      // 新しいDateオブジェクトを作成して元の日付を変更しないようにする
+      const result = new Date(date);
+      result.setDate(diff);
+      return result;
     },
     
     /**
