@@ -227,12 +227,15 @@ describe('apiFacade.js ロジックテスト', () => {
 
     it('deleteMoodRecord: 指定された日付の気分記録を削除', async () => {
       const date = '2024-01-01'
+      const userId = 'user123' // userIdを追加
       
       apiClient.delete.mockResolvedValue({ data: { success: true } })
       
-      const result = await apiFacade.deleteMoodRecord(date)
+      const result = await apiFacade.deleteMoodRecord(date, userId)
       
-      expect(apiClient.delete).toHaveBeenCalledWith('/mood/2024-01-01')
+      expect(apiClient.delete).toHaveBeenCalledWith('/mood/2024-01-01', {
+        params: { userId }
+      })
       expect(result).toEqual({ success: true })
     })
 
@@ -264,12 +267,15 @@ describe('apiFacade.js ロジックテスト', () => {
     it('getMoodRecords: APIエラー時に例外がスローされる', async () => {
       const userId = 'user123'
       
-      apiClient.get.mockResolvedValue({ 
-        status: 500, 
-        data: { error: 'Internal Server Error' } 
+      // mockResolvedValueではなくmockRejectedValueを使用してエラーを返す
+      apiClient.get.mockRejectedValue({ 
+        response: {
+          status: 500, 
+          data: { error: 'Internal Server Error' } 
+        }
       })
       
-      await expect(apiFacade.getMoodRecords(userId)).rejects.toThrow('Failed to fetch mood records')
+      await expect(apiFacade.getMoodRecords(userId)).rejects.toThrow('気分記録の取得に失敗しました')
     })
 
     it('getMoodAnalysis: APIエラー時に例外がスローされる', async () => {
@@ -277,12 +283,15 @@ describe('apiFacade.js ロジックテスト', () => {
       const startDate = '2024-01-01'
       const endDate = '2024-01-31'
       
-      apiClient.get.mockResolvedValue({ 
-        status: 500, 
-        data: { error: 'Internal Server Error' } 
+      // mockResolvedValueではなくmockRejectedValueを使用してエラーを返す
+      apiClient.get.mockRejectedValue({ 
+        response: {
+          status: 500, 
+          data: { error: 'Internal Server Error' } 
+        }
       })
       
-      await expect(apiFacade.getMoodAnalysis(userId, startDate, endDate)).rejects.toThrow('Failed to fetch mood analysis')
+      await expect(apiFacade.getMoodAnalysis(userId, startDate, endDate)).rejects.toThrow('気分分析の取得に失敗しました')
     })
   })
 })

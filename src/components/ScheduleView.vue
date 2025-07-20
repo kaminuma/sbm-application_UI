@@ -653,33 +653,44 @@ export default {
       this.createDialog = true;
     },
     handleDateClick(eventData) {
+      // Vue-Cal v5に対応：nullチェックを追加
+      if (!eventData) {
+        console.log('Event data is null or undefined');
+        return;
+      }
+
       // Vue-Cal v5では、eventDataはオブジェクトで、event（カレンダーイベントデータ）を含む
       // { e: DOMEvent, event: CalendarEvent, ... } の形式になっている
-      const event = eventData.event || eventData; // Vue-Cal v5なら.eventから、それ以外はそのまま
-      
-      if (event) {
-        console.log('Event clicked:', event); // デバッグ用
-        this.selectedEventTitle = event.title;
-        this.selectedEventContents = event.contents || event.content; // Vue-Cal v5ではcontentとして提供される場合がある
-        this.selectedEventId = event.activityId;
-        this.selectedCategory = event.category;
-        this.selectedCategorySub = event.categorySub || event.category_sub || '';
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-        const year = eventStart.getFullYear();
-        const month = String(eventStart.getMonth() + 1).padStart(2, "0");
-        const day = String(eventStart.getDate()).padStart(2, "0");
-        const startDateStr = `${year}-${month}-${day}`;
-        this.selectedDate = startDateStr;
-        const eventFormatTime = (date) => {
-          const hours = String(date.getHours()).padStart(2, "0");
-          const minutes = String(date.getMinutes()).padStart(2, "0");
-          return `${hours}:${minutes}`;
-        };
-        this.selectedEventStartTime = eventFormatTime(eventStart);
-        this.selectedEventEndTime = eventFormatTime(eventEnd);
-        this.isEdit = true;
-        this.editDialog = true;
+      try {
+        const event = eventData.event || eventData; // Vue-Cal v5なら.eventから、それ以外はそのまま
+        
+        if (event) {
+          console.log('Event clicked:', event); // デバッグ用
+          this.selectedEventTitle = event.title;
+          this.selectedEventContents = event.contents || event.content; // Vue-Cal v5ではcontentとして提供される場合がある
+          this.selectedEventId = event.activityId;
+          this.selectedCategory = event.category;
+          this.selectedCategorySub = event.categorySub || event.category_sub || '';
+          const eventStart = new Date(event.start);
+          const eventEnd = new Date(event.end);
+          const year = eventStart.getFullYear();
+          const month = String(eventStart.getMonth() + 1).padStart(2, "0");
+          const day = String(eventStart.getDate()).padStart(2, "0");
+          const startDateStr = `${year}-${month}-${day}`;
+          this.selectedDate = startDateStr;
+          const eventFormatTime = (date) => {
+            const hours = String(date.getHours()).padStart(2, "0");
+            const minutes = String(date.getMinutes()).padStart(2, "0");
+            return `${hours}:${minutes}`;
+          };
+          this.selectedEventStartTime = eventFormatTime(eventStart);
+          this.selectedEventEndTime = eventFormatTime(eventEnd);
+          this.isEdit = true;
+          this.editDialog = true;
+        }
+      } catch (error) {
+        console.error('Error handling date click:', error);
+        // エラーが発生しても処理を続行
       }
     },
 
