@@ -61,7 +61,7 @@
       </div>
 
       <vue-cal
-        :disable-views="['years', 'year', 'month']"
+        :views="['day', 'week', 'month']"
         small
         :time-from="0 * 60"
         :time-to="24 * 60"
@@ -70,23 +70,15 @@
         :selected-date="selectedDate"
         hide-view-selector
         :transitions="false"
+        @header-date-click="handleCellClick"
         @event-click="handleDateClick"
-        @cell-click="handleCellClick"
+        @view-change="setupHeaderDateClicks"
+        @click-on-date="onDateChanged"
+        @ready="setupHeaderDateClicks"
+        @next="setupHeaderDateClicks"
+        @previous="setupHeaderDateClicks"
+        @today="setupHeaderDateClicks"
       >
-        <!-- カスタムセルテンプレート：カレンダーの各日付セルをカスタマイズ -->
-        <template #cell="{ cell }">
-          <div class="vuecal__cell-content">
-            <!-- 日付番号の表示 -->
-            <div class="vuecal__cell-date">{{ cell.date.getDate() }}</div>
-            
-            <!-- 気分記録がある場合のアイコン表示 -->
-            <div v-if="getMoodForDate(formatDateForMood(cell.date))" class="mood-indicator">
-              <span class="mood-emoji-small">
-                {{ getMoodEmoji(getMoodForDate(formatDateForMood(cell.date)).mood) }}
-              </span>
-            </div>
-          </div>
-        </template>
       </vue-cal>
 
       <!-- 新規イベント作成ダイアログ -->
@@ -293,7 +285,7 @@
             <v-btn
               color="primary"
               text
-              @click="saveEvent(event)"
+              @click="saveEvent()"
               :disabled="!isFormValid()"
               class="btn-rounded"
             >
@@ -302,7 +294,7 @@
             <v-btn
               color="error"
               text
-              @click="openDeleteConfirm(event)"
+              @click="openDeleteConfirm()"
               class="btn-rounded"
             >
               削除
@@ -342,7 +334,7 @@
       <!-- 気分記録ダイアログ -->
       <v-dialog v-model="showMoodDialog" max-width="500" persistent>
         <v-card>
-          <v-card-title class="headline">{{ selectedMoodDate }}の気分を記録</v-card-title>
+          <v-card-title class="headline">{{ formatDisplayDate(selectedMoodDate) }}の気分を記録</v-card-title>
           <v-card-text>
             <v-form ref="moodForm" v-model="moodFormValid">
               <!-- 日付表示 -->
@@ -400,9 +392,9 @@
 </template>
 
 <script>
-import VueCal from "vue-cal";
+import { VueCal } from "vue-cal";
 import apiFacade from "../services/apiFacade";
-import "vue-cal/dist/vuecal.css";
+import "vue-cal/style.css";
 import "vuetify/dist/vuetify.min.css";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -483,6 +475,12 @@ export default {
     this.fetchActivities();
     this.fetchMoodRecords();
   },
+  mounted() {
+    // Vue-Cal v5のヘッダー日付にクリックイベントを直接追加
+    this.$nextTick(() => {
+      this.setupHeaderDateClicks();
+    });
+  },
   methods: {
     isFormValid() {
       if (
@@ -520,9 +518,114 @@ export default {
     async fetchActivities() {
       try {
         const activities = await apiFacade.getActivities(this.userId);
-        this.events = activities;
+        
+        // Handle case where activities is undefined or not an array
+        if (!activities || !Array.isArray(activities)) {
+          console.warn("Activities is not an array or is undefined:", activities);
+          this.events = [];
+          return;
+        }
+        
+        // Transform activities to vue-cal v5 event format
+        const transformedEvents = activities.map(activity => {
+          // Handle date conversion more robustly
+          let startDate = activity.start;
+          let endDate = activity.end;
+          
+          // 日付の文字列を整形
+          // 日付形式が "YYYY-MM-DD HH:MM:SS" または "YYYY-MM-DD" のどちらかで扱う
+          if (typeof startDate === 'string') {
+            if (startDate.includes('T') || startDate.includes(' ')) {
+              // ISO形式またはスペース区切りの日時文字列
+              startDate = new Date(startDate);
+            } else {
+              // 日付のみの場合は時刻部分を追加
+              const [dateStr, timeStr] = startDate.split(' ');
+              if (!timeStr) {
+                startDate = new Date(`${dateStr}T00:00:00`);
+              } else {
+                startDate = new Date(startDate);
+              }
+            }
+          }
+          
+          if (typeof endDate === 'string') {
+            if (endDate.includes('T') || endDate.includes(' ')) {
+              // ISO形式またはスペース区切りの日時文字列
+              endDate = new Date(endDate);
+            } else {
+              // 日付のみの場合は時刻部分を追加
+              const [dateStr, timeStr] = endDate.split(' ');
+              if (!timeStr) {
+                endDate = new Date(`${dateStr}T00:00:00`);
+              } else {
+                endDate = new Date(endDate);
+              }
+            }
+          }
+          
+          // Dateオブジェクトでなければ変換
+          if (!(startDate instanceof Date)) startDate = new Date(startDate);
+          if (!(endDate instanceof Date)) endDate = new Date(endDate);
+          
+          // 正しくDateオブジェクトに変換できたか確認
+          if (isNaN(startDate.getTime())) {
+            console.error(`Invalid start date for activity: ${activity.activityId}, date: ${activity.start}`);
+            startDate = new Date(); // エラー時はデフォルト値を使用
+          }
+          if (isNaN(endDate.getTime())) {
+            console.error(`Invalid end date for activity: ${activity.activityId}, date: ${activity.end}`);
+            endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // エラー時はスタート+1時間
+          }
+          
+          // カテゴリに基づく背景色の定義
+          const categoryColors = {
+            '運動': { bg: '#e0f7fa', text: '#01579b' },
+            '仕事': { bg: '#e3f2fd', text: '#0d47a1' },
+            '学習': { bg: '#f3e5f5', text: '#4a148c' },
+            '趣味': { bg: '#fff3e0', text: '#e65100' },
+            '食事': { bg: '#ffebee', text: '#b71c1c' },
+            '睡眠': { bg: '#e8eaf6', text: '#1a237e' },
+            '買い物': { bg: '#e0f2f1', text: '#004d40' },
+            '娯楽': { bg: '#fce4ec', text: '#880e4f' },
+            '休憩': { bg: '#f1f8e9', text: '#33691e' },
+            '家事': { bg: '#efebe9', text: '#3e2723' },
+            '通院': { bg: '#eceff1', text: '#263238' },
+            '散歩': { bg: '#f9fbe7', text: '#827717' },
+            'その他': { bg: '#f5f5f5', text: '#212121' }
+          };
+          
+          // カテゴリに対応する色を取得
+          const colorSet = categoryColors[activity.category] || { bg: '#f5f5f5', text: '#212121' };
+          
+          // Vue-Cal v5用のイベントオブジェクト
+          const event = {
+            // vue-cal v5 expects these specific properties
+            start: startDate,
+            end: endDate,
+            title: activity.title,
+            content: activity.contents, // Note: vue-cal uses 'content', API returns 'contents'
+            
+            // Keep original properties for our custom functionality
+            activityId: activity.activityId,
+            category: activity.category,
+            categorySub: activity.categorySub || activity.category_sub || '',
+            contents: activity.contents, // Keep for backward compatibility
+            
+            // 直接スタイルを適用 (Vue-Cal v5のdynamic colors機能)
+            backgroundColor: colorSet.bg,
+            color: colorSet.text,
+            
+            // カテゴリごとのサイドバー表示用にクラスを設定
+            class: `category-${activity.category}`
+          };
+          return event;
+        });
+        
+        this.events = transformedEvents;
       } catch (error) {
         console.error("Error fetching activities:", error);
+        this.events = []; // Set empty array on error
       }
     },
     /**
@@ -549,10 +652,15 @@ export default {
       this.isEdit = false;
       this.createDialog = true;
     },
-    handleDateClick(event) {
+    handleDateClick(eventData) {
+      // Vue-Cal v5では、eventDataはオブジェクトで、event（カレンダーイベントデータ）を含む
+      // { e: DOMEvent, event: CalendarEvent, ... } の形式になっている
+      const event = eventData.event || eventData; // Vue-Cal v5なら.eventから、それ以外はそのまま
+      
       if (event) {
+        console.log('Event clicked:', event); // デバッグ用
         this.selectedEventTitle = event.title;
-        this.selectedEventContents = event.contents;
+        this.selectedEventContents = event.contents || event.content; // Vue-Cal v5ではcontentとして提供される場合がある
         this.selectedEventId = event.activityId;
         this.selectedCategory = event.category;
         this.selectedCategorySub = event.categorySub || event.category_sub || '';
@@ -575,14 +683,45 @@ export default {
       }
     },
 
-    handleCellClick(cell) {
-      // 日付セルをクリックした時の処理
-      const clickedDate = cell.date;
-      const year = clickedDate.getFullYear();
-      const month = String(clickedDate.getMonth() + 1).padStart(2, "0");
-      const day = String(clickedDate.getDate()).padStart(2, "0");
+    handleCellClick(cellData) {
+      // ヘッダークリック時はDate型、セルクリック時はcellオブジェクト
+      console.log('🎯 handleCellClick呼び出し:', cellData);
+      let dateObj;
+
+      if (cellData instanceof Date) {
+        // ヘッダークリック
+        dateObj = cellData;
+        console.log('📅 ヘッダー日付がクリックされました:', {
+          date: dateObj.toISOString().split('T')[0],
+          year: dateObj.getFullYear(),
+          month: dateObj.getMonth() + 1,
+          day: dateObj.getDate(),
+          weekday: ['日', '月', '火', '水', '木', '金', '土'][dateObj.getDay()]
+        });
+      } else if (cellData && cellData.cell && cellData.cell.date) {
+        // セルクリック
+        dateObj = cellData.cell.date;
+        console.log('Cell clicked:', cellData.cell);
+      } else {
+        // 不正なデータ
+        console.error('Invalid cell data:', cellData);
+        return;
+      }
+
+      // 日付が有効かどうか確認
+      if (isNaN(dateObj.getTime())) {
+        console.error('Invalid date object:', dateObj);
+        return;
+      }
+
+      // 現在のカレンダー表示状態に合わせて日付を補正
+      // (既に修正済みなので、このまま使用)
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
       const dateStr = `${year}-${month}-${day}`;
-      
+
+      console.log(`Converting date: ${dateObj} to string: ${dateStr}`);
       this.selectedMoodDate = dateStr;
       this.openMoodDialog(dateStr);
     },
@@ -776,6 +915,7 @@ export default {
      * @returns {string} YYYY-MM-DD形式の日付文字列
      */
     formatDateForMood(date) {
+      if (!date || !date.getFullYear) return '';
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
@@ -851,6 +991,392 @@ export default {
         console.error("気分記録の保存に失敗:", error);
         alert("気分記録の保存に失敗しました。");
       }
+    },
+    
+    /**
+     * イベントの開始時間や終了時間を時刻表示用にフォーマットする
+     * @param {Date} date - フォーマットする時間
+     * @returns {string} - HH:MM形式の時間文字列
+     */
+    formatEventTime(date) {
+      if (!date) return '';
+      
+      const dateObj = new Date(date);
+      const hours = String(dateObj.getHours()).padStart(2, "0");
+      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+      
+      return `${hours}:${minutes}`;
+    },
+    
+    /**
+     * Vue-Cal v5のヘッダー日付要素にクリックイベントを追加する
+     * カレンダーレンダリング後や表示変更時に呼び出される
+     */
+    setupHeaderDateClicks() {
+      // DOM更新を待つために少し遅延させる
+      setTimeout(() => {
+        try {
+          console.log('Setting up header date clicks');
+          
+          // ヘッダー要素を取得（複数のセレクタを試す）
+          let weekdayElements = document.querySelectorAll('.vuecal--custom-theme .vuecal__weekday');
+          
+          // もし見つからない場合は別のセレクタを試す
+          if (weekdayElements.length === 0) {
+            weekdayElements = document.querySelectorAll('.vuecal--week-view .vuecal__heading');
+          }
+          
+          // それでも見つからない場合は他のセレクタを試す
+          if (weekdayElements.length === 0) {
+            weekdayElements = document.querySelectorAll('.vuecal__flex .vuecal__heading');
+          }
+          
+          if (weekdayElements.length === 0) {
+            console.warn('Vue-Cal weekday headers not found');
+            return;
+          }
+          
+          console.log('Vue-Cal weekday headers found:', weekdayElements.length);
+          
+          // 各ヘッダー日付要素にクリックイベントを追加
+          weekdayElements.forEach((element, index) => {
+            // イベントリスナーをクリアするために要素をクローン
+            const newElement = element.cloneNode(true);
+            if (element.parentNode) {
+              element.parentNode.replaceChild(newElement, element);
+            }
+            
+            // クリックイベントリスナーを追加
+            newElement.addEventListener('click', (e) => {
+              try {
+                console.log(`🖱️ ヘッダー要素 ${index} がクリックされました`);
+                
+                // カレンダー要素から直接日付を取得
+                const vuecalInstance = document.querySelector('.vuecal')?.__vue__;
+                let clickDate;
+                
+                if (vuecalInstance && vuecalInstance.view && vuecalInstance.view.startDate) {
+                  // Vue-Calインスタンスから週の開始日を取得
+                  const weekStart = new Date(vuecalInstance.view.startDate);
+                
+                  // インデックスに基づいて日付を計算
+                  clickDate = new Date(weekStart);
+                  clickDate.setDate(weekStart.getDate() + index);
+                  console.log(`Using Vue-Cal instance: weekStart=${weekStart}, index=${index}, clickDate=${clickDate}`);
+                } else {
+                  // 要素から日付テキストを取得（フォールバック）
+                  const dateText = newElement.querySelector('.vuecal__weekday-date')?.innerText || '';
+                  
+                  if (dateText && !isNaN(parseInt(dateText))) {
+                    const dayOfMonth = parseInt(dateText);
+                    
+                    // 現在のカレンダー情報を取得
+                    const calendarInfo = this.getCurrentCalendarInfo();
+                    
+                    // 現在のカレンダー情報を詳細に出力
+                    console.log('🔍 取得したカレンダー情報:', {
+                      year: calendarInfo.year,
+                      month: calendarInfo.month + 1,
+                      startDate: calendarInfo.startDate?.toISOString(),
+                      hasWeekDates: !!calendarInfo.weekDates,
+                      weekDatesLength: calendarInfo.weekDates?.length || 0
+                    });
+                    
+                    // 週の日付情報が利用可能な場合はそれを使用
+                    if (calendarInfo.weekDates && calendarInfo.weekDates.length > 0) {
+                      // 週の表示形式に応じてインデックスを調整
+                      const adjustedIndex = index % 7; // 7で割った余りを使用（週の中での相対位置）
+                      
+                      console.log(`🔢 インデックス調整: 元のindex=${index}, 調整後index=${adjustedIndex}, ヘッダーテキスト=${dateText}`);
+                      
+                      if (adjustedIndex < calendarInfo.weekDates.length) {
+                        // 調整したインデックスに対応する週の日付を使用
+                        clickDate = new Date(calendarInfo.weekDates[adjustedIndex]);
+                        console.log(`✅ 週の日付配列を使用: adjustedIndex=${adjustedIndex}, clickDate=${clickDate.toISOString().split('T')[0]}`);
+                      } else {
+                        // インデックスが範囲外の場合のフォールバック
+                        console.log(`⚠️ 調整後インデックス ${adjustedIndex} が週の日付配列の範囲外です`);
+                        const currentYear = calendarInfo.year;
+                        const currentMonth = calendarInfo.month;
+                        clickDate = new Date(currentYear, currentMonth, dayOfMonth);
+                      }
+                    } else {
+                      // 週の日付情報がない場合の従来のフォールバック
+                      const currentYear = calendarInfo.year;
+                      const currentMonth = calendarInfo.month;
+                      
+                      // 日付オブジェクトを作成
+                      clickDate = new Date(currentYear, currentMonth, dayOfMonth);
+                      console.log(`⚠️ 従来のフォールバック: year=${currentYear}, month=${currentMonth+1}, day=${dayOfMonth}, clickDate=${clickDate.toISOString().split('T')[0]}`);
+                    }
+                  } else {
+                    // どうしても取得できない場合は今日の日付を使用
+                    clickDate = new Date();
+                    console.warn('Failed to get date from element, using current date:', clickDate);
+                  }
+                }
+                
+                console.log('✅ 最終的なヘッダー日付クリック:', {
+                  date: clickDate.toISOString().split('T')[0],
+                  year: clickDate.getFullYear(),
+                  month: clickDate.getMonth() + 1,
+                  day: clickDate.getDate(),
+                  weekday: ['日', '月', '火', '水', '木', '金', '土'][clickDate.getDay()]
+                });
+                this.handleCellClick(clickDate);
+              } catch (error) {
+                console.error('Error in weekday click handler:', error);
+                // エラーが発生した場合は今日の日付を使用
+                const today = new Date();
+                this.handleCellClick(today);
+              }
+              
+              // イベントの伝播を止める
+              e.stopPropagation();
+            }, { capture: true });
+          });
+        } catch (error) {
+          console.error('Error setting up header date clicks:', error);
+        }
+      });
+    },
+    
+    /**
+     * 現在のカレンダーの週情報を取得する
+     * 週表示で月をまたぐ場合にも正確な日付を返す
+     */
+    getCurrentCalendarInfo() {
+      console.log('🔍 getCurrentCalendarInfo: カレンダー情報の取得を開始');
+      
+      // 基本的にはVue-Calのインスタンスから週の開始日を取得
+      const vuecalInstance = document.querySelector('.vuecal')?.__vue__;
+      if (vuecalInstance && vuecalInstance.view && vuecalInstance.view.startDate) {
+        // 週の開始日を取得
+        const weekStart = new Date(vuecalInstance.view.startDate);
+        console.log('📅 Vue-Calから週の開始日を取得:', weekStart);
+        console.log('🔎 現在のビュー:', vuecalInstance.currentView);
+        
+        // 現在のビューに関する追加情報
+        if (vuecalInstance.cells && vuecalInstance.cells.length > 0) {
+          console.log('📊 セル情報:', 
+            vuecalInstance.cells.map(cell => ({
+              date: cell.date, 
+              content: cell.content,
+              events: cell.events?.length || 0
+            }))
+          );
+        }
+        
+        // 現在の日付から取得（週の最初の日の情報を使用）
+        const weekDates = Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + i);
+          return date;
+        });
+        
+        console.log('📆 計算された週の日付:', 
+          weekDates.map(date => date.toISOString().split('T')[0])
+        );
+        
+        return {
+          year: weekStart.getFullYear(),
+          month: weekStart.getMonth(),
+          startDate: weekStart,
+          weekDates: weekDates
+        };
+      }
+      
+      // フォールバック: Vue-Calから情報を取得できない場合
+      console.log('⚠️ Vue-Calインスタンスから情報を取得できないためフォールバック');
+      
+      let currentDate = new Date();
+      const calendarHeaderEl = document.querySelector('.vuecal--custom-theme .vuecal__title');
+      
+      if (calendarHeaderEl) {
+        // カレンダーのタイトルから情報を抽出（フォールバック）
+        const titleText = calendarHeaderEl.textContent || '';
+        console.log('📝 カレンダータイトルのテキスト:', titleText);
+        
+        // "Jul 28 - Aug 3, 2025" のような形式も処理（月をまたぐ週の場合）
+        const crossMonthMatch = titleText.match(/([A-Za-z]+)\s+(\d+)\s+-\s+([A-Za-z]+)\s+(\d+),\s+(\d{4})/);
+        if (crossMonthMatch && crossMonthMatch.length >= 6) {
+          console.log('🔄 月をまたぐ週のフォーマットを検出:', crossMonthMatch);
+          
+          const startMonth = this.getMonthNumberFromName(crossMonthMatch[1]);
+          const startDay = parseInt(crossMonthMatch[2], 10);
+          const endMonth = this.getMonthNumberFromName(crossMonthMatch[3]);
+          const endDay = parseInt(crossMonthMatch[4], 10);
+          const year = parseInt(crossMonthMatch[5], 10);
+          
+          console.log(`🗓️ 解析結果: 開始=${startMonth+1}月${startDay}日, 終了=${endMonth+1}月${endDay}日, 年=${year}`);
+          
+          if (!isNaN(startMonth) && !isNaN(startDay) && !isNaN(endMonth) && !isNaN(endDay) && !isNaN(year)) {
+            // 実際の週の開始日を決定する（日曜日または月曜日から始まる週）
+            const firstDisplayedDay = new Date(year, startMonth, startDay);
+            let weekStart;
+            
+            // ヘッダーに表示されている最初の日の曜日を取得
+            const firstDayOfWeek = firstDisplayedDay.getDay(); // 0=日曜, 1=月曜, ...
+            
+            if (firstDayOfWeek === 0) {
+              // 日曜日から始まる週の場合、そのまま使用
+              weekStart = new Date(firstDisplayedDay);
+            } else if (firstDayOfWeek === 1) {
+              // 月曜日から始まる週の場合、そのまま使用
+              weekStart = new Date(firstDisplayedDay);
+            } else {
+              // それ以外の場合、表示されている週の日曜日を計算
+              weekStart = new Date(firstDisplayedDay);
+              weekStart.setDate(startDay - firstDayOfWeek);
+            }
+            
+            console.log('📅 実際の週の開始日:', weekStart);
+            
+            const weekDates = Array.from({ length: 7 }, (_, i) => {
+              const date = new Date(weekStart);
+              date.setDate(weekStart.getDate() + i);
+              return date;
+            });
+            
+            console.log('📆 月をまたぐ週の日付:', 
+              weekDates.map(date => date.toISOString().split('T')[0])
+            );
+            
+            return {
+              year: weekStart.getFullYear(),
+              month: weekStart.getMonth(),
+              startDate: weekStart,
+              weekDates: weekDates,
+              hasWeekDates: true,
+              weekDatesLength: weekDates.length
+            };
+          }
+        }
+        
+        // 単一月の週の形式 "August 11-17, 2025" の処理
+        const singleMonthMatch = titleText.match(/([A-Za-z]+)\s+(\d+)-(\d+),\s+(\d{4})/);
+        if (singleMonthMatch && singleMonthMatch.length >= 5) {
+          console.log('🔄 単一月の週のフォーマットを検出:', singleMonthMatch);
+          
+          const month = this.getMonthNumberFromName(singleMonthMatch[1]);
+          const startDay = parseInt(singleMonthMatch[2], 10);
+          const endDay = parseInt(singleMonthMatch[3], 10);
+          const year = parseInt(singleMonthMatch[4], 10);
+          
+          console.log(`🗓️ 解析結果: 月=${month+1}, 開始日=${startDay}, 終了日=${endDay}, 年=${year}`);
+          
+          if (!isNaN(month) && !isNaN(startDay) && !isNaN(endDay) && !isNaN(year)) {
+            // 実際の週の開始日を決定する
+            const firstDisplayedDay = new Date(year, month, startDay);
+            let weekStart;
+            
+            // ヘッダーに表示されている最初の日の曜日を取得
+            const firstDayOfWeek = firstDisplayedDay.getDay(); // 0=日曜, 1=月曜, ...
+            
+            if (firstDayOfWeek === 0) {
+              // 日曜日から始まる週の場合、そのまま使用
+              weekStart = new Date(firstDisplayedDay);
+            } else if (firstDayOfWeek === 1) {
+              // 月曜日から始まる週の場合、そのまま使用
+              weekStart = new Date(firstDisplayedDay);
+            } else {
+              // それ以外の場合、表示されている週の日曜日を計算
+              weekStart = new Date(firstDisplayedDay);
+              weekStart.setDate(startDay - firstDayOfWeek);
+            }
+            
+            console.log('📅 単一月の週の開始日:', weekStart);
+            
+            const weekDates = Array.from({ length: 7 }, (_, i) => {
+              const date = new Date(weekStart);
+              date.setDate(weekStart.getDate() + i);
+              return date;
+            });
+            
+            console.log('📆 単一月の週の日付:', 
+              weekDates.map(date => date.toISOString().split('T')[0])
+            );
+            
+            return {
+              year: weekStart.getFullYear(),
+              month: month,
+              startDate: weekStart,
+              weekDates: weekDates,
+              hasWeekDates: true,
+              weekDatesLength: weekDates.length
+            };
+          }
+        }
+        
+        // 標準的な形式 "2025年7月" の処理
+        const standardMatch = titleText.match(/(\d{4})年(\d{1,2})月/);
+        if (standardMatch && standardMatch.length >= 3) {
+          console.log('📅 標準的な年月フォーマットを検出:', standardMatch);
+          
+          const year = parseInt(standardMatch[1], 10);
+          const month = parseInt(standardMatch[2], 10) - 1; // JavaScriptの月は0始まり
+          
+          if (!isNaN(year) && !isNaN(month)) {
+            currentDate = new Date(year, month, 1);
+            console.log('📆 標準フォーマットから取得した年月:', year, '年', month + 1, '月');
+          }
+        }
+      } else {
+        console.log('⚠️ カレンダータイトル要素が見つかりません');
+      }
+      
+      // どの方法でも情報が取得できなかった場合は現在の日付を使用
+      console.log('🔄 フォールバック: 現在の日付を使用します:', currentDate);
+      
+      return {
+        year: currentDate.getFullYear(),
+        month: currentDate.getMonth(),
+        startDate: new Date(currentDate.getFullYear(), currentDate.getMonth(), 1),
+        weekDates: null, // 週の日付が特定できない場合はnull
+        hasWeekDates: false,
+        weekDatesLength: 0
+      };
+    },
+    
+    /**
+     * 月名から月番号を取得する (0-based)
+     * @param {string} monthName - 月の名前 (Jan, February など)
+     * @returns {number} 月の番号 (0-11)、不明な場合は -1
+     */
+    getMonthNumberFromName(monthName) {
+      if (!monthName) return -1;
+      
+      const monthNames = {
+        jan: 0, january: 0,
+        feb: 1, february: 1,
+        mar: 2, march: 2,
+        apr: 3, april: 3,
+        may: 4,
+        jun: 5, june: 5,
+        jul: 6, july: 6,
+        aug: 7, august: 7,
+        sep: 8, september: 8,
+        oct: 9, october: 9,
+        nov: 10, november: 10,
+        dec: 11, december: 11
+      };
+      
+      const normalizedName = monthName.toLowerCase().trim();
+      const result = monthNames[normalizedName] !== undefined ? monthNames[normalizedName] : -1;
+      console.log(`🗓️ 月名 "${monthName}" を月番号 ${result} に変換`);
+      return result;
+    },
+    
+    /**
+     * 日付変更時に呼び出される
+     * ヘッダークリックイベントを再設定する
+     */
+    onDateChanged() {
+      console.log('Date changed, resetting header clicks');
+      // DOM更新を待ってからヘッダークリックイベントを設定
+      this.$nextTick(() => {
+        this.setupHeaderDateClicks();
+      });
     },
   },
 };
@@ -956,6 +1482,33 @@ body {
 
 .vuecal--custom-theme .vuecal__time {
   color: #00695c;
+}
+.vuecal--custom-theme .vuecal__weekday-date {
+  cursor: pointer !important;
+  display: inline-block !important;
+  padding: 6px 12px !important;
+  background: #eef !important;
+  border-radius: 4px !important;
+  transition: background 0.2s !important;
+  pointer-events: auto !important;
+}
+
+.vuecal--custom-theme .vuecal__weekday-date:hover {
+  background: #c7d2fe !important;
+}
+/* ヘッダーセル全体をクリック可能に見せる */
+.vuecal--custom-theme .vuecal__weekday {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: background 0.2s !important;
+  border-radius: 6px !important;
+}
+/* 選択状態のセルのデフォルト背景色を無効化 */
+.vuecal__cell--selected,
+.vuecal__weekday--selected {
+  background: none !important;
+  box-shadow: none !important;
+  /* 必要に応じてborderやcolorもリセット */
 }
 
 /* PC向けのスタイルを追加 */
@@ -1208,5 +1761,18 @@ body {
   .mood-note {
     width: 100%;
   }
+}
+
+/* カレンダーイベントの基本スタイル */
+.vuecal__event {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Vue-Cal カスタムテーマの追加調整 */
+.vuecal--custom-theme .vuecal__event:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
