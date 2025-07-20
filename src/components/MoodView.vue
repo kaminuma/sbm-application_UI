@@ -502,7 +502,15 @@ export default {
     async deleteMood(mood) {
       if (confirm("この気分記録を削除しますか？")) {
         try {
-          await apiFacade.deleteMoodRecord(mood.date);
+          const userId = this.$store.state.userId;
+          if (!userId) {
+            console.error('ユーザーIDが取得できません。');
+            alert('ユーザー情報が取得できません。再ログインしてください。');
+            return;
+          }
+          
+          console.log(`気分記録削除: date=${mood.date}, userId=${userId}`);
+          await apiFacade.deleteMoodRecord(mood.date, userId);
           
           const index = this.recentMoods.findIndex(m => m.date === mood.date);
           if (index !== -1) {
@@ -512,7 +520,7 @@ export default {
           alert("気分記録を削除しました。");
         } catch (error) {
           console.error("気分記録の削除に失敗:", error);
-          alert("気分記録の削除に失敗しました。");
+          alert(`気分記録の削除に失敗しました: ${error.message}`);
         }
       }
     },

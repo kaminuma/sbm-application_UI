@@ -94,11 +94,22 @@ const apiFacade = {
    * @returns {Promise<Object>} 気分記録の配列を含むレスポンス
    */
   async getMoodRecords(userId) {
-    const response = await apiClient.get("/mood", { params: { userId } });
-    if (response.status === 200) {
+    try {
+      const response = await apiClient.get("/mood", { params: { userId } });
+      console.log(`気分記録取得: userId=${userId}`);
       return response.data;
-    } else {
-      throw new Error("Failed to fetch mood records");
+    } catch (error) {
+      console.error(`気分記録の取得に失敗しました: userId=${userId}`, error);
+      if (error.response) {
+        console.error('エラーレスポンス:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      }
+      throw new Error(
+        error.response?.data?.message || "気分記録の取得に失敗しました。"
+      );
     }
   },
 
@@ -108,8 +119,23 @@ const apiFacade = {
    * @returns {Promise<Object>} 作成された気分記録
    */
   async createMoodRecord(moodData) {
-    const response = await apiClient.post("/mood", moodData);
-    return response.data;
+    try {
+      const response = await apiClient.post("/mood", moodData);
+      console.log(`気分記録作成: date=${moodData.date}, userId=${moodData.userId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`気分記録の作成に失敗しました:`, moodData, error);
+      if (error.response) {
+        console.error('エラーレスポンス:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      }
+      throw new Error(
+        error.response?.data?.message || "気分記録の作成に失敗しました。"
+      );
+    }
   },
 
   /**
@@ -118,28 +144,100 @@ const apiFacade = {
    * @returns {Promise<Object>} 更新された気分記録
    */
   async updateMoodRecord(moodData) {
-    const response = await apiClient.put(`/mood/${moodData.date}`, moodData);
-    return response.data;
+    try {
+      const response = await apiClient.put(`/mood/${moodData.date}`, moodData);
+      console.log(`気分記録更新: date=${moodData.date}, userId=${moodData.userId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`気分記録の更新に失敗しました:`, moodData, error);
+      if (error.response) {
+        console.error('エラーレスポンス:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      }
+      throw new Error(
+        error.response?.data?.message || "気分記録の更新に失敗しました。"
+      );
+    }
   },
 
   /**
    * 指定された日付の気分記録を削除する
    * @param {string} date - 削除する気分記録の日付（YYYY-MM-DD）
+   * @param {string|number} userId - 気分記録の所有者ID
    * @returns {Promise<Object>} 削除結果
    */
-  async deleteMoodRecord(date) {
-    const response = await apiClient.delete(`/mood/${date}`);
-    return response.data;
+  async deleteMoodRecord(date, userId) {
+    try {
+      // 日付のフォーマット確認（YYYY-MM-DDであることを確認）
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        console.error(`日付のフォーマットが不正です: ${date}`);
+        throw new Error(`日付のフォーマットが不正です。YYYY-MM-DD形式で指定してください。`);
+      }
+      
+      // userIdが適切に提供されていることを確認
+      if (userId === undefined || userId === null || userId === '') {
+        console.error(`userIdが指定されていません`);
+        throw new Error(`userIdが指定されていません。ユーザーIDを指定してください。`);
+      }
+      
+      console.log(`気分記録削除リクエスト準備: date=${date}, userId=${userId}`);
+      
+      // APIのパスが /api/v1/mood/{date} であることを考慮
+      // apiClient のbaseURLが既に /api/v1 を含んでいる場合は /mood/{date} のままでOK
+      const response = await apiClient.delete(`/mood/${date}`, {
+        params: { userId }
+      });
+      
+      console.log(`気分記録削除リクエスト完了: date=${date}, userId=${userId}`, response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`気分記録の削除に失敗しました: date=${date}, userId=${userId}`, error);
+      
+      // エラーレスポンスの詳細をログに出力
+      if (error.response) {
+        console.error('エラーレスポンス:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+        
+        // 400エラーの場合は詳細なメッセージを提供
+        if (error.response.status === 400) {
+          console.error('400 Bad Requestエラー: リクエストの形式が正しくありません。');
+          console.error('リクエストURL:', error.config?.url);
+          console.error('リクエストパラメータ:', error.config?.params);
+        }
+      }
+      
+      throw new Error(
+        error.response?.data?.message || "気分記録の削除に失敗しました。"
+      );
+    }
   },
 
   async getMoodAnalysis(userId, startDate, endDate) {
-    const response = await apiClient.get("/mood/analysis", {
-      params: { userId, startDate, endDate },
-    });
-    if (response.status === 200) {
+    try {
+      const response = await apiClient.get("/mood/analysis", {
+        params: { userId, startDate, endDate },
+      });
+      console.log(`気分分析取得: userId=${userId}, startDate=${startDate}, endDate=${endDate}`);
       return response.data;
-    } else {
-      throw new Error("Failed to fetch mood analysis");
+    } catch (error) {
+      console.error(`気分分析の取得に失敗しました: userId=${userId}, startDate=${startDate}, endDate=${endDate}`, error);
+      if (error.response) {
+        console.error('エラーレスポンス:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+      }
+      throw new Error(
+        error.response?.data?.message || "気分分析の取得に失敗しました。"
+      );
     }
   },
 };
