@@ -22,3 +22,11 @@ export const clearAuthToken = () => {
   localStorage.removeItem("token");
   setAuthToken();
 };
+
+// 認証関連のストレージをすべてクリア（デバッグ用）
+export const clearAllAuthData = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("vuex-auth");
+  console.log("Cleared all auth data from localStorage");
+  setAuthToken();
+};

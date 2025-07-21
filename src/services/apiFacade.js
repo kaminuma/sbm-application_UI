@@ -11,7 +11,7 @@ apiClient.interceptors.response.use(
       alert(
         "トークンの有効期限がきれています。再度ログインしなおしてください。"
       );
-      router.push("/"); // ログインページへ遷移
+      router.push("/"); // ランディングページへ遷移（ログインモーダルが表示されます）
     }
     return Promise.reject(error);
   }
@@ -21,25 +21,37 @@ apiClient.interceptors.response.use(
 setAuthToken();
 
 const apiFacade = {
-  registerUser(username, email, password) {
-    return apiClient.post("/auth/register", { username, password, email });
+  async register(userData) {
+    try {
+      const response = await apiClient.post("/auth/register", userData);
+      if (response.status === 201 || response.status === 200) {
+        // 登録後自動ログイン（トークンが返される場合）
+        if (response.data.token) {
+          saveAuthToken(response.data.token);
+        }
+        return response.data;
+      } else {
+        throw new Error("Registration failed");
+      }
+    } catch (error) {
+      console.error("Registration API Error:", error);
+      throw error;
+    }
   },
 
-  loginUser(username, password) {
-    return apiClient
-      .post("/auth/login", { username, password })
-      .then((response) => {
-        if (response.status === 200) {
-          saveAuthToken(response.data.token);
-          return response.data;
-        } else {
-          throw new Error("Login failed");
-        }
-      })
-      .catch((error) => {
-        console.error("API Error:", error);
-        throw error;
-      });
+  async login(credentials) {
+    try {
+      const response = await apiClient.post("/auth/login", credentials);
+      if (response.status === 200) {
+        saveAuthToken(response.data.token);
+        return response.data.userId || response.data.user_id; // ユーザーIDを返す
+      } else {
+        throw new Error("Login failed");
+      }
+    } catch (error) {
+      console.error("Login API Error:", error);
+      throw error;
+    }
   },
 
   async uploadExcelFile(formData) {
