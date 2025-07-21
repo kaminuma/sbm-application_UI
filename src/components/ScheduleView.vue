@@ -1820,7 +1820,7 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .vuecal--default-theme {
-  height: 1100px; /* 高さを1000pxに設定 */
-  max-height: 1100px; /* 最大高さも1000pxに設定 */
+  height: 1000px; /* 高さを1000pxに設定 */
+  max-height: 1000px; /* 最大高さも1000pxに設定 */
 }
 </style>
