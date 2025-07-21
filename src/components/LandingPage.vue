@@ -258,7 +258,7 @@ export default {
 .highlight {
   color: #d63aff;
   position: relative;
-  text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.3);
+  text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.7);
   font-weight: 900;
   letter-spacing: -0.5px;
 }
