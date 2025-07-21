@@ -112,11 +112,11 @@
             </div>
           </v-col>
           <v-col cols="12" md="6" order="1" order-md="2">
-            <v-img
-              src="/images/image.png"
-              alt="データ分析の例"
-              class="second-demo-image"
-            ></v-img>
+                <v-img
+                  src="/images/image.png"
+                  alt="生活記録 生活管理 健康管理 記録アプリ 日記 スケジュール管理 分析 グラフ カレンダー"
+                  class="second-demo-image"
+                ></v-img>
           </v-col>
         </v-row>
       </v-container>
@@ -258,7 +258,7 @@ export default {
 .highlight {
   color: #d63aff;
   position: relative;
-  text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.3);
+  text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.7);
   font-weight: 900;
   letter-spacing: -0.5px;
 }
