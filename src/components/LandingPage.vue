@@ -112,11 +112,11 @@
             </div>
           </v-col>
           <v-col cols="12" md="6" order="1" order-md="2">
-            <v-img
-              src="/images/image.png"
-              alt="データ分析の例"
-              class="second-demo-image"
-            ></v-img>
+                <v-img
+                  src="/images/image.png"
+                  alt="生活記録 生活管理 健康管理 記録アプリ 日記 スケジュール管理 分析 グラフ カレンダー"
+                  class="second-demo-image"
+                ></v-img>
           </v-col>
         </v-row>
       </v-container>
