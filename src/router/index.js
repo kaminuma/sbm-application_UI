@@ -5,6 +5,8 @@ import UploadView from "../components/UploadView.vue";
 import Auth from "../components/Auth.vue";
 import AnalyzeView from "../components/AnalyzeView.vue";
 import MoodView from "../components/MoodView.vue";
+import TermsOfService from "../components/TermsOfService.vue";
+import PrivacyPolicy from "../components/PrivacyPolicy.vue";
 
 const routes = [
   {
@@ -43,11 +45,25 @@ const routes = [
     component: () => import("../components/LandingPage.vue"),
     meta: { requiresGuest: true }
   },
+  {
+    path: "/terms",
+    name: "TermsOfService",
+    component: TermsOfService
+  },
+  {
+    path: "/privacy",
+    name: "PrivacyPolicy",
+    component: PrivacyPolicy
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    // すべてのページ遷移でスクロール位置をリセット
+    return { top: 0 }
+  }
 });
 
 router.beforeEach((to, from, next) => {
