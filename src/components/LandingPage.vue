@@ -153,8 +153,8 @@
         <v-row justify="center">
           <v-col cols="12" class="text-center">
             <div class="mb-4">
-              <a href="#" class="footer-link">利用規約</a>
-              <a href="#" class="footer-link">プライバシーポリシー</a>
+              <router-link to="/terms" class="footer-link">利用規約</router-link>
+              <router-link to="/privacy" class="footer-link">プライバシーポリシー</router-link>
               <a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener" class="footer-link">
                 <v-icon size="18" class="mr-1">mdi-twitter</v-icon>お問い合わせ
               </a>
