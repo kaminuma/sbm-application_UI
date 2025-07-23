@@ -219,20 +219,23 @@ export default {
         this.errorMessage = "";
         
         try {
+          let isRegistration = !this.isLogin; // 登録モードかどうかを保存
+          
           if (this.isLogin) {
             await this.handleLogin();
+            // ログイン後は指定されたリダイレクト先へ遷移
+            if (this.redirectPath) {
+              this.$router.push(this.redirectPath);
+            }
           } else {
             await this.handleRegistration();
+            // 新規登録後はランディングページ(/)へ遷移
+            this.$router.push('/');
           }
           
           // 成功した場合
           this.$emit('success', { isLogin: this.isLogin });
           this.close();
-          
-          // リダイレクト先が指定されていればそこへ遷移
-          if (this.redirectPath) {
-            this.$router.push(this.redirectPath);
-          }
         } catch (error) {
           console.error("認証エラー:", error);
           this.errorMessage = error.response?.data?.message || 
@@ -256,14 +259,32 @@ export default {
     
     // 新規登録処理
     async handleRegistration() {
-      const userData = {
-        username: this.username,
-        email: this.email,
-        password: this.password,
-      };
+      // apiFacade.registerは3つの個別のパラメータを期待している
+      const response = await apiFacade.register(
+        this.username,
+        this.email,
+        this.password
+      );
+      console.log('AuthModal - 登録結果:', response);
       
-      const response = await apiFacade.register(userData);
-      await this.register(response); // Vuexアクションを呼び出し
+      if (response && response.userId) {
+        // ユーザーIDが返された場合は自動ログイン
+        await this.register(response); // Vuexアクションを呼び出し
+        // 既にログイン済みなので何もしない
+      } else {
+        // 登録は成功したがユーザーIDがない場合
+        alert("登録が完了しました！ログイン画面に移動します。");
+        // フォームをリセット（パスワードは消去、ユーザー名は残す）
+        this.password = "";
+        this.confirmPassword = "";
+        this.email = "";
+        this.errorMessage = "";
+        
+        // フォームの検証状態もリセット
+        if (this.$refs.form) {
+          this.$refs.form.resetValidation();
+        }
+      }
     },
     
     // ログイン/登録モードの切り替え

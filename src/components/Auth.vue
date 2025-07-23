@@ -203,13 +203,32 @@ export default {
           return;
         }
         try {
-          await apiFacade.register(
+          const result = await apiFacade.register(
             this.username,
             this.email,
             this.password
           );
-          alert("登録が完了しました！ログインしてください。");
-          this.toggleLogin();
+          console.log('登録結果:', result);
+          
+          if (result && result.userId) {
+            // ユーザーIDが返された場合は自動ログイン
+            console.log('登録後のユーザーID:', result.userId);
+            this.$store.dispatch("login", result.userId);
+            alert("登録が完了しました！");
+          } else {
+            // ユーザーIDがない場合はログイン画面へ
+            alert("登録が完了しました！ログイン画面に移動します。");
+            // ユーザー名は保持してログイン画面へ遷移
+            this.isLogin = true;
+            this.password = "";
+            this.email = "";
+            this.confirmPassword = "";
+            
+            // フォームの検証状態をリセット
+            if (this.$refs.form) {
+              this.$refs.form.resetValidation();
+            }
+          }
         } catch (error) {
           alert(
             "登録に失敗しました。\n別のIDをお試しいただくか、もう一度お試しください。"

@@ -44,8 +44,21 @@ export default createStore({
       try {
         commit("setLoading", true);
         commit("clearError");
-        commit("setAuthentication", true);
-        commit("setUserId", userData.userId || userData);
+        
+        // ユーザーデータの形式をログに出力
+        console.log('Vuex register action - userData:', userData);
+        
+        // userIdが明示的に存在する場合のみ認証状態を更新
+        if (userData && userData.userId) {
+          commit("setAuthentication", true);
+          commit("setUserId", userData.userId);
+          console.log('ユーザー登録完了 - userIdを設定:', userData.userId);
+        } else {
+          console.warn('register action: userIdが見つかりません');
+          return false; // 登録は成功したが自動ログインはしない
+        }
+        
+        return true; // 登録・ログイン完了
       } catch (error) {
         commit("setError", error.message || "新規登録に失敗しました");
         console.error("Error in register action:", error);
