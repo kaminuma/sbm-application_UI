@@ -2,19 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 import store from "../store";
 import ScheduleView from "../components/ScheduleView.vue";
 import UploadView from "../components/UploadView.vue";
-import Auth from "../components/Auth.vue";
 import AnalyzeView from "../components/AnalyzeView.vue";
 import MoodView from "../components/MoodView.vue";
 import TermsOfService from "../components/TermsOfService.vue";
 import PrivacyPolicy from "../components/PrivacyPolicy.vue";
 
 const routes = [
-  {
-    path: "/auth",
-    name: "Auth",
-    component: Auth,
-    meta: { requiresGuest: true },
-  },
   {
     path: "/schedule",
     name: "ScheduleView",
