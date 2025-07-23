@@ -8,7 +8,7 @@ import Auth from '../../components/Auth.vue'
 vi.mock('../../services/apiFacade', () => ({
   default: {
     loginUser: vi.fn(),
-    registerUser: vi.fn()
+    register: vi.fn()
   }
 }))
 
@@ -112,9 +112,9 @@ describe('Auth.vue ロジックテスト', () => {
     wrapper.vm.valid = true
     // APIモックの設定
     const { default: apiFacade } = await import('../../services/apiFacade')
-    apiFacade.registerUser.mockResolvedValue({ success: true })
+    apiFacade.register.mockResolvedValue({ success: true })
     await wrapper.vm.submit()
-    expect(apiFacade.registerUser).toHaveBeenCalledWith('newuser', 'new@example.com', 'password123')
+    expect(apiFacade.register).toHaveBeenCalledWith('newuser', 'new@example.com', 'password123')
   })
 
   it('submit: パスワード不一致時の処理', async () => {
@@ -146,7 +146,7 @@ describe('Auth.vue ロジックテスト', () => {
     wrapper.vm.valid = true
     // APIモックの設定
     const { default: apiFacade } = await import('../../services/apiFacade')
-    apiFacade.registerUser.mockRejectedValue(new Error('User already exists'))
+    apiFacade.register.mockRejectedValue(new Error('User already exists'))
     await wrapper.vm.submit()
     expect(globalThis.alert).toHaveBeenCalledWith('登録に失敗しました。\n別のIDをお試しいただくか、もう一度お試しください。')
   })

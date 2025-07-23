@@ -40,14 +40,14 @@ describe('apiFacade.js ロジックテスト', () => {
     vi.clearAllMocks()
   })
 
-  it('registerUser: 正しいパラメータでAPIが呼ばれる', async () => {
+  it('register: 正しいパラメータでAPIが呼ばれる', async () => {
     const username = 'testuser'
     const email = 'test@example.com'
     const password = 'password123'
     
     apiClient.post.mockResolvedValue({ data: { success: true } })
     
-    await apiFacade.registerUser(username, email, password)
+    await apiFacade.register(username, email, password)
     
     expect(apiClient.post).toHaveBeenCalledWith('/auth/register', {
       username,
@@ -56,7 +56,7 @@ describe('apiFacade.js ロジックテスト', () => {
     })
   })
 
-  it('loginUser: 成功時にトークンが保存される', async () => {
+  it('login: 成功時にトークンが保存される', async () => {
     const username = 'testuser'
     const password = 'password123'
     const responseData = { token: 'test-token', userId: 'user123' }
@@ -66,14 +66,14 @@ describe('apiFacade.js ロジックテスト', () => {
       data: responseData 
     })
     
-    const result = await apiFacade.loginUser(username, password)
+    const result = await apiFacade.login({ username, password })
     
     expect(apiClient.post).toHaveBeenCalledWith('/auth/login', {
       username,
       password
     })
     expect(saveAuthToken).toHaveBeenCalledWith('test-token')
-    expect(result).toEqual(responseData)
+    expect(result).toEqual('user123')
   })
 
   it('uploadExcelFile: FormDataでアップロードが実行される', async () => {

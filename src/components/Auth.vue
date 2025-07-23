@@ -203,7 +203,7 @@ export default {
           return;
         }
         try {
-          await apiFacade.registerUser(
+          await apiFacade.register(
             this.username,
             this.email,
             this.password
