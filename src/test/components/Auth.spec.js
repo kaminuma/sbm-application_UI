@@ -7,7 +7,7 @@ import Auth from '../../components/Auth.vue'
 // APIモック
 vi.mock('../../services/apiFacade', () => ({
   default: {
-    loginUser: vi.fn(),
+    login: vi.fn(),
     register: vi.fn()
   }
 }))
@@ -97,9 +97,9 @@ describe('Auth.vue ロジックテスト', () => {
     wrapper.vm.valid = true
     // APIモックの設定
     const { default: apiFacade } = await import('../../services/apiFacade')
-    apiFacade.loginUser.mockResolvedValue({ userId: 'user123' })
+    apiFacade.login.mockResolvedValue({ userId: 'user123' })
     await wrapper.vm.submit()
-    expect(apiFacade.loginUser).toHaveBeenCalledWith('testuser', 'password123')
+    expect(apiFacade.login).toHaveBeenCalledWith('testuser', 'password123')
     expect(wrapper.vm.$store.dispatch).toHaveBeenCalledWith('login', 'user123')
   })
 
@@ -132,7 +132,7 @@ describe('Auth.vue ロジックテスト', () => {
     wrapper.vm.valid = true
     // APIモックの設定
     const { default: apiFacade } = await import('../../services/apiFacade')
-    apiFacade.loginUser.mockRejectedValue(new Error('Invalid credentials'))
+    apiFacade.login.mockRejectedValue(new Error('Invalid credentials'))
     await wrapper.vm.submit()
     expect(globalThis.alert).toHaveBeenCalledWith('無効な認証情報です')
   })
@@ -158,7 +158,7 @@ describe('Auth.vue ロジックテスト', () => {
     await wrapper.vm.submit()
     // APIが呼ばれないことを確認
     const { default: apiFacade } = await import('../../services/apiFacade')
-    expect(apiFacade.loginUser).not.toHaveBeenCalled()
+    expect(apiFacade.login).not.toHaveBeenCalled()
   })
 
   it('バリデーションルール: 必須項目', () => {

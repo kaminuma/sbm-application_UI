@@ -186,7 +186,7 @@ export default {
       }
       if (this.isLogin) {
         try {
-          const response = await apiFacade.loginUser(
+          const response = await apiFacade.login(
             this.username,
             this.password
           );
