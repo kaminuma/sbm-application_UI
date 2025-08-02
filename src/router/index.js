@@ -7,6 +7,7 @@ import AnalyzeView from "../components/AnalyzeView.vue";
 import MoodView from "../components/MoodView.vue";
 import TermsOfService from "../components/TermsOfService.vue";
 import PrivacyPolicy from "../components/PrivacyPolicy.vue";
+import PasswordChange from "../components/PasswordChange.vue";
 
 const routes = [
   {
@@ -54,6 +55,12 @@ const routes = [
     path: "/privacy",
     name: "PrivacyPolicy",
     component: PrivacyPolicy
+  },
+  {
+    path: "/password-change",
+    name: "PasswordChange",
+    component: PasswordChange,
+    meta: { requiresAuth: true },
   },
 ];
 
