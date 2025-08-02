@@ -27,13 +27,41 @@ dist-ssr
 .env
 
 # Android build files
-android/app/build/
-android/build/
-android/.gradle/
-android/local.properties
-android/capacitor-cordova-android-plugins/build/
+android-native/app/build/
+android-native/build/
+android-native/.gradle/
+android-native/local.properties
+android-native/.idea/
+android-native/*.iml
+android-native/app/*.iml
+android-native/captures/
+android-native/keystore.properties
+android-native/app/release/
+android-native/app/debug/
 
-# Android 全体を無視（開発中のみ）
+# Android Studio Files
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Legacy Android directory (deprecated)
 android/
 
+# Claude AI assistant files
+.claude/
+.serena
 .cursorrules
+
+# Documentation directory (personal development notes)
+docs/
