@@ -154,6 +154,7 @@ export default {
           (v && v.length >= 8) ||
           "パスワードは最低8文字以上で入力してください。",
         passwordSpecial: (v) =>
+        //PASSWORD_ALLOWED_CHARS_REGEX
           /^[a-zA-Z0-9!@#$%^&*()_+\-=[\]{};':"\\|,.<>\/?]+$/.test(v) ||
           "パスワードは英数字と特殊文字のみ使用可能です。",
         matchNewPassword: (v) =>
@@ -181,7 +182,6 @@ export default {
         this.successSnackbar = true;
         this.resetForm();
       } catch (error) {
-        console.error("Password change error:", error);
         this.errorMessage = error.message || "パスワードの変更に失敗しました。";
         this.errorSnackbar = true;
       } finally {

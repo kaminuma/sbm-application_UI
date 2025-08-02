@@ -278,16 +278,11 @@ const apiFacade = {
         currentPassword,
         newPassword
       });
-      console.log("パスワード変更成功");
       return response.data;
     } catch (error) {
-      console.error("パスワード変更エラー:", error);
+       console.error("パスワード変更エラーが発生しました。");
       if (error.response) {
-        console.error('エラーレスポンス:', {
-          status: error.response.status,
-          statusText: error.response.statusText,
-          data: error.response.data
-        });
+        // 詳細なエラー情報はログ出力しない
         
         if (error.response.status === 400) {
           throw new Error("現在のパスワードが間違っています。");
