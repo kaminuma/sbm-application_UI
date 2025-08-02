@@ -29,6 +29,12 @@
             <span>気分記録</span>
           </router-link>
         </li>
+        <li class="sidebar-item">
+          <router-link to="/password-change" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-lock-reset</v-icon>
+            <span>パスワード変更</span>
+          </router-link>
+        </li>
         <!-- 他のメニュー項目を追加 -->
       </ul>
     </div>

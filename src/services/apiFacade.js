@@ -265,6 +265,42 @@ const apiFacade = {
       );
     }
   },
+
+  /**
+   * パスワードを変更する
+   * @param {string} currentPassword - 現在のパスワード
+   * @param {string} newPassword - 新しいパスワード
+   * @returns {Promise<string>} 変更結果メッセージ
+   */
+  async changePassword(currentPassword, newPassword) {
+    try {
+      const response = await apiClient.put("/auth/change-password", {
+        currentPassword,
+        newPassword
+      });
+      console.log("パスワード変更成功");
+      return response.data;
+    } catch (error) {
+      console.error("パスワード変更エラー:", error);
+      if (error.response) {
+        console.error('エラーレスポンス:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data
+        });
+        
+        if (error.response.status === 400) {
+          throw new Error("現在のパスワードが間違っています。");
+        }
+        if (error.response.status === 401) {
+          throw new Error("認証が無効です。再度ログインしてください。");
+        }
+      }
+      throw new Error(
+        error.response?.data?.message || "パスワードの変更に失敗しました。"
+      );
+    }
+  },
 };
 
 export default apiFacade;
