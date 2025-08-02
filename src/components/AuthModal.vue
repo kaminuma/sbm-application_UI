@@ -178,7 +178,7 @@ export default {
           );
         },
         passwordMin: (value) =>
-          (value && value.length >= 6) || "6文字以上で入力してください",
+          (value && value.length >= 8) || "8文字以上で入力してください",
         passwordSpecial: (value) => {
           // 英字・数字・特殊文字を含むパスワードのバリデーション
           // 実際のセキュリティ要件に応じて調整
