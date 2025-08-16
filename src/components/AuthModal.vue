@@ -317,7 +317,8 @@ export default {
     
     // Googleログイン処理
     handleGoogleLogin() {
-      window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+      const oauthBaseUrl = import.meta.env.VITE_OAUTH2_BASE_URL;
+      window.location.href = `${oauthBaseUrl}/oauth2/authorization/google`;
     },
     
     // モーダルを閉じる

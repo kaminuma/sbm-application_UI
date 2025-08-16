@@ -93,7 +93,8 @@ export default {
 
       try {
         // JWTトークンを取得
-        const response = await fetch('http://localhost:8080/api/v1/auth/oauth2/session', {
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+        const response = await fetch(`${apiBaseUrl}/auth/oauth2/session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

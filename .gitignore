@@ -25,6 +25,9 @@ dist-ssr
 
 # 環境変数ファイルを無視
 .env
+.env.local
+.env.development
+.env.production
 
 # Android build files
 android-native/app/build/
