@@ -1,7 +1,7 @@
 # SBM Application UI
 
 [![Release](https://img.shields.io/badge/release-live-brightgreen)](https://sbm-app.com/)
-[![Version](https://img.shields.io/badge/version-0.3.0-green)](https://github.com/kaminuma/sbm-application_UI)
+[![Version](https://img.shields.io/badge/version-0.4.0-green)](https://github.com/kaminuma/sbm-application_UI)
 [![License](https://img.shields.io/badge/license-Apache%202.0-yellow)](LICENSE)
 
 生活記録の管理・分析を通じて、日々の生活をより充実させるWebアプリケーション
@@ -48,6 +48,12 @@ Google Search Console登録済みの正式サービスです。どなたでも�
 - **パスワード変更**: ローカルアカウントのセキュリティ管理
 - **退会機能**: アカウントの安全な無効化
 - **データ管理**: 個人データの取り扱いを明確化
+
+### 🌐 SEO・SNSシェア対応 *（v0.4.0新機能）*
+- **OGP対応**: Facebook等でのシェア時に適切な画像・情報表示
+- **Twitter Card対応**: Twitterでのシェア時に最適化された表示
+- **構造化データ**: 検索エンジン向けのメタデータ実装
+- **SNSシェア用画像**: SBMブランドロゴを活用したオリジナル画像
 
 ### 📊 分析・インサイト機能
 - **基本分析**: 活動記録と気分データの基本的な分析・可視化 ✅
@@ -192,4 +198,4 @@ https://github.com/kaminuma/sbm-application_API
 ---
 
 **Last Updated:** 2025年8月27日  
-**Current Version:** v0.3.0
+**Current Version:** v0.4.0
