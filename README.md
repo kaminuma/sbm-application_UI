@@ -1,169 +1,182 @@
 # SBM Application UI
 
-[![Beta Release](https://img.shields.io/badge/release-beta-blue)](https://github.com/kaminuma/sbm-application_UI/releases)
+[![Release](https://img.shields.io/badge/release-live-brightgreen)](https://sbm-app.com/)
+[![Version](https://img.shields.io/badge/version-0.3.0-green)](https://github.com/kaminuma/sbm-application_UI)
+[![License](https://img.shields.io/badge/license-Apache%202.0-yellow)](LICENSE)
 
-SBM Application UI 　設計コンセプト
+生活記録の管理・分析を通じて、日々の生活をより充実させるWebアプリケーション
 
-生活記録やスケジュールの管理、生活振り返り分析機能を備えた
-使いやすいインターフェースを目指しています。
+## 🎯 アプリケーションの目的
 
-- 自分の生活記録を整理・管理したい方
-- データを基にした行動分析に興味がある方
-- 日々のスケジュールを簡単に設定し、管理したい方
-- Vue.js やフロントエンド技術に触れてみたい開発者
+SBM Application UIは、以下のような方々に向けた生活支援ツールです：
 
-## API
+- 📊 日々の生活記録を体系的に管理したい方
+- 📈 データ分析を通じて自己理解を深めたい方
+- 📅 スケジュール管理を効率化したい方
+- 💭 気分の変化を追跡し、メンタルヘルスケアに活用したい方
 
-### https://github.com/kaminuma/sbm-application_API
+## 🌐 サービス利用
 
-## 🌐 テスト用 Beta 環境
+**[SBMアプリ](https://sbm-app.com/)**
 
-テスト環境は以下の URL からアクセスできます。
+Google Search Console登録済みの正式サービスです。どなたでもご利用いただけます。
 
-**[beta 環境はこちら](https://sbm-app.com/)**
+### 📱 今後の展開
 
-### 🚧 現在の状況
+- **Androidアプリ版** - 近日リリース予定
+- **iOS版** - 開発検討中
 
-- **この環境は開発中の Beta 版です**  
-  現在、実装途中の機能やデザインが含まれており、一部の動作や表示が最終版と異なる場合があります。
+## ✨ 主な機能
 
-- **データリセットの可能性**  
-  テスト環境では、不定期にデータが初期化される場合がありますのでご了承ください。
+### 実装済み機能
+- ✅ **ユーザー認証** - JWT/OAuth2.0（Google）による安全な認証
+- ✅ **気分記録** - 日々の気分を記録・可視化
+- ✅ **スケジュール管理** - Vue Calを使用した直感的なカレンダー表示
+- ✅ **データアップロード** - CSVファイルによるデータインポート
+- ✅ **レスポンシブデザイン** - モバイル・タブレット対応
 
----
+### 開発中の機能
+- 🔄 **AI分析機能** - 生活記録データのAI分析（API側実装待ち）
+- 🔄 **データエクスポート** - 各種フォーマットでのデータ出力
+- 🔄 **詳細な統計情報** - より高度な分析ダッシュボード
 
-### ⚠️ 注意事項
+## 🛠️ 技術スタック
 
-- **秘密情報の入力はお控えください**  
-  テスト環境は開発中のため、セキュリティ機能の実装や設定が十分ではない部分があります。
+- **Vue.js 3** - フロントエンドフレームワーク
+- **Vuetify 3** - UIコンポーネントライブラリ
+- **Vue Router** - ルーティング
+- **Vuex** - 状態管理
+- **Axios** - HTTP通信
+- **Chart.js / ECharts** - データ可視化
+- **Vitest** - テストフレームワーク
+- **Vite** - ビルドツール
+- **AWS** - インフラストラクチャ
+- **GitHub Actions** - CI/CD
 
-  **個人情報や機密性の高い情報の入力は行わないようお願いいたします。**
+## 🚀 開発環境のセットアップ
 
-- **動作保証について**  
-  テスト環境での動作は安定性を保証するものではありません。
-  **本番環境ではない**ことをご留意ください。
+### 前提条件
 
-- **フィードバックのお願い**  
-  発見されたバグ、不具合、改善点については、
-  GitHub の[Issues](https://github.com/kaminuma/sbm-application_UI/issues)からお知らせいただけると幸いです。
-
----
-
-### 📅 Beta 版リリース日
-
-# SBM アプリケーション UI
-
-バージョン: **v0.1.0-beta**  
-ベータ版リリース日: 2024 年 11 月 30 日
-
-このバージョンは開発中のベータ版です。
-
-本番環境リリース（v1.0.0）予定となっています。
-
-## 📋 主な特徴
-
-- **生活記録の管理**: 日々の記録を簡単に追加、編集、削除可能。
-- **カレンダー表示**: 直感的なイベント管理ができる Vue Cal を採用。
-- **分析機能**: 生活記録データを基に視覚的な分析が可能。（※現在開発中）
-- **レスポンシブデザイン**: スマートフォンやタブレットでも快適に利用可能。
-- **認証機能**: JWT トークンを活用したセキュアな認証プロセス。
-
----
-
-## 🛠️ 使用技術
-
-- **Vue.js 3**: フロントエンドフレームワーク
-- **Vuetify 3**: UI コンポーネントライブラリ
-- **Vue Router**: ルーティング管理
-- **Axios**: API 通信
-- **JWT**: 認証トークン管理
-- **Cypress**: E2E テスト（※予定）
-- **AWS**: デプロイ環境（EC2、RDS）
-- **GitHub Actions**: CI/CD パイプライン管理
-
----
-
-## 🚀 開発者向け　 local 環境起動方法
-
-### 必要条件
-
-- Node.js（推奨バージョン: 16.x 以上）
+- Node.js 16.x以上（推奨: 20.x）
 - npm または yarn
+- Git
 
-### 💻 セットアップ手順
+### インストール手順
 
-### 環境変数設定
-
-ローカル環境での動作には、.env ファイルが必要です。以下の手順で設定してください。
-
-プロジェクトルートにある .env.example を .env ファイルを作成してにコピーします。
-
-必要に応じて値を設定してください。
-
-.env ファイルは .gitignore に追加されているため、リモートにはプッシュされません。
-
-環境変数の設定例：（.env.example は下記内容と同じです）
-
-### .env ファイル設定
-
-以下の内容をルートディレクトリに `.env` ファイルとして記載してください。
-
-```plaintext
-VITE_BASE_URL=/
-VITE_API_BASE_URL=http://localhost:8080/api/v1
-```
-
-<br>
-
-### 設定後に以下のコマンドを順に実行してください
-
+1. **リポジトリのクローン**
 ```bash
 git clone https://github.com/kaminuma/sbm-application_UI.git
 cd sbm-application_UI
+```
+
+2. **環境変数の設定**
+
+`src/.env.example`を参考に、プロジェクトルートに`.env`ファイルを作成：
+
+```env
+# 基本設定
+VITE_BASE_URL=/
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+
+# OAuth2.0設定（Google認証を使用する場合）
+VITE_OAUTH2_BASE_URL=http://localhost:8080
+```
+
+**注意**: Google認証を使用する場合は、`VITE_OAUTH2_BASE_URL`を適切なAPIサーバーのURLに設定してください。
+
+3. **依存関係のインストール**
+```bash
 npm install
+```
+
+4. **開発サーバーの起動**
+```bash
 npm run dev
 ```
 
-### ブラウザで以下の URL を開いてください：
+ブラウザで http://localhost:5173/ にアクセス
 
-http://localhost:5173/
+### 利用可能なスクリプト
+
+```bash
+npm run dev          # 開発サーバー起動
+npm run build        # プロダクションビルド
+npm run build:prod   # プロダクションモードでビルド
+npm run preview      # ビルドのプレビュー
+npm run test         # テスト実行（watch mode）
+npm run test:run     # テスト実行（単発）
+npm run test:ui      # Vitest UIでテスト実行
+npm run test:coverage # カバレッジレポート生成
+```
+
+## 📁 プロジェクト構造
+
+```
+sbm-application_UI/
+├── src/
+│   ├── api/          # API通信関連
+│   ├── assets/       # 静的アセット
+│   ├── components/   # Vueコンポーネント
+│   ├── plugins/      # Vueプラグイン（Vuetify等）
+│   ├── router/       # ルーティング設定
+│   ├── services/     # ビジネスロジック
+│   ├── store/        # Vuex状態管理
+│   └── test/         # テストファイル
+├── public/           # 公開静的ファイル
+├── .github/          # GitHub Actions設定
+└── vite.config.js    # Vite設定
+```
+
+## 🔐 認証システム
+
+### JWT認証
+- アクセストークンによるAPI認証
+- Vuex-persistedstateによるトークン永続化
+- 自動ログアウト機能（トークン有効期限切れ時）
+
+### OAuth2.0（Google認証）
+- Googleアカウントでのシングルサインオン
+- セキュアな認証フロー実装
+
+## 📊 API連携
+
+バックエンドAPIリポジトリ：
+
+https://github.com/kaminuma/sbm-application_API
+
+## 🐛 既知の問題と改善点
+
+### 優先度：高
+- 🔴 JWTトークン期限切れ時の403エラーハンドリング改善
+- 🔴 トークンリフレッシュ機能の実装
+
+### 優先度：中
+- 🟡 AI分析機能のUI実装（API完成待ち）
+- 🟡 データエクスポート機能の実装
+- 🟡 パフォーマンス最適化（大量データ時）
+
+### 優先度：低
+- 🟢 E2Eテストの導入（Cypress）
+- 🟢 国際化（i18n）対応
+- 🟢 ダークモード対応
+
+
+## 🤝 コントリビューション
+
+バグ報告や機能要望は[Issues](https://github.com/kaminuma/sbm-application_UI/issues)からお願いします。
+
+プルリクエストも歓迎します！
+
+## 📄 ライセンス
+
+このプロジェクトは[Apache License 2.0](LICENSE)のもとで公開されています。
+
+## 📧 お問い合わせ
+
+- GitHub Issues: [バグ報告・機能要望](https://github.com/kaminuma/sbm-application_UI/issues)
+- プロジェクトオーナー: [@kaminuma](https://github.com/kaminuma)
 
 ---
 
-### 🔐 認証機能
-
-このプロジェクトでは、JWT トークンを活用してユーザー認証を行います。
-
----
-
-### 🛡️ 現在の課題
-
-- **生活記録分析機能**  
-  ボタンは実装されていますが、分析ロジックが未実装のため、要件定義とバックエンド連携が必要です。
-
-  AI による分析機能を予定しており、API 側からの実装となります。
-
-- **JWT 認証の改善**  
-  トークンリフレッシュとログインリダイレクト機能の最適化。
-
-  **注意** 現在トークンの有効期限が切れると 403 が返ってくるだけになっているため、修正が必要です。
-
-- **レスポンシブデザイン**  
-  さらなるスマートフォン対応を目指して微調整中。
-
----
-
-### 📖 今後の予定
-
-- 生活記録分析機能の完成
-- E2E テストの導入（Cypress）
-- デザイン統一のためのスタイルガイド作成
-
----
-
-### 📧 問い合わせ
-
-バグ報告や機能リクエストは、Issues をご利用ください。
-
-## 📜 License
-This project is licensed under the **Apache License 2.0**.
+**Last Updated:** 2025年8月25日
+**Current Version:** v0.2.0

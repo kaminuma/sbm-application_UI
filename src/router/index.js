@@ -8,6 +8,7 @@ import MoodView from "../components/MoodView.vue";
 import TermsOfService from "../components/TermsOfService.vue";
 import PrivacyPolicy from "../components/PrivacyPolicy.vue";
 import PasswordChange from "../components/PasswordChange.vue";
+import Settings from "../components/Settings.vue";
 import LoginCallback from "../components/LoginCallback.vue";
 
 const routes = [
@@ -61,6 +62,12 @@ const routes = [
     path: "/password-change",
     name: "PasswordChange",
     component: PasswordChange,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: Settings,
     meta: { requiresAuth: true },
   },
   {

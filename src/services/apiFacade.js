@@ -296,6 +296,55 @@ const apiFacade = {
       );
     }
   },
+
+  async withdrawAccount() {
+    try {
+      const response = await apiClient.delete("/auth/withdraw");
+      return response.data;
+    } catch (error) {
+      console.error("退会処理エラーが発生しました。");
+      if (error.response) {
+        if (error.response.status === 401) {
+          const errorMessage = error.response.data;
+          if (errorMessage.includes("Token has expired")) {
+            throw new Error("認証の有効期限が切れています。再度ログインしてください。");
+          } else if (errorMessage.includes("Invalid token signature")) {
+            throw new Error("認証情報が無効です。再度ログインしてください。");
+          } else {
+            throw new Error("認証が無効です。再度ログインしてください。");
+          }
+        }
+        if (error.response.status === 400) {
+          throw new Error("退会処理に失敗しました。既に削除されている可能性があります。");
+        }
+        if (error.response.status === 500) {
+          throw new Error("サーバーエラーが発生しました。しばらく時間をおいて再試行してください。");
+        }
+        // その他のHTTPエラー
+        throw new Error(error.response.data || `退会処理に失敗しました (${error.response.status})`);
+      }
+      // ネットワークエラーなど
+      throw new Error("退会処理中にネットワークエラーが発生しました。");
+    }
+  },
+
+  async getUserInfo() {
+    try {
+      const response = await apiClient.get("/auth/user");
+      return response.data;
+    } catch (error) {
+      console.error("ユーザー情報取得エラーが発生しました。");
+      if (error.response) {
+        if (error.response.status === 401) {
+          throw new Error("認証が無効です。再度ログインしてください。");
+        }
+        if (error.response.status === 404) {
+          throw new Error("ユーザー情報が見つかりません。");
+        }
+      }
+      throw new Error("ユーザー情報の取得に失敗しました。");
+    }
+  },
 };
 
 export default apiFacade;
