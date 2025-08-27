@@ -171,8 +171,8 @@
             <div class="mb-4">
               <router-link to="/terms" class="footer-link">利用規約</router-link>
               <router-link to="/privacy" class="footer-link">プライバシーポリシー</router-link>
-              <a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener" class="footer-link">
-                <v-icon size="18" class="mr-1">mdi-twitter</v-icon>お問い合わせ
+              <a href="mailto:kaminuma.dev@gmail.com" class="footer-link">
+                <v-icon size="18" class="mr-1">mdi-email</v-icon>お問い合わせ
               </a>
             </div>
             <p class="footer-copyright">

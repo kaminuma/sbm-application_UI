@@ -65,7 +65,7 @@
               当アプリは、ユーザーから自己の個人情報についての開示、訂正、追加、削除等の請求があった場合、本人確認を行った上で、合理的な範囲内で速やかに対応いたします。以下の連絡先までご連絡ください。
             </p>
             <p>
-              Twitter：<a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener">@kaminuma_dev</a>
+              お問い合わせ連絡先：<a href="mailto:kaminuma.dev@gmail.com">kaminuma.dev@gmail.com</a>
             </p>
             
             <h2 class="privacy-section-title">6. 自動データ収集技術の使用</h2>
@@ -88,7 +88,7 @@
             
             <h2 class="privacy-section-title">8. データの保持期間</h2>
             <p>
-              当アプリは、法令に定められた保管期間または当アプリのサービス提供に必要な期間、個人情報を保持します。不要となった個人情報は、合理的な期間内に削除または匿名化します。ただし、ユーザーがアカウントを削除した場合でも、バックアップやシステムログなどの一部データは技術的な理由で一定期間保持される場合があります。
+              当アプリは、法令に定められた保管期間または当アプリのサービス提供に必要な期間、個人情報を保持します。不要となった個人情報は、合理的な期間内に削除または匿名化します。ユーザーが退会した場合、アカウントは無効化され、登録情報および関連するデータは一定期間保持された後、削除される場合があります。また、バックアップやシステムログなどの一部データは技術的な理由により保持される場合があります。
             </p>
             
             <h2 class="privacy-section-title">9. 未成年者のプライバシー</h2>
@@ -107,7 +107,7 @@
             </p>
             <p class="mb-5">
               SBM application 運営<br>
-              Twitter：<a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener">@kaminuma_dev</a>
+              お問い合わせ連絡先：<a href="mailto:kaminuma.dev@gmail.com">kaminuma.dev@gmail.com</a>
             </p>
           </div>
           
