@@ -37,15 +37,6 @@ jobs:
       - name: Build UI
         run: npm run build
 
-      - name: Grant temporary write permissions
-        uses: appleboy/ssh-action@v0.1.5
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SECRET_KEY }}
-          script: |
-            sudo chmod -R 777 /srv/sbm/ui
-
       # 6. 成果物をEC2にデプロイ
       - name: Deploy to EC2
         uses: burnett01/rsync-deployments@5.1
