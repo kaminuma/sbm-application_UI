@@ -4,7 +4,7 @@
       <v-row justify="center">
         <v-col cols="12" md="10" lg="8">
           <h1 class="privacy-title">プライバシーポリシー</h1>
-          <div class="privacy-updated-date">最終更新日: 2025年8月28日</div>
+          <div class="privacy-updated-date">最終更新日: 2025年8月30日</div>
           
           <div class="privacy-section">
             <p class="mb-5">
