@@ -67,5 +67,5 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SECRET_KEY }}
           script: |
-            sudo chmod -R 755 /srv/sbm/ui
+            sudo chmod -R 644 /srv/sbm/ui
             sudo chown -R ${{ secrets.USER }}:${{ secrets.USER }} /srv/sbm/ui
