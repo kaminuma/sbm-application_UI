@@ -27,18 +27,19 @@
       </template>
     </v-snackbar>
     
-    <!-- デバッグ用リセットボタン（常時表示） -->
+    <!-- ログアウト用ボタン（ランディングページ以外で表示） -->
     <v-btn
-      color="warning"
+      v-if="!isLandingPage"
+      color="error"
       fixed
       right
       bottom
       icon
       style="bottom: 16px; right: 16px; z-index: 9999;"
       @click="resetAuthAndRedirect"
-      title="認証状態をリセットしてランディングページに移動"
+      title="ログアウトしてランディングページに移動"
     >
-      <v-icon>mdi-refresh</v-icon>
+      <v-icon>mdi-exit-to-app</v-icon>
     </v-btn>
     
     <!-- ランディングページ以外の場合のみヘッダーとサイドバーを表示 -->
