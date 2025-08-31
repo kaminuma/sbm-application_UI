@@ -808,7 +808,7 @@ export default {
   height: 48px;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid rgba(255, 255, 255, 0.7);
-  border-radius: 12px;
+  border-radius: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
