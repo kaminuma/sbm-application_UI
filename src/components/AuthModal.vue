@@ -244,17 +244,14 @@ export default {
             if (this.redirectPath) {
               this.$router.push(this.redirectPath);
             }
-            // ログイン成功時のみモーダルを閉じる
-            this.$emit('success', { isLogin: this.isLogin });
-            this.close();
           } else {
             await this.handleRegistration();
             // 新規登録後はランディングページ(/)へ遷移
             this.$router.push('/');
-            // 登録成功時のみモーダルを閉じる
-            this.$emit('success', { isLogin: this.isLogin });
-            this.close();
           }
+          
+          // 共通の成功処理
+          this.handleSuccess();
         } catch (error) {
           console.error("認証エラー:", error);
           
@@ -297,7 +294,6 @@ export default {
         this.email,
         this.password
       );
-      console.log('AuthModal - 登録結果:', response);
       
       if (response && response.userId) {
         // ユーザーIDが返された場合は自動ログイン
@@ -331,6 +327,12 @@ export default {
       }
     },
     
+    // 成功処理の共通化
+    handleSuccess() {
+      this.$emit('success', { isLogin: this.isLogin });
+      this.close();
+    },
+    
     // エラーメッセージをクリア
     clearError() {
       this.errorMessage = "";
@@ -341,7 +343,6 @@ export default {
     handleOutsideClick() {
       if (this.errorMessage) {
         // エラーメッセージがある場合は閉じない
-        console.log('エラーがあるため、モーダルを閉じません');
         return;
       }
       // エラーがない場合のみ閉じる
