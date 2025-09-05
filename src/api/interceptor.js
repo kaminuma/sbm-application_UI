@@ -49,14 +49,23 @@ apiClient.interceptors.response.use(
         headers: error.response.headers
       });
       
-      // 401エラー（認証失敗）の場合はトークンを削除してログインページへ
+      // 401エラー（認証失敗）の場合
       if (error.response.status === 401) {
-        console.log('[Auth] Token invalid, clearing authentication and redirecting to login');
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        // ページ全体をリロードしてVuexストアもリセット
-        window.location.href = '/';
-        return;
+        // ログインエンドポイントへのリクエストの場合は、モーダルでエラー処理するためリダイレクトしない
+        const isLoginRequest = error.config?.url?.includes('/auth/login');
+        
+        if (!isLoginRequest) {
+          // ログイン以外の401エラーの場合のみ、トークンを削除してログインページへ
+          console.log('[Auth] Token invalid, clearing authentication and redirecting to login');
+          localStorage.removeItem('token');
+          localStorage.removeItem('userId');
+          // ページ全体をリロードしてVuexストアもリセット
+          window.location.href = '/';
+          return;
+        }
+        
+        // ログインリクエストの401エラーはそのまま伝播させて、AuthModalで処理する
+        console.log('[Auth] Login failed, error will be handled by AuthModal');
       }
     } else if (error.request) {
       console.error('[API Error] Network error or no response:', error.request);

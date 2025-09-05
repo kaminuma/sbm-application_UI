@@ -63,6 +63,17 @@ const apiFacade = {
       }
     } catch (error) {
       console.error("Login API Error:", error);
+      // エラーレスポンスの詳細を含めて返す
+      if (error.response) {
+        const errorData = {
+          status: error.response.status,
+          message: error.response.data?.error || error.response.data?.message || "ログインに失敗しました",
+          errorType: error.response.data?.errorType
+        };
+        const errorObj = new Error(errorData.message);
+        errorObj.errorType = errorData.errorType;
+        throw errorObj;
+      }
       throw error;
     }
   },
