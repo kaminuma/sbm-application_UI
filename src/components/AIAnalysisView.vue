@@ -317,11 +317,17 @@ export default {
         const response = await apiFacade.getAIUsage()
         if (response.success) {
           // APIからのレスポンスのフィールド名に合わせる（キャメルケース）
+          const dailyUsed = response.data.dailyUsed || response.data.daily_usage || 0
+          const dailyLimit = response.data.dailyLimit || response.data.daily_limit || 5
+          // remainingUsageがない場合は、limitからusedを引いて計算
+          const remaining = response.data.remainingUsage || response.data.remaining_usage || 
+                           (dailyLimit - dailyUsed)
+          
           this.aiUsageInfo = {
-            dailyUsed: response.data.dailyUsed || response.data.daily_usage || 0,
-            dailyLimit: response.data.dailyLimit || response.data.daily_limit || 5,
-            remainingToday: response.data.remainingUsage || response.data.remaining_usage || 5,
-            canUseToday: (response.data.remainingUsage || response.data.remaining_usage || 5) > 0
+            dailyUsed: dailyUsed,
+            dailyLimit: dailyLimit,
+            remainingToday: remaining,
+            canUseToday: remaining > 0
           }
         }
       } catch (error) {
@@ -376,11 +382,17 @@ export default {
     updateUsageInfo(usageInfo) {
       if (usageInfo) {
         // APIからのレスポンスのフィールド名に合わせる（両方のパターンに対応）
+        const dailyUsed = usageInfo.dailyUsed || usageInfo.daily_usage || 0
+        const dailyLimit = usageInfo.dailyLimit || usageInfo.daily_limit || 5
+        // remainingUsageがない場合は、limitからusedを引いて計算
+        const remaining = usageInfo.remainingUsage || usageInfo.remaining_usage || 
+                         (dailyLimit - dailyUsed)
+        
         this.aiUsageInfo = {
-          dailyUsed: usageInfo.dailyUsed || usageInfo.daily_usage || 0,
-          dailyLimit: usageInfo.dailyLimit || usageInfo.daily_limit || 5,
-          remainingToday: usageInfo.remainingUsage || usageInfo.remaining_usage || 0,
-          canUseToday: (usageInfo.remainingUsage || usageInfo.remaining_usage || 0) > 0
+          dailyUsed: dailyUsed,
+          dailyLimit: dailyLimit,
+          remainingToday: remaining,
+          canUseToday: remaining > 0
         }
       }
     },
