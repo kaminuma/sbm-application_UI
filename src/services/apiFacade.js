@@ -356,6 +356,70 @@ const apiFacade = {
       throw new Error("ユーザー情報の取得に失敗しました。");
     }
   },
+
+  // 汎用リクエストメソッド
+  async request(url, method = 'GET', data = null) {
+    try {
+      const config = {
+        method: method.toUpperCase(),
+        url
+      };
+      
+      if (data) {
+        if (method.toUpperCase() === 'GET') {
+          config.params = data;
+        } else {
+          config.data = data;
+        }
+      }
+      
+      const response = await apiClient(config);
+      
+      // レスポンスの構造を統一
+      return {
+        success: response.status >= 200 && response.status < 300,
+        data: response.data?.data || response.data,
+        error: response.data?.error || null,
+        status: response.status,
+        usage_info: response.data?.usage_info
+      };
+    } catch (error) {
+      console.error(`API Request Error [${method} ${url}]:`, error);
+      
+      // エラーレスポンスも統一形式で返す
+      const errorResponse = {
+        success: false,
+        data: null,
+        error: error.response?.data?.error || error.message || 'リクエストに失敗しました',
+        status: error.response?.status || 0,
+        usage_info: error.response?.data?.usage_info
+      };
+      
+      // 特定のエラーは再スローして上位で適切に処理
+      if (error.response?.status === 429 || error.response?.status === 401) {
+        const enhancedError = new Error(errorResponse.error);
+        enhancedError.response = error.response;
+        throw enhancedError;
+      }
+      
+      return errorResponse;
+    }
+  },
+  
+  // AI分析専用メソッド
+  async getAIUsage() {
+    return this.request('/ai/usage', 'GET');
+  },
+  
+  async generateAIAnalysis(analysisConfig) {
+    return this.request('/ai/analysis', 'POST', {
+      start_date: analysisConfig.startDate,
+      end_date: analysisConfig.endDate,
+      analysis_focus: analysisConfig.analysisFocus,
+      detail_level: analysisConfig.detailLevel,
+      response_style: analysisConfig.responseStyle
+    });
+  }
 };
 
 export default apiFacade;

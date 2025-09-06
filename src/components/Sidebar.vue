@@ -30,6 +30,12 @@
           </router-link>
         </li>
         <li class="sidebar-item">
+          <router-link to="/ai-analysis" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-robot</v-icon>
+            <span>AI分析</span>
+          </router-link>
+        </li>
+        <li class="sidebar-item">
           <router-link to="/settings" @click="$emit('close-sidebar')">
             <v-icon class="sidebar-icon">mdi-cog</v-icon>
             <span>設定</span>
