@@ -281,7 +281,7 @@ export default {
   computed: {
     ...mapGetters(['isAuthenticated']),
     today() {
-      return new Date().toISOString().substr(0, 10)
+      return new Date().toISOString().slice(0, 10)
     },
     canAnalyze() {
       return this.isAuthenticated && 
@@ -307,10 +307,10 @@ export default {
     getDefaultStartDate() {
       const date = new Date()
       date.setDate(date.getDate() - 7) // 1週間前
-      return date.toISOString().substr(0, 10)
+      return date.toISOString().slice(0, 10)
     },
     getDefaultEndDate() {
-      return new Date().toISOString().substr(0, 10)
+      return new Date().toISOString().slice(0, 10)
     },
     async loadAIUsageInfo() {
       this.isLoadingUsage = true
