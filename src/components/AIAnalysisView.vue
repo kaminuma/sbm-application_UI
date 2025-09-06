@@ -131,7 +131,6 @@
           <div v-if="!canAnalyze" class="mt-2 text-caption text-disabled">
             {{ disableReason }}
           </div>
-        
         </v-col>
       </v-row>
 
