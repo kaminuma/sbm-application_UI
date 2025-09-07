@@ -718,7 +718,8 @@ export default {
           }
           
           // ヘッダーにプロフィール画像更新を通知
-          this.$root.$emit('profile-image-updated');
+          // ヘッダーのプロフィール画像を更新するイベントを発行
+          window.dispatchEvent(new CustomEvent('profile-image-updated'));
         } else {
           this.showError(response.error || 'アップロードに失敗しました');
         }
@@ -751,7 +752,8 @@ export default {
           this.showSuccess(response.data.message || 'プロフィール画像を削除しました');
           
           // ヘッダーにプロフィール画像更新を通知
-          this.$root.$emit('profile-image-updated');
+          // ヘッダーのプロフィール画像を更新するイベントを発行
+          window.dispatchEvent(new CustomEvent('profile-image-updated'));
         } else {
           this.showError(response.error || '削除に失敗しました');
         }

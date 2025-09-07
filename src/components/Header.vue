@@ -69,13 +69,18 @@ export default {
   },
   mounted() {
     // プロフィール画像更新イベントをリスン
-    window.addEventListener('profile-image-updated', this.fetchProfileImage);
+    window.addEventListener('profile-image-updated', this.handleProfileImageUpdate);
   },
   beforeUnmount() {
     // イベントリスナーをクリーンアップ
-    window.removeEventListener('profile-image-updated', this.fetchProfileImage);
+    window.removeEventListener('profile-image-updated', this.handleProfileImageUpdate);
   },
   methods: {
+    // プロフィール画像更新イベントのハンドラー
+    handleProfileImageUpdate() {
+      this.fetchProfileImage();
+    },
+
     async fetchProfileImage() {
       try {
         // 認証チェック
