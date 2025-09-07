@@ -135,8 +135,8 @@ export default {
 
     goToSettings() {
       console.log('Profile icon clicked - navigating to settings');
-      // 既存機能への影響を避けるため、シンプルにlocation.hrefを使用
-      window.location.href = '/settings';
+      // Vue Routerを使用してSPA内でのナビゲーション
+      this.$router.push('/settings');
     },
 
     clearProfileData() {
