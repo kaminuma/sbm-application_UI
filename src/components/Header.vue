@@ -92,7 +92,13 @@ export default {
           this.imageKey = Date.now();
           
           if (response.data && response.data.profile_image_url) {
-            await this.loadImageWithAuth(response.data.profile_image_url);
+            if (response.data.is_google_image) {
+              // Google画像は認証なしで直接表示
+              this.imageDataUrl = response.data.profile_image_url;
+            } else {
+              // ローカルアップロード画像は認証付きでfetch
+              await this.loadImageWithAuth(response.data.profile_image_url);
+            }
           } else {
             this.imageDataUrl = null;
           }

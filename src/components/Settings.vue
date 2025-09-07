@@ -631,9 +631,15 @@ export default {
           console.log('Profile image info updated:', this.profileImageInfo);
           this.imageKey = Date.now(); // データ取得時もキャッシュバスティング
           
-          // 画像URLが存在する場合、認証付きでフェッチしてBase64に変換
+          // 画像URLが存在する場合、Google画像か判定して適切に処理
           if (response.data.profile_image_url) {
-            await this.loadImageWithAuth(response.data.profile_image_url);
+            if (response.data.is_google_image) {
+              // Google画像は認証なしで直接表示
+              this.imageDataUrl = response.data.profile_image_url;
+            } else {
+              // ローカルアップロード画像は認証付きでfetch
+              await this.loadImageWithAuth(response.data.profile_image_url);
+            }
           } else {
             this.imageDataUrl = null;
           }
@@ -712,9 +718,15 @@ export default {
           console.log('Profile image updated:', response.data);
           this.showSuccess(response.data.message || 'プロフィール画像をアップロードしました');
           
-          // アップロード成功時は画像を即座に認証付きで読み込み
+          // アップロード成功時は画像を即座に適切に読み込み
           if (response.data.profile_image_url) {
-            await this.loadImageWithAuth(response.data.profile_image_url);
+            if (response.data.is_google_image) {
+              // Google画像は認証なしで直接表示
+              this.imageDataUrl = response.data.profile_image_url;
+            } else {
+              // ローカルアップロード画像は認証付きでfetch
+              await this.loadImageWithAuth(response.data.profile_image_url);
+            }
           }
           
           // ヘッダーにプロフィール画像更新を通知
