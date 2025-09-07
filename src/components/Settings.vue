@@ -8,27 +8,30 @@
       <div class="settings-content">
         <!-- ユーザー情報セクション -->
         <v-card class="settings-card mb-6" elevation="3">
-          <v-card-title class="card-title d-flex align-center justify-space-between py-4">
-            <div class="d-flex align-center">
-            <v-avatar color="primary" size="40" class="mr-4">
-              <v-icon color="white">mdi-account</v-icon>
-            </v-avatar>
-            <div>
-              <h3 class="mb-0">プロフィール</h3>
-              <span class="subtitle">アカウント情報とプロフィール画像</span>
+          <v-card-title class="card-title profile-header py-4">
+            <div class="profile-header-content">
+              <div class="profile-info">
+                <v-avatar color="primary" size="40" class="mr-4">
+                  <v-icon color="white">mdi-account</v-icon>
+                </v-avatar>
+                <div class="profile-text">
+                  <h3 class="mb-0">プロフィール</h3>
+                  <span class="subtitle">アカウント情報とプロフィール画像</span>
+                </div>
+              </div>
+              <!-- ログアウトボタン -->
+              <v-btn
+                @click="confirmLogout"
+                color="white"
+                variant="outlined"
+                size="small"
+                :loading="logoutLoading"
+                prepend-icon="mdi-logout"
+                class="logout-btn"
+              >
+                <span class="logout-text">ログアウト</span>
+              </v-btn>
             </div>
-            </div>
-            <!-- ログアウトボタン -->
-            <v-btn
-              @click="confirmLogout"
-              color="white"
-              variant="outlined"
-              size="small"
-              :loading="logoutLoading"
-              prepend-icon="mdi-logout"
-            >
-              ログアウト
-            </v-btn>
           </v-card-title>
           <v-divider></v-divider>
           <v-card-text class="py-6">
@@ -1177,7 +1180,67 @@ export default {
   }
 }
 
+/* プロフィールヘッダーのレスポンシブスタイル */
+.profile-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
 
+.profile-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0; /* テキストが溢れないように */
+}
+
+.profile-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.logout-btn {
+  flex-shrink: 0;
+}
+
+.logout-text {
+  display: inline;
+}
+
+/* スマホ対応 */
+@media (max-width: 768px) {
+  .profile-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .logout-btn {
+    align-self: stretch;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header-content {
+    gap: 10px;
+  }
+  
+  .logout-btn {
+    font-size: 0.875rem;
+  }
+  
+  .logout-text {
+    display: none; /* 非常に小さい画面ではテキストを隠す */
+  }
+  
+  .logout-btn .v-icon {
+    margin-right: 0 !important;
+  }
+}
 
 /* ダイアログスタイル */
 .modern-dialog {
