@@ -560,7 +560,7 @@ export default {
   
   .analysis-btn {
     width: 100%;
-    padding: 16px !important;
+    padding: 12px !important;
   }
   
   .insight-title {

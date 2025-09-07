@@ -419,6 +419,53 @@ const apiFacade = {
       detail_level: analysisConfig.detailLevel,
       response_style: analysisConfig.responseStyle
     });
+  },
+
+  // プロフィール画像管理専用メソッド
+  /**
+   * プロフィール画像情報を取得
+   */
+  async getProfileImage() {
+    return this.request('/users/profile-image', 'GET');
+  },
+
+  /**
+   * プロフィール画像をアップロード/更新
+   * @param {File} file - アップロードする画像ファイル
+   */
+  async uploadProfileImage(file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await apiClient.post('/users/profile-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      return {
+        success: response.status >= 200 && response.status < 300,
+        data: response.data,
+        error: null,
+        status: response.status
+      };
+    } catch (error) {
+      console.error('Profile image upload error:', error);
+      return {
+        success: false,
+        data: null,
+        error: error.response?.data?.message || error.message || 'アップロードに失敗しました',
+        status: error.response?.status || 0
+      };
+    }
+  },
+
+  /**
+   * プロフィール画像を削除
+   */
+  async deleteProfileImage() {
+    return this.request('/users/profile-image', 'DELETE');
   }
 };
 
