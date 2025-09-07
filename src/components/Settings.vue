@@ -1231,14 +1231,12 @@ export default {
   
   .logout-btn {
     font-size: 0.875rem;
+    padding-left: 12px;
+    padding-right: 12px;
   }
   
   .logout-text {
-    display: none; /* 非常に小さい画面ではテキストを隠す */
-  }
-  
-  .logout-btn .v-icon {
-    margin-right: 0 !important;
+    font-size: 0.8rem; /* テキストサイズを小さく */
   }
 }
 
