@@ -19,14 +19,14 @@
         </div>
         
         <div class="button-group">
-          <h4 class="button-group-title">📊 分析</h4>
+          <h4 class="button-group-title">🤖 AI分析</h4>
           <div class="button-group-content">
             <v-btn
-              color="secondary"
-              @click="showAnalysisToast"
+              color="#9575cd"
+              @click="goToAIAnalysis"
               class="btn-rounded"
             >
-              生活記録分析
+              AI分析
             </v-btn>
           </div>
         </div>
@@ -859,8 +859,8 @@ export default {
       this.showDeleteConfirm = false; // ダイアログを非表示
       this.eventToDelete = null; // 削除対象のイベントをリセット
     },
-    showAnalysisToast() {
-      this.$router.push('/analyze');
+    goToAIAnalysis() {
+      this.$router.push('/ai-analysis');
     },
 
     // 気分記録関連のメソッド

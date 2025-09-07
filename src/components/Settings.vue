@@ -8,17 +8,116 @@
       <div class="settings-content">
         <!-- ユーザー情報セクション -->
         <v-card class="settings-card mb-6" elevation="3">
-          <v-card-title class="card-title d-flex align-center py-4">
+          <v-card-title class="card-title d-flex align-center justify-space-between py-4">
+            <div class="d-flex align-center">
             <v-avatar color="primary" size="40" class="mr-4">
               <v-icon color="white">mdi-account</v-icon>
             </v-avatar>
             <div>
               <h3 class="mb-0">プロフィール</h3>
-              <span class="subtitle">アカウント情報</span>
+              <span class="subtitle">アカウント情報とプロフィール画像</span>
             </div>
+            </div>
+            <!-- ログアウトボタン -->
+            <v-btn
+              @click="confirmLogout"
+              color="white"
+              variant="outlined"
+              size="small"
+              :loading="logoutLoading"
+              prepend-icon="mdi-logout"
+            >
+              ログアウト
+            </v-btn>
           </v-card-title>
           <v-divider></v-divider>
           <v-card-text class="py-6">
+            <!-- プロフィール画像セクション -->
+            <div class="profile-image-section mb-6">
+              <div class="section-title mb-4">
+                <v-icon color="primary" class="mr-2">mdi-image-area</v-icon>
+                <span class="section-label">プロフィール画像</span>
+              </div>
+              
+              <div class="profile-image-container-new">
+                <!-- 画像プレビューとボタンを統合 -->
+                <div class="profile-image-card">
+                  <div class="image-preview-new">
+                    <v-avatar size="80" class="profile-avatar-new">
+                      <img 
+                        v-if="!profileImageInfo?.profile_image_url"
+                        src="/default-avatar.svg"
+                        alt="Default Profile"
+                        class="profile-image"
+                      />
+                      <img 
+                        v-else
+                        :src="imageDataUrl"
+                        :key="imageKey"
+                        alt="Profile"
+                        class="profile-image"
+                        @error="handleImageError"
+                      />
+                    </v-avatar>
+                    <div v-if="profileImageInfo?.is_google_image" class="google-badge-new">
+                      <v-chip size="x-small" color="primary">
+                        <v-icon size="10" class="mr-1">mdi-google</v-icon>
+                        Google
+                      </v-chip>
+                    </div>
+                  </div>
+
+                  <div class="image-actions-new">
+                    <input
+                      ref="fileInput"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      @change="handleFileSelect"
+                      style="display: none"
+                    />
+                    
+                    <div class="action-buttons">
+                      <v-btn
+                        @click="$refs.fileInput.click()"
+                        :loading="uploading"
+                        :disabled="uploading"
+                        color="primary"
+                        variant="outlined"
+                        size="small"
+                        class="action-btn"
+                      >
+                        <v-icon class="mr-1" size="16">mdi-upload</v-icon>
+                        {{ profileImageInfo?.profile_image_url ? '変更' : 'アップロード' }}
+                      </v-btn>
+
+                      <v-btn
+                        v-if="profileImageInfo?.can_delete"
+                        @click="confirmImageDelete"
+                        :loading="deleting"
+                        :disabled="deleting || uploading"
+                        color="error"
+                        variant="text"
+                        size="small"
+                        class="action-btn"
+                      >
+                        <v-icon class="mr-1" size="16">mdi-delete</v-icon>
+                        削除
+                      </v-btn>
+                    </div>
+
+                    <div class="image-info-new">
+                      <v-chip size="x-small" variant="tonal" color="info" class="format-chip">
+                        JPEG, PNG, WebP (最大5MB)
+                      </v-chip>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <v-divider class="my-6"></v-divider>
+
+            <!-- ユーザー情報 -->
             <div class="info-container">
               <div class="info-section">
                 <div class="info-icon-wrapper">
@@ -149,6 +248,7 @@
           </v-card-actions>
         </v-card>
 
+
         <!-- アカウント管理セクション -->
         <v-card class="settings-card danger-zone" elevation="3">
           <v-card-title class="card-title danger-title d-flex align-center py-4">
@@ -198,6 +298,77 @@
         </v-card>
       </div>
     </div>
+
+    <!-- 画像削除確認ダイアログ -->
+    <v-dialog v-model="imageDeleteDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6">
+          プロフィール画像の削除
+        </v-card-title>
+        <v-card-text>
+          <div v-if="profileImageInfo?.is_google_image">
+            Googleアカウントの画像を削除しますか？
+            <br>
+            再ログイン時に復元される可能性があります。
+          </div>
+          <div v-else>
+            プロフィール画像を削除してもよろしいですか？
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey"
+            variant="text"
+            @click="imageDeleteDialog = false"
+          >
+            キャンセル
+          </v-btn>
+          <v-btn
+            color="error"
+            variant="text"
+            @click="deleteProfileImage"
+          >
+            削除
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- ログアウト確認ダイアログ -->
+    <v-dialog v-model="logoutDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6 d-flex align-center">
+          <v-icon color="warning" class="mr-2">mdi-logout</v-icon>
+          ログアウト確認
+        </v-card-title>
+        <v-card-text>
+          <div class="text-body-1">
+            ログアウトしてもよろしいですか？
+            <br>
+            再度ログインするには認証情報の入力が必要です。
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey"
+            variant="text"
+            @click="logoutDialog = false"
+          >
+            キャンセル
+          </v-btn>
+          <v-btn
+            color="warning"
+            variant="text"
+            @click="executeLogout"
+            :loading="logoutLoading"
+          >
+            ログアウト
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <!-- 退会確認ダイアログ -->
     <v-dialog v-model="withdrawDialog" max-width="600px" persistent>
@@ -376,12 +547,24 @@ export default {
       email: "",
       isOAuthUser: false,
       
+      // プロフィール画像
+      profileImageInfo: null,
+      uploading: false,
+      deleting: false,
+      imageDeleteDialog: false,
+      imageKey: Date.now(), // 画像キャッシュバスティング用
+      imageDataUrl: null, // Base64エンコードされた画像データ
+      
       // パスワード変更
       currentPassword: "",
       newPassword: "",
       confirmNewPassword: "",
       passwordValid: false,
       passwordLoading: false,
+      
+      // ログアウト処理
+      logoutDialog: false,
+      logoutLoading: false,
       
       // 退会処理
       withdrawDialog: false,
@@ -411,6 +594,7 @@ export default {
   },
   mounted() {
     this.loadUserInfo();
+    this.fetchProfileImage();
   },
   methods: {
     async loadUserInfo() {
@@ -434,6 +618,169 @@ export default {
         this.isOAuthUser = false;
       }
     },
+
+    // プロフィール画像関連メソッド
+    async fetchProfileImage() {
+      try {
+        console.log('Fetching profile image...');
+        const response = await apiFacade.getProfileImage();
+        console.log('Profile image response:', response);
+        
+        if (response.success) {
+          this.profileImageInfo = response.data;
+          console.log('Profile image info updated:', this.profileImageInfo);
+          this.imageKey = Date.now(); // データ取得時もキャッシュバスティング
+          
+          // 画像URLが存在する場合、認証付きでフェッチしてBase64に変換
+          if (response.data.profile_image_url) {
+            await this.loadImageWithAuth(response.data.profile_image_url);
+          } else {
+            this.imageDataUrl = null;
+          }
+        } else {
+          console.error('Failed to fetch profile image:', response.error);
+        }
+      } catch (error) {
+        console.error('Failed to fetch profile image:', error);
+      }
+    },
+
+    // 認証付きで画像を読み込んでBase64に変換
+    async loadImageWithAuth(imageUrl) {
+      try {
+        console.log('Loading image with auth:', imageUrl);
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No auth token found');
+          return;
+        }
+
+        const response = await fetch(imageUrl, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const reader = new FileReader();
+          
+          reader.onload = (e) => {
+            this.imageDataUrl = e.target.result;
+            console.log('Image loaded and converted to data URL');
+          };
+          
+          reader.readAsDataURL(blob);
+        } else {
+          console.error('Failed to fetch image:', response.status, response.statusText);
+          this.imageDataUrl = null;
+        }
+      } catch (error) {
+        console.error('Error loading image with auth:', error);
+        this.imageDataUrl = null;
+      }
+    },
+
+    handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // クライアント側バリデーション
+      if (file.size > 5 * 1024 * 1024) {
+        this.showError('ファイルサイズは5MB以下にしてください');
+        return;
+      }
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        this.showError('対応していないファイル形式です。JPEG、PNG、WebPのみ対応しています');
+        return;
+      }
+
+      this.uploadProfileImage(file);
+    },
+
+    async uploadProfileImage(file) {
+      this.uploading = true;
+      try {
+        const response = await apiFacade.uploadProfileImage(file);
+        
+        if (response.success) {
+          this.profileImageInfo = response.data;
+          this.imageKey = Date.now(); // キャッシュバスティングで画像を強制更新
+          console.log('Profile image updated:', response.data);
+          this.showSuccess(response.data.message || 'プロフィール画像をアップロードしました');
+          
+          // アップロード成功時は画像を即座に認証付きで読み込み
+          if (response.data.profile_image_url) {
+            await this.loadImageWithAuth(response.data.profile_image_url);
+          }
+          
+          // ヘッダーにプロフィール画像更新を通知
+          this.$root.$emit('profile-image-updated');
+        } else {
+          this.showError(response.error || 'アップロードに失敗しました');
+        }
+      } catch (error) {
+        console.error('Upload failed:', error);
+        this.showError('アップロードに失敗しました');
+      } finally {
+        this.uploading = false;
+        // ファイル入力をクリア
+        this.$refs.fileInput.value = '';
+      }
+    },
+
+    confirmImageDelete() {
+      this.imageDeleteDialog = true;
+    },
+
+    async deleteProfileImage() {
+      this.imageDeleteDialog = false;
+      this.deleting = true;
+      
+      try {
+        const response = await apiFacade.deleteProfileImage();
+        
+        if (response.success) {
+          this.profileImageInfo = response.data;
+          this.imageKey = Date.now(); // キャッシュバスティングで画像を強制更新
+          this.imageDataUrl = null; // 削除時は画像データURLをクリア
+          console.log('Profile image deleted:', response.data);
+          this.showSuccess(response.data.message || 'プロフィール画像を削除しました');
+          
+          // ヘッダーにプロフィール画像更新を通知
+          this.$root.$emit('profile-image-updated');
+        } else {
+          this.showError(response.error || '削除に失敗しました');
+        }
+      } catch (error) {
+        console.error('Delete failed:', error);
+        this.showError('削除に失敗しました');
+      } finally {
+        this.deleting = false;
+      }
+    },
+
+    handleImageError(event) {
+      console.error('Image load error:', event);
+      console.error('Failed to load image URL:', event.target.src);
+      console.error('imageDataUrl value:', this.imageDataUrl);
+      console.error('profileImageInfo:', this.profileImageInfo);
+      event.target.src = '/default-avatar.svg';
+    },
+
+    showSuccess(message) {
+      this.successMessage = message;
+      this.successSnackbar = true;
+    },
+
+    showError(message) {
+      this.errorMessage = message;
+      this.errorSnackbar = true;
+    },
+
     
     async changePassword() {
       if (!this.$refs.passwordForm.validate()) {
@@ -467,6 +814,33 @@ export default {
       }
     },
     
+    // ログアウト関連メソッド
+    confirmLogout() {
+      this.logoutDialog = true;
+    },
+    
+    async executeLogout() {
+      this.logoutLoading = true;
+      try {
+        // Vuexのlogoutアクションを呼び出し
+        await this.$store.dispatch('logout');
+        
+        this.logoutDialog = false;
+        this.showSuccess('ログアウトしました');
+        
+        // 少し遅延してからリダイレクト
+        setTimeout(() => {
+          this.$router.push('/');
+        }, 1000);
+        
+      } catch (error) {
+        console.error('ログアウトエラー:', error);
+        this.showError('ログアウト処理に失敗しました');
+      } finally {
+        this.logoutLoading = false;
+      }
+    },
+    
     openWithdrawDialog() {
       this.withdrawDialog = true;
       this.confirmText = "";
@@ -490,7 +864,7 @@ export default {
       
       this.withdrawLoading = true;
       try {
-        const response = await apiFacade.withdrawAccount();
+        await apiFacade.withdrawAccount();
         
         // ダイアログを閉じる
         this.closeWithdrawDialog();
@@ -651,6 +1025,142 @@ export default {
   font-size: 1.1rem;
   font-weight: 600;
   color: #333;
+}
+
+/* プロフィール画像セクションのスタイル */
+.profile-image-section {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #333;
+}
+
+.section-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.profile-image-container-new {
+  width: 100%;
+}
+
+.profile-image-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 191, 165, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-image-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 191, 165, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview-new {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-avatar-new {
+  border: 3px solid rgba(var(--v-theme-primary), 0.1);
+  transition: border-color 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar-new:hover {
+  border-color: rgba(var(--v-theme-primary), 0.3);
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.google-badge-new {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+}
+
+.image-actions-new {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.image-info-new {
+  margin-top: 8px;
+}
+
+.format-chip {
+  font-size: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .profile-image-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .image-actions-new {
+    width: 100%;
+    align-items: center;
+  }
+
+  .action-buttons {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .action-btn {
+    min-width: 100px;
+  }
+
+  .profile-avatar-new {
+    width: 70px !important;
+    height: 70px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-btn {
+    width: 100%;
+    min-width: auto;
+  }
 }
 
 
