@@ -23,6 +23,7 @@
     "vue-cal": "^5.0.1-rc.25",
     "vue-chartjs": "^5.3.2",
     "vue-echarts": "^7.0.3",
+    "vue-i18n": "^9.14.5",
     "vue-router": "^4.5.1",
     "vuetify": "^3.9.2",
     "vuex": "^4.0.2",
