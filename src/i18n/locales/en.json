@@ -1,0 +1,14 @@
+{
+    "common": {
+      "buttons": { "save": "Save", "cancel": "Cancel" },
+      "messages": { "success": "Successfully processed", "loading": "Loading..." }
+    },
+    "auth": {
+      "login": { "title": "Login", "email": "Email Address" }
+    },
+    "navigation": {
+      "home": "Home",
+      "schedule": "Schedule",
+      "settings": "Settings"
+    }
+  }
