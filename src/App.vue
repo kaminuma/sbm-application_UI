@@ -27,19 +27,6 @@
       </template>
     </v-snackbar>
     
-    <!-- デバッグ用リセットボタン（常時表示） -->
-    <v-btn
-      color="warning"
-      fixed
-      right
-      bottom
-      icon
-      style="bottom: 16px; right: 16px; z-index: 9999;"
-      @click="resetAuthAndRedirect"
-      title="認証状態をリセットしてランディングページに移動"
-    >
-      <v-icon>mdi-refresh</v-icon>
-    </v-btn>
     
     <!-- ランディングページ以外の場合のみヘッダーとサイドバーを表示 -->
     <template v-if="!isLandingPage">

@@ -6,6 +6,9 @@ import AnalyzeView from "../components/AnalyzeView.vue";
 import MoodView from "../components/MoodView.vue";
 import TermsOfService from "../components/TermsOfService.vue";
 import PrivacyPolicy from "../components/PrivacyPolicy.vue";
+import PasswordChange from "../components/PasswordChange.vue";
+import Settings from "../components/Settings.vue";
+import LoginCallback from "../components/LoginCallback.vue";
 
 const routes = [
   {
@@ -33,6 +36,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: "/ai-analysis",
+    name: "AIAnalysisView",
+    component: () => import("../components/AIAnalysisView.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
     path: "/",
     name: "LandingPage",
     component: () => import("../components/LandingPage.vue"),
@@ -47,6 +56,23 @@ const routes = [
     path: "/privacy",
     name: "PrivacyPolicy",
     component: PrivacyPolicy
+  },
+  {
+    path: "/password-change",
+    name: "PasswordChange",
+    component: PasswordChange,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/settings",
+    name: "Settings",
+    component: Settings,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/login/callback",
+    name: "LoginCallback",
+    component: LoginCallback
   },
 ];
 

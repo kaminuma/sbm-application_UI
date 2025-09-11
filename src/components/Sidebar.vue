@@ -12,10 +12,33 @@
           </router-link>
         </li>
         <li class="sidebar-item">
+          <router-link to="/mood" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-emoticon-happy</v-icon>
+            <span>気分記録</span>
+          </router-link>
+        </li>
+        <li class="sidebar-item">
+          <router-link to="/ai-analysis" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-robot</v-icon>
+            <span>AI分析</span>
+          </router-link>
+        </li>
+        <li class="sidebar-item">
           <router-link to="/upload" @click="$emit('close-sidebar')">
             <v-icon class="sidebar-icon">mdi-upload</v-icon>
             <span>一括アップロード</span>
           </router-link>
+        </li>
+        <li class="sidebar-item">
+          <router-link to="/settings" @click="$emit('close-sidebar')">
+            <v-icon class="sidebar-icon">mdi-cog</v-icon>
+            <span>設定</span>
+          </router-link>
+        </li>
+        
+        <!-- おまけ機能セクション -->
+        <li class="sidebar-divider">
+          <span class="divider-text">おまけ機能</span>
         </li>
         <li class="sidebar-item">
           <router-link to="/analyze" @click="$emit('close-sidebar')">
@@ -23,13 +46,6 @@
             <span>生活記録分析</span>
           </router-link>
         </li>
-        <li class="sidebar-item">
-          <router-link to="/mood" @click="$emit('close-sidebar')">
-            <v-icon class="sidebar-icon">mdi-emoticon-happy</v-icon>
-            <span>気分記録</span>
-          </router-link>
-        </li>
-        <!-- 他のメニュー項目を追加 -->
       </ul>
     </div>
   </transition>
@@ -102,6 +118,20 @@ export default {
 
 .sidebar-item:hover {
   background-color: #f0f4f8;
+}
+
+.sidebar-divider {
+  padding: 12px 20px 8px 20px;
+  margin-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.divider-text {
+  color: #999;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 @media (max-width: 600px) {
