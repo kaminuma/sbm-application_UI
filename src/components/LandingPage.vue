@@ -8,11 +8,11 @@
           <v-col cols="12" md="10" lg="8" class="text-center">
             <h1 class="hero-title">SBM<span class="highlight">アプリ</span></h1>
             <p class="hero-subtitle">
-              生活記録と分析で、より良い毎日を
+              生活記録・日記アプリで、より良い毎日を
             </p>
             <p class="hero-description">
-              日々の活動、気分、スケジュールを簡単に記録し、
-              データ分析で健康と生産性の向上をサポートします。
+              毎日の記録を簡単に。日々の活動、気分、スケジュールをデジタル日記、生活記録表として記録し、
+              データ分析で健康管理、メンタルヘルス、習慣化をサポートします。
             </p>
             <div class="hero-actions">
               <v-btn
@@ -40,6 +40,22 @@
                 </span>
               </v-btn>
             </div>
+
+            <!-- Googleログインボタン -->
+            <div class="google-section">
+              <button
+                @click="handleGoogleLogin"
+                class="google-login-btn"
+              >
+                <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                <span class="google-text">Googleでログイン</span>
+              </button>
+            </div>
           </v-col>
         </v-row>
       </v-container>
@@ -52,7 +68,7 @@
           <v-col cols="12" class="text-center">
             <h2 class="features-title">主な機能</h2>
             <p class="features-subtitle">
-              SBMアプリで実現できることをご紹介します
+              生活記録アプリ・生活記録表アプリとして実現できることをご紹介します
             </p>
           </v-col>
         </v-row>
@@ -91,18 +107,17 @@
             <div class="text-content">
               <h2 class="section-title">より良い生活習慣のために</h2>
               <p class="section-description">
-                SBMアプリは生活記録を視覚化し、あなたの健康的な生活習慣を
-                サポートします。日々のデータから得られる洞察で、
+                SBMアプリは生活記録・日常記録を視覚化し、あなたの健康的な生活習慣をサポートします。毎日の記録、行動記録から得られる洞察で、
                 より良いセルフマネジメントを実現しましょう。
               </p>
               <div class="feature-points">
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>シンプルな操作で簡単記録</span>
+                  <span>シンプルな操作で毎日の記録を簡単に</span>
                 </div>
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>データに基づく生活改善</span>
+                  <span>データに基づく生活改善・メンタルヘルス管理</span>
                 </div>
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
@@ -114,7 +129,7 @@
           <v-col cols="12" md="6" order="1" order-md="2">
                 <v-img
                   src="/images/image.png"
-                  alt="生活記録 生活管理 健康管理 記録アプリ 日記 スケジュール管理 分析 グラフ カレンダー"
+                  alt="生活記録アプリ 日記アプリ 毎日の記録 日常記録 デジタル日記 行動記録 習慣化 習慣記録 健康管理 スケジュール管理 分析 グラフ カレンダー"
                   class="second-demo-image"
                 ></v-img>
           </v-col>
@@ -127,9 +142,10 @@
       <v-container>
         <v-row justify="center">
           <v-col cols="12" md="8" class="text-center">
-            <h2 class="cta-title">今すぐ始めましょう</h2>
+            <h2 class="cta-title">今すぐ生活記録を始めましょう</h2>
             <p class="cta-description">
-              無料でアカウントを作成して、より良い生活習慣を築きませんか？
+              無料でアカウントを作成して<br>
+              日記アプリでより良い生活習慣を築きませんか？
             </p>
             <v-btn
               color="primary"
@@ -155,8 +171,8 @@
             <div class="mb-4">
               <router-link to="/terms" class="footer-link">利用規約</router-link>
               <router-link to="/privacy" class="footer-link">プライバシーポリシー</router-link>
-              <a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener" class="footer-link">
-                <v-icon size="18" class="mr-1">mdi-twitter</v-icon>お問い合わせ
+              <a href="mailto:kaminuma.dev@gmail.com" class="footer-link">
+                <v-icon size="18" class="mr-1">mdi-email</v-icon>お問い合わせ
               </a>
             </div>
             <p class="footer-copyright">
@@ -205,6 +221,11 @@ export default {
           description: '毎日の気分を簡単に登録し、過去の傾向を振り返りやすくする機能です。'
         },
         {
+          icon: 'mdi-heart-pulse',
+          title: 'メンタルヘルスサポート',
+          description: '生活記録表としても活用可能。メンタル不調時の生活リズムの管理や復職準備にも対応。'
+        },
+        {
           icon: 'mdi-bell-outline',
           title: 'リマインダー',
           description: '重要なタスクや記録の入力を忘れないよう、リマインダーを設定できます。'
@@ -243,6 +264,10 @@ export default {
     },
     onModalClose() {
       this.showModal = false;
+    },
+    handleGoogleLogin() {
+      const oauthBaseUrl = import.meta.env.VITE_OAUTH2_BASE_URL;
+      window.location.href = `${oauthBaseUrl}/oauth2/authorization/google`;
     }
   }
 }
@@ -770,5 +795,82 @@ export default {
 /* Utility classes */
 .h-100 {
   height: 100%;
+}
+
+/* Googleログインセクション */
+.google-section {
+  margin-top: 24px;
+  width: 100%;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Googleログインボタン */
+.google-login-btn {
+  width: 100%;
+  min-width: 180px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #3c4043;
+  text-decoration: none;
+  padding: 0 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.3px;
+}
+
+.google-login-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.google-login-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.google-login-btn:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1), 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.google-icon {
+  margin-right: 12px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+.google-text {
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 600px) {
+  .google-section {
+    margin-top: 24px;
+    max-width: 100%;
+    padding: 0 20px;
+  }
+  
+  .google-login-btn {
+    height: 48px;
+    font-size: 14px;
+  }
 }
 </style>

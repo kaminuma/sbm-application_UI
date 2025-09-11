@@ -1,0 +1,71 @@
+name: Build and Deploy UI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-ui:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      # 1. リポジトリをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Node.jsのセットアップ
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      # 3. 環境変数を設定
+      - name: Configure environment variables
+        run: |
+          # 既存の値を置き換える
+          sed -i "s|^VITE_API_BASE_URL=.*|VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}|" .env
+          sed -i "s|^VITE_BASE_URL=.*|VITE_BASE_URL=${{ secrets.BASE_URL }}|" .env
+          sed -i "s|^VITE_OAUTH2_BASE_URL=.*|VITE_OAUTH2_BASE_URL=${{ secrets.OAUTH2_BASE_URL }}|" .env
+
+      # 4. 依存関係のインストール
+      - name: Install dependencies
+        run: npm ci
+
+      # 5. ビルド
+      - name: Build UI
+        run: npm run build
+
+      # 6. 成果物をEC2にデプロイ
+      - name: Deploy to EC2
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: '-avz --delete --rsync-path="sudo rsync"'
+          path: ./dist/ # ローカルの成果物パス
+          remote_path: /srv/sbm/ui/ # EC2のデプロイ先ディレクトリ
+          remote_host: ${{ secrets.HOST }}
+          remote_user: ${{ secrets.USER }}
+          remote_key: ${{ secrets.SECRET_KEY }}
+
+      # 7. サーバーを再起動（Nginxリロード）
+      - name: Restart Nginx
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SECRET_KEY }}
+          script: |
+            sudo nginx -t
+            sudo systemctl reload nginx
+
+      # 権限を戻す
+      - name: Reset permissions
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SECRET_KEY }}
+          script: |
+            sudo chmod -R 755 /srv/sbm/ui
+            sudo chown -R ${{ secrets.USER }}:${{ secrets.USER }} /srv/sbm/ui

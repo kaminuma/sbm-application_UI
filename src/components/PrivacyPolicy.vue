@@ -4,110 +4,81 @@
       <v-row justify="center">
         <v-col cols="12" md="10" lg="8">
           <h1 class="privacy-title">プライバシーポリシー</h1>
-          <div class="privacy-updated-date">最終更新日: 2025年7月22日</div>
+          <div class="privacy-updated-date">最終更新日: 2025年8月30日</div>
           
           <div class="privacy-section">
             <p class="mb-5">
-              SBM application（以下「当アプリ」といいます）は、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます）を定めます。
+              SBM Application（以下「当アプリ」といいます）は、ユーザーの個人情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます）を定めます。本ポリシーは、Google Play Store のデータ安全性要件に準拠し、ユーザーの皆様に透明性の高い情報を提供します。
             </p>
             
-            <h2 class="privacy-section-title">1. 個人情報の取得方法</h2>
-            <p>
-              当アプリは、以下の方法により個人情報を取得します：
-            </p>
+            <h2 class="privacy-section-title">1. 収集するデータの種類</h2>
+            <p>当アプリは、以下のデータを収集します：</p>
+            
+            <h3 class="privacy-subsection-title">個人情報</h3>
             <ul class="privacy-list">
-              <li>ユーザー登録時に入力いただく情報（メールアドレス、パスワードなど）</li>
-              <li>当アプリの利用履歴、アクセスログなど利用時に自動的に取得される情報</li>
-              <li>お問い合わせやサポート依頼時に提供される情報</li>
-              <li>ユーザーが当アプリに登録・保存する生活記録やその他のデータ</li>
+              <li><strong>メールアドレス</strong>: アカウント認証とログインのために使用</li>
+              <li><strong>ユーザー名</strong>: アプリ内での表示のために使用</li>
+              <li><strong>パスワード</strong>: アカウント認証のために使用（ハッシュ化して安全に保存）</li>
+            </ul>
+
+            <h3 class="privacy-subsection-title">活動・ムード情報</h3>
+            <ul class="privacy-list">
+              <li><strong>活動記録</strong>: あなたの時間管理とAI分析のために使用</li>
+              <li><strong>ムード記録</strong>: あなたの感情管理とAI分析のために使用</li>
+            </ul>
+
+            <h3 class="privacy-subsection-title">アプリ設定</h3>
+            <ul class="privacy-list">
+              <li><strong>AI分析設定</strong>: あなたの好みに合わせてAI分析をカスタマイズ</li>
+            </ul>
+
+            <h2 class="privacy-section-title">2. データの共有</h2>
+            
+            <p>あなたのデータは以下の目的でのみ共有します：</p>
+            
+            <ul class="privacy-list">
+              <li><strong>アプリ機能の提供</strong>: ログイン、データ保存、AI分析機能</li>
+              <li><strong>広告表示</strong>: Google AdMobでバナー広告を表示（個人データは送信しません）</li>
+              <li><strong>AI分析</strong>: あなたの活動データを匿名化してAI分析に使用</li>
             </ul>
             
-            <h2 class="privacy-section-title">2. 取得する個人情報の項目</h2>
-            <p>
-              当アプリが取得する個人情報の項目は、以下のとおりです：
-            </p>
+            <p><strong>重要</strong>: 個人データを第三者に販売することはありません。</p>
+
+            <h2 class="privacy-section-title">3. データの安全性</h2>
+            
             <ul class="privacy-list">
-              <li>メールアドレス</li>
-              <li>パスワード（ハッシュ化して保存）</li>
-              <li>ユーザーが当アプリに登録する生活記録データ</li>
-              <li>IPアドレス、ブラウザの種類、利用環境などの技術的情報</li>
-              <li>当アプリの利用履歴やアクセス記録</li>
-              <li>ユーザーが任意で提供するプロフィール情報</li>
+              <li>認証情報は暗号化してデバイスに安全に保存</li>
+              <li>サーバーとの通信はすべてHTTPSで暗号化</li>
+              <li>アプリは必要最小限の権限のみ使用</li>
             </ul>
+
+            <h2 class="privacy-section-title">4. データの削除</h2>
             
-            <h2 class="privacy-section-title">3. 個人情報を利用する目的</h2>
-            <p>
-              当アプリは、取得した個人情報を以下の目的のために利用します：
-            </p>
             <ul class="privacy-list">
-              <li>当アプリのサービス提供および機能の実現</li>
-              <li>ユーザー認証およびアカウント管理</li>
-              <li>当アプリの品質向上、新機能開発、サービス改善</li>
-              <li>ユーザーサポートおよび問い合わせ対応</li>
-              <li>利用状況の分析および統計情報の作成（個人を識別できない形式で行います）</li>
-              <li>不正アクセスや不正利用防止のためのセキュリティ対策</li>
-              <li>当アプリに関するお知らせや新機能の案内</li>
+              <li>アプリ内設定からいつでもアカウントを完全削除できます</li>
+              <li>個別の活動・ムード記録も削除可能です</li>
+              <li>アプリをアンインストールするとローカルデータは全て削除されます</li>
             </ul>
+
+            <h2 class="privacy-section-title">5. あなたの権利</h2>
             
-            <h2 class="privacy-section-title">4. 個人情報の第三者提供</h2>
-            <p>
-              当アプリは、以下の場合を除き、ユーザーの同意なく個人情報を第三者に提供することはありません：
-            </p>
             <ul class="privacy-list">
-              <li>法令に基づく場合</li>
-              <li>人の生命、身体または財産の保護のために必要がある場合であって、本人の同意を得ることが困難である場合</li>
-              <li>公衆衛生の向上または児童の健全な育成の推進のために特に必要がある場合であって、本人の同意を得ることが困難である場合</li>
-              <li>国の機関もしくは地方公共団体またはその委託を受けた者が法令の定める事務を遂行することに対して協力する必要がある場合であって、本人の同意を得ることにより当該事務の遂行に支障を及ぼすおそれがある場合</li>
+              <li>保存されているデータの確認</li>
+              <li>不正確なデータの修正</li>
+              <li>データの削除要求</li>
+              <li>データ処理の停止要求</li>
             </ul>
+
+            <h2 class="privacy-section-title">6. 広告のオプトアウト</h2>
             
-            <h2 class="privacy-section-title">5. 個人情報の開示、訂正、追加、削除等</h2>
-            <p>
-              当アプリは、ユーザーから自己の個人情報についての開示、訂正、追加、削除等の請求があった場合、本人確認を行った上で、合理的な範囲内で速やかに対応いたします。以下の連絡先までご連絡ください。
-            </p>
-            <p>
-              Twitter：<a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener">@kaminuma_dev</a>
-            </p>
+            <p>個人化広告を望まない場合、Android設定から「広告の個人設定」でオプトアウトできます。</p>
+
+            <h2 class="privacy-section-title">7. お問い合わせ</h2>
             
-            <h2 class="privacy-section-title">6. 自動データ収集技術の使用</h2>
-            <p>
-              当アプリは、サービスの機能向上や利便性向上のため、以下のような自動データ収集技術を使用することがあります：
-            </p>
-            <ul class="privacy-list">
-              <li>クッキー（Cookie）：ユーザー設定やログイン状態を保持するため</li>
-              <li>ローカルストレージ：アプリのパフォーマンス向上や機能提供のため</li>
-              <li>アクセス解析ツール：サービス改善のためのアクセス情報収集</li>
-            </ul>
-            <p>
-              ユーザーは、ブラウザの設定によりクッキーの受け入れを拒否することができますが、その場合、当アプリの一部機能が利用できなくなる可能性があります。
-            </p>
-            
-            <h2 class="privacy-section-title">7. データセキュリティ</h2>
-            <p>
-              当アプリは、個人情報の紛失、盗用、不正アクセス、漏洩、改ざん、破壊から保護するために、適切なセキュリティ対策を講じます。しかしながら、インターネットやデータベースの技術の特性上、完全なセキュリティを保証することはできません。
-            </p>
-            
-            <h2 class="privacy-section-title">8. データの保持期間</h2>
-            <p>
-              当アプリは、法令に定められた保管期間または当アプリのサービス提供に必要な期間、個人情報を保持します。不要となった個人情報は、合理的な期間内に削除または匿名化します。ただし、ユーザーがアカウントを削除した場合でも、バックアップやシステムログなどの一部データは技術的な理由で一定期間保持される場合があります。
-            </p>
-            
-            <h2 class="privacy-section-title">9. 未成年者のプライバシー</h2>
-            <p>
-              当アプリは、16歳未満の方による利用を想定していません。16歳未満の方が個人情報を提供する場合は、保護者の同意を得た上で行ってください。16歳未満のユーザーから同意なく個人情報が提供されていると判明した場合、当アプリはそのデータを削除するための措置を講じます。
-            </p>
-            
-            <h2 class="privacy-section-title">10. プライバシーポリシーの変更</h2>
-            <p>
-              当アプリは、必要に応じて本ポリシーを変更することがあります。変更後のプライバシーポリシーは、当アプリ上に掲載した時点から効力を生じるものとします。重要な変更がある場合は、アプリ内の通知または当アプリの公式SNSアカウントでの告知により、変更内容を通知いたします。
-            </p>
-            
-            <h2 class="privacy-section-title">11. お問い合わせ先</h2>
-            <p>
-              本ポリシーに関するご質問やご意見、個人情報の取扱いに関するお問い合わせは、以下の連絡先までご連絡ください。
-            </p>
+            <p>プライバシーに関するご質問やご要望がございましたら、以下までご連絡ください。</p>
             <p class="mb-5">
-              SBM application 運営<br>
-              Twitter：<a href="https://x.com/kaminuma_dev" target="_blank" rel="noopener">@kaminuma_dev</a>
+              <strong>SBM Application 運営</strong><br>
+              メール：<a href="mailto:kaminuma.dev@gmail.com">kaminuma.dev@gmail.com</a>
             </p>
           </div>
           
@@ -151,6 +122,7 @@ export default {
   color: #718096;
   text-align: center;
   margin-bottom: 3rem;
+  font-weight: 600;
 }
 
 .privacy-section {
@@ -170,13 +142,21 @@ export default {
   border-bottom: 2px solid #e2e8f0;
 }
 
+.privacy-subsection-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-top: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
 .privacy-list {
   padding-left: 2rem;
   margin-bottom: 1.5rem;
 }
 
 .privacy-list li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   line-height: 1.6;
 }
 
@@ -189,5 +169,19 @@ p {
 .back-button {
   min-width: 200px;
   font-weight: 600;
+}
+
+a {
+  color: #3182ce;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #2c5aa0;
+}
+
+strong {
+  font-weight: 600;
+  color: #2d3748;
 }
 </style>

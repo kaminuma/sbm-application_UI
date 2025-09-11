@@ -4,6 +4,7 @@
     max-width="520px"
     persistent
     :content-class="'auth-modal-dialog'"
+    @click:outside="handleOutsideClick"
   >
     <v-card class="auth-card">
       <v-card-title class="text-center pa-6">
@@ -88,12 +89,17 @@
         <!-- エラーメッセージ表示エリア -->
         <v-alert
           v-if="errorMessage"
-          type="error"
+          :type="errorType === 'ACCOUNT_LOCKED' ? 'warning' : 'error'"
           class="mt-4"
           variant="tonal"
           closable
+          @click:close="clearError"
         >
-          {{ errorMessage }}
+          <div class="error-message">
+            <template v-for="(line, index) in errorMessageLines" :key="index">
+              {{ line }}<br v-if="index < errorMessageLines.length - 1">
+            </template>
+          </div>
         </v-alert>
       </v-card-text>
 
@@ -114,6 +120,7 @@
           <v-icon right class="ml-2">{{ isLogin ? 'mdi-login' : 'mdi-account-plus' }}</v-icon>
         </v-btn>
       </v-card-actions>
+
 
       <v-card-text class="text-center pt-0 pb-6">
         <!-- モード切替リンク -->
@@ -159,6 +166,7 @@ export default {
       valid: false,
       loading: false,
       errorMessage: "",
+      errorType: null, // エラータイプを追加
       showDialog: this.modelValue,
       
       // バリデーションルール
@@ -178,7 +186,7 @@ export default {
           );
         },
         passwordMin: (value) =>
-          (value && value.length >= 6) || "6文字以上で入力してください",
+          (value && value.length >= 8) || "8文字以上で入力してください",
         passwordSpecial: (value) => {
           // 英字・数字・特殊文字を含むパスワードのバリデーション
           // 実際のセキュリティ要件に応じて調整
@@ -209,6 +217,14 @@ export default {
       }
     }
   },
+  computed: {
+    // エラーメッセージを改行で分割して安全に表示
+    errorMessageLines() {
+      if (!this.errorMessage) return [];
+      // 改行で分割して配列として返す（XSS対策）
+      return this.errorMessage.split('\n');
+    }
+  },
   methods: {
     ...mapActions(["login", "register"]),
     
@@ -217,6 +233,7 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true;
         this.errorMessage = "";
+        this.errorType = null;
         
         try {
           let isRegistration = !this.isLogin; // 登録モードかどうかを保存
@@ -233,13 +250,25 @@ export default {
             this.$router.push('/');
           }
           
-          // 成功した場合
-          this.$emit('success', { isLogin: this.isLogin });
-          this.close();
+          // 共通の成功処理
+          this.handleSuccess();
         } catch (error) {
           console.error("認証エラー:", error);
-          this.errorMessage = error.response?.data?.message || 
-            (this.isLogin ? "ログインに失敗しました" : "登録に失敗しました");
+          
+          // エラーメッセージとタイプを設定
+          if (error.message && error.errorType) {
+            // apiFacadeから返されたエラーオブジェクト
+            this.errorMessage = error.message;
+            this.errorType = error.errorType;
+          } else {
+            // その他のエラー
+            this.errorMessage = error.response?.data?.message || 
+              (this.isLogin ? "ログインに失敗しました" : "登録に失敗しました");
+            this.errorType = null;
+          }
+          
+          // エラー時はモーダルを閉じない
+          // パスワードもクリアしない（ユーザーが修正しやすいように）
         } finally {
           this.loading = false;
         }
@@ -265,7 +294,6 @@ export default {
         this.email,
         this.password
       );
-      console.log('AuthModal - 登録結果:', response);
       
       if (response && response.userId) {
         // ユーザーIDが返された場合は自動ログイン
@@ -291,6 +319,7 @@ export default {
     toggleAuthMode() {
       this.isLogin = !this.isLogin;
       this.errorMessage = "";
+      this.errorType = null;
       
       // フォームをリセット
       if (this.$refs.form) {
@@ -298,10 +327,33 @@ export default {
       }
     },
     
+    // 成功処理の共通化
+    handleSuccess() {
+      this.$emit('success', { isLogin: this.isLogin });
+      this.close();
+    },
+    
+    // エラーメッセージをクリア
+    clearError() {
+      this.errorMessage = "";
+      this.errorType = null;
+    },
+    
+    // 外側クリック時の処理（エラーがある場合は閉じない）
+    handleOutsideClick() {
+      if (this.errorMessage) {
+        // エラーメッセージがある場合は閉じない
+        return;
+      }
+      // エラーがない場合のみ閉じる
+      this.close();
+    },
+    
     // モーダルを閉じる
     close() {
       this.showDialog = false;
       this.errorMessage = "";
+      this.errorType = null;
       
       // フォームをリセット
       if (this.$refs.form) {
@@ -381,4 +433,15 @@ export default {
 .auth-modal-dialog {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
 }
+
+/* エラーアラートのスタイル */
+.v-alert {
+  border-radius: 8px;
+}
+
+.v-alert div {
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
 </style>

@@ -63,6 +63,17 @@ const apiFacade = {
       }
     } catch (error) {
       console.error("Login API Error:", error);
+      // エラーレスポンスの詳細を含めて返す
+      if (error.response) {
+        const errorData = {
+          status: error.response.status,
+          message: error.response.data?.error || error.response.data?.message || "ログインに失敗しました",
+          errorType: error.response.data?.errorType
+        };
+        const errorObj = new Error(errorData.message);
+        errorObj.errorType = errorData.errorType;
+        throw errorObj;
+      }
       throw error;
     }
   },
@@ -265,6 +276,197 @@ const apiFacade = {
       );
     }
   },
+
+  /**
+   * パスワードを変更する
+   * @param {string} currentPassword - 現在のパスワード
+   * @param {string} newPassword - 新しいパスワード
+   * @returns {Promise<string>} 変更結果メッセージ
+   */
+  async changePassword(currentPassword, newPassword) {
+    try {
+      const response = await apiClient.put("/auth/change-password", {
+        currentPassword,
+        newPassword
+      });
+      return response.data;
+    } catch (error) {
+       console.error("パスワード変更エラーが発生しました。");
+      if (error.response) {
+        // 詳細なエラー情報はログ出力しない
+        
+        if (error.response.status === 400) {
+          throw new Error("現在のパスワードが間違っています。");
+        }
+        if (error.response.status === 401) {
+          throw new Error("認証が無効です。再度ログインしてください。");
+        }
+      }
+      throw new Error(
+        error.response?.data?.message || "パスワードの変更に失敗しました。"
+      );
+    }
+  },
+
+  async withdrawAccount() {
+    try {
+      const response = await apiClient.delete("/auth/withdraw");
+      return response.data;
+    } catch (error) {
+      console.error("退会処理エラーが発生しました。");
+      if (error.response) {
+        if (error.response.status === 401) {
+          const errorMessage = error.response.data;
+          if (errorMessage.includes("Token has expired")) {
+            throw new Error("認証の有効期限が切れています。再度ログインしてください。");
+          } else if (errorMessage.includes("Invalid token signature")) {
+            throw new Error("認証情報が無効です。再度ログインしてください。");
+          } else {
+            throw new Error("認証が無効です。再度ログインしてください。");
+          }
+        }
+        if (error.response.status === 400) {
+          throw new Error("退会処理に失敗しました。既に削除されている可能性があります。");
+        }
+        if (error.response.status === 500) {
+          throw new Error("サーバーエラーが発生しました。しばらく時間をおいて再試行してください。");
+        }
+        // その他のHTTPエラー
+        throw new Error(error.response.data || `退会処理に失敗しました (${error.response.status})`);
+      }
+      // ネットワークエラーなど
+      throw new Error("退会処理中にネットワークエラーが発生しました。");
+    }
+  },
+
+  async getUserInfo() {
+    try {
+      const response = await apiClient.get("/auth/user");
+      return response.data;
+    } catch (error) {
+      console.error("ユーザー情報取得エラーが発生しました。");
+      if (error.response) {
+        if (error.response.status === 401) {
+          throw new Error("認証が無効です。再度ログインしてください。");
+        }
+        if (error.response.status === 404) {
+          throw new Error("ユーザー情報が見つかりません。");
+        }
+      }
+      throw new Error("ユーザー情報の取得に失敗しました。");
+    }
+  },
+
+  // 汎用リクエストメソッド
+  async request(url, method = 'GET', data = null) {
+    try {
+      const config = {
+        method: method.toUpperCase(),
+        url
+      };
+      
+      if (data) {
+        if (method.toUpperCase() === 'GET') {
+          config.params = data;
+        } else {
+          config.data = data;
+        }
+      }
+      
+      const response = await apiClient(config);
+      
+      // レスポンスの構造を統一
+      return {
+        success: response.status >= 200 && response.status < 300,
+        data: response.data?.data || response.data,
+        error: response.data?.error || null,
+        status: response.status,
+        usage_info: response.data?.usage_info
+      };
+    } catch (error) {
+      console.error(`API Request Error [${method} ${url}]:`, error);
+      
+      // エラーレスポンスも統一形式で返す
+      const errorResponse = {
+        success: false,
+        data: null,
+        error: error.response?.data?.error || error.message || 'リクエストに失敗しました',
+        status: error.response?.status || 0,
+        usage_info: error.response?.data?.usage_info
+      };
+      
+      // 特定のエラーは再スローして上位で適切に処理
+      if (error.response?.status === 429 || error.response?.status === 401) {
+        const enhancedError = new Error(errorResponse.error);
+        enhancedError.response = error.response;
+        throw enhancedError;
+      }
+      
+      return errorResponse;
+    }
+  },
+  
+  // AI分析専用メソッド
+  async getAIUsage() {
+    return this.request('/ai/usage', 'GET');
+  },
+  
+  async generateAIAnalysis(analysisConfig) {
+    return this.request('/ai/analysis', 'POST', {
+      start_date: analysisConfig.startDate,
+      end_date: analysisConfig.endDate,
+      analysis_focus: analysisConfig.analysisFocus,
+      detail_level: analysisConfig.detailLevel,
+      response_style: analysisConfig.responseStyle
+    });
+  },
+
+  // プロフィール画像管理専用メソッド
+  /**
+   * プロフィール画像情報を取得
+   */
+  async getProfileImage() {
+    return this.request('/users/profile-image', 'GET');
+  },
+
+  /**
+   * プロフィール画像をアップロード/更新
+   * @param {File} file - アップロードする画像ファイル
+   */
+  async uploadProfileImage(file) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await apiClient.post('/users/profile-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      return {
+        success: response.status >= 200 && response.status < 300,
+        data: response.data,
+        error: null,
+        status: response.status
+      };
+    } catch (error) {
+      console.error('Profile image upload error:', error);
+      return {
+        success: false,
+        data: null,
+        error: error.response?.data?.message || error.message || 'アップロードに失敗しました',
+        status: error.response?.status || 0
+      };
+    }
+  },
+
+  /**
+   * プロフィール画像を削除
+   */
+  async deleteProfileImage() {
+    return this.request('/users/profile-image', 'DELETE');
+  }
 };
 
 export default apiFacade;

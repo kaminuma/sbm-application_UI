@@ -1,169 +1,225 @@
 # SBM Application UI
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-[![Beta Release](https://img.shields.io/badge/release-beta-blue)](https://github.com/kaminuma/sbm-application_UI/releases)
+[![Release](https://img.shields.io/badge/release-live-brightgreen)](https://sbm-app.com/)
+[![Version](https://img.shields.io/badge/version-0.4.0-green)](https://github.com/kaminuma/sbm-application_UI)
+[![License](https://img.shields.io/badge/license-Apache%202.0-yellow)](LICENSE)
 
-SBM Application UI 　設計コンセプト
+生活記録の管理・分析を通じて、日々の生活をより充実させるWebアプリケーション
 
-生活記録やスケジュールの管理、生活振り返り分析機能を備えた
-使いやすいインターフェースを目指しています。
+## 🎯 アプリケーションの目的
 
-- 自分の生活記録を整理・管理したい方
-- データを基にした行動分析に興味がある方
-- 日々のスケジュールを簡単に設定し、管理したい方
-- Vue.js やフロントエンド技術に触れてみたい開発者
+SBM Application UIは、以下のような方々に向けた生活支援ツールです：
 
-## API
+- 📊 日々の生活記録を体系的に管理したい方
+- 📈 データ分析を通じて自己理解を深めたい方
+- 📅 スケジュール管理を効率化したい方
+- 💭 気分の変化を追跡し、メンタルヘルスケアに活用したい方
 
-### https://github.com/kaminuma/sbm-application_API
+## 🌐 サービス利用
 
-## 🌐 テスト用 Beta 環境
+**[SBMアプリ](https://sbm-app.com/)**
 
-テスト環境は以下の URL からアクセスできます。
+Google Search Console登録済みの正式サービスです。どなたでもご利用いただけます。
 
-**[beta 環境はこちら](https://sbm-app.com/)**
+### 📱 マルチプラットフォーム展開
 
-### 🚧 現在の状況
+- **Androidアプリ版** - [開発中](https://github.com/kaminuma/sbm-application-android-native) 🚧
+  - AI週間分析機能を先行実装
+  - Jetpack Compose + Material 3デザイン
+  - Clean Architectureアプローチ
+- **iOS版** - 開発検討中
 
-- **この環境は開発中の Beta 版です**  
-  現在、実装途中の機能やデザインが含まれており、一部の動作や表示が最終版と異なる場合があります。
+## ✨ 主な機能
 
-- **データリセットの可能性**  
-  テスト環境では、不定期にデータが初期化される場合がありますのでご了承ください。
+### 📅 活動記録管理
+- **予定と実績の管理**: カレンダー形式で直感的に記録・確認
+- **活動の詳細記録**: 時間、場所、メモなど詳細な情報の保存
+- **データインポート**: CSVファイルによる一括データ取り込み
+- **レスポンシブ対応**: スマートフォン・タブレット・PC対応
 
----
+### 💭 気分記録機能
+- **日々の気分登録**: 5段階評価で簡単に気分を記録
+- **メモ機能**: その日の出来事や感情を詳しく記録
+- **気分の推移表示**: グラフで気分の変化を可視化
+- **パターン分析**: 気分と活動の関連性を分析
 
-### ⚠️ 注意事項
+### ⚙️ 設定・アカウント管理 *（v0.3.0新機能）*
+- **ユーザー設定**: プロフィール情報の表示・管理
+- **パスワード変更**: ローカルアカウントのセキュリティ管理
+- **退会機能**: アカウントの安全な無効化
+- **データ管理**: 個人データの取り扱いを明確化
 
-- **秘密情報の入力はお控えください**  
-  テスト環境は開発中のため、セキュリティ機能の実装や設定が十分ではない部分があります。
+### 🌐 SEO・SNSシェア対応 *（v0.4.0新機能）*
+- **OGP対応**: Facebook等でのシェア時に適切な画像・情報表示
+- **Twitter Card対応**: Twitterでのシェア時に最適化された表示
+- **構造化データ**: 検索エンジン向けのメタデータ実装
+- **SNSシェア用画像**: SBMブランドロゴを活用したオリジナル画像
 
-  **個人情報や機密性の高い情報の入力は行わないようお願いいたします。**
+### 📊 分析・インサイト機能
+- **基本分析**: 活動記録と気分データの基本的な分析・可視化 ✅
+- **AI分析機能**: 機械学習によるパーソナライズされた洞察 *（開発中）*
+- **高度な統計分析**: より詳細なデータ分析機能 *（開発中）*
+- **データエクスポート**: 記録データの外部出力機能 *（開発中）*
 
-- **動作保証について**  
-  テスト環境での動作は安定性を保証するものではありません。
-  **本番環境ではない**ことをご留意ください。
+> **Note**: AI週間分析機能は[Androidアプリ版](https://github.com/kaminuma/sbm-application-android-native)で先行開発中です
 
-- **フィードバックのお願い**  
-  発見されたバグ、不具合、改善点については、
-  GitHub の[Issues](https://github.com/kaminuma/sbm-application_UI/issues)からお知らせいただけると幸いです。
+### 🔐 セキュリティ・プライバシー
+- **多様な認証方式**: JWT認証、Google OAuth2対応
+- **透明性のあるデータ管理**: 明確な利用規約・プライバシーポリシー
+- **退会時の適切な処理**: データ保持期間の明示
+- **問い合わせ対応**: メールでの直接サポート
 
----
+## 🛠️ 技術スタック
 
-### 📅 Beta 版リリース日
+- **Vue.js 3** - フロントエンドフレームワーク
+- **Vuetify 3** - UIコンポーネントライブラリ
+- **Vue Router** - ルーティング
+- **Vuex** - 状態管理
+- **Axios** - HTTP通信
+- **Chart.js / ECharts** - データ可視化
+- **Vitest** - テストフレームワーク
+- **Vite** - ビルドツール
+- **AWS** - インフラストラクチャ
+- **GitHub Actions** - CI/CD
 
-# SBM アプリケーション UI
+## 🚀 開発環境のセットアップ
 
-バージョン: **v0.1.0-beta**  
-ベータ版リリース日: 2024 年 11 月 30 日
+### 前提条件
 
-このバージョンは開発中のベータ版です。
-
-本番環境リリース（v1.0.0）予定となっています。
-
-## 📋 主な特徴
-
-- **生活記録の管理**: 日々の記録を簡単に追加、編集、削除可能。
-- **カレンダー表示**: 直感的なイベント管理ができる Vue Cal を採用。
-- **分析機能**: 生活記録データを基に視覚的な分析が可能。（※現在開発中）
-- **レスポンシブデザイン**: スマートフォンやタブレットでも快適に利用可能。
-- **認証機能**: JWT トークンを活用したセキュアな認証プロセス。
-
----
-
-## 🛠️ 使用技術
-
-- **Vue.js 3**: フロントエンドフレームワーク
-- **Vuetify 3**: UI コンポーネントライブラリ
-- **Vue Router**: ルーティング管理
-- **Axios**: API 通信
-- **JWT**: 認証トークン管理
-- **Cypress**: E2E テスト（※予定）
-- **AWS**: デプロイ環境（EC2、RDS）
-- **GitHub Actions**: CI/CD パイプライン管理
-
----
-
-## 🚀 開発者向け　 local 環境起動方法
-
-### 必要条件
-
-- Node.js（推奨バージョン: 16.x 以上）
+- Node.js 16.x以上（推奨: 20.x）
 - npm または yarn
+- Git
 
-### 💻 セットアップ手順
+### インストール手順
 
-### 環境変数設定
-
-ローカル環境での動作には、.env ファイルが必要です。以下の手順で設定してください。
-
-プロジェクトルートにある .env.example を .env ファイルを作成してにコピーします。
-
-必要に応じて値を設定してください。
-
-.env ファイルは .gitignore に追加されているため、リモートにはプッシュされません。
-
-環境変数の設定例：（.env.example は下記内容と同じです）
-
-### .env ファイル設定
-
-以下の内容をルートディレクトリに `.env` ファイルとして記載してください。
-
-```plaintext
-VITE_BASE_URL=/
-VITE_API_BASE_URL=http://localhost:8080/api/v1
-```
-
-<br>
-
-### 設定後に以下のコマンドを順に実行してください
-
+1. **リポジトリのクローン**
 ```bash
 git clone https://github.com/kaminuma/sbm-application_UI.git
 cd sbm-application_UI
+```
+
+2. **環境変数の設定**
+
+`src/.env.example`を参考に、プロジェクトルートに`.env`ファイルを作成：
+
+```env
+# 基本設定
+VITE_BASE_URL=/
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+
+# OAuth2.0設定（Google認証を使用する場合）
+VITE_OAUTH2_BASE_URL=http://localhost:8080
+```
+
+**注意**: Google認証を使用する場合は、`VITE_OAUTH2_BASE_URL`を適切なAPIサーバーのURLに設定してください。
+
+3. **依存関係のインストール**
+```bash
 npm install
+```
+
+4. **開発サーバーの起動**
+```bash
 npm run dev
 ```
 
-### ブラウザで以下の URL を開いてください：
+ブラウザで http://localhost:5173/ にアクセス
 
-http://localhost:5173/
+### 利用可能なスクリプト
+
+```bash
+npm run dev          # 開発サーバー起動
+npm run build        # プロダクションビルド
+npm run build:prod   # プロダクションモードでビルド
+npm run preview      # ビルドのプレビュー
+npm run test         # テスト実行（watch mode）
+npm run test:run     # テスト実行（単発）
+npm run test:ui      # Vitest UIでテスト実行
+npm run test:coverage # カバレッジレポート生成
+```
+
+## 📁 プロジェクト構造
+
+```
+sbm-application_UI/
+├── src/
+│   ├── api/          # API通信関連
+│   ├── assets/       # 静的アセット
+│   ├── components/   # Vueコンポーネント
+│   ├── plugins/      # Vueプラグイン（Vuetify等）
+│   ├── router/       # ルーティング設定
+│   ├── services/     # ビジネスロジック
+│   ├── store/        # Vuex状態管理
+│   └── test/         # テストファイル
+├── public/           # 公開静的ファイル
+├── .github/          # GitHub Actions設定
+└── vite.config.js    # Vite設定
+```
+
+## 🔐 認証システム
+
+### JWT認証
+- アクセストークンによるAPI認証
+- Vuex-persistedstateによるトークン永続化
+- 自動ログアウト機能（トークン有効期限切れ時）
+
+### OAuth2.0（Google認証）
+- Googleアカウントでのシングルサインオン
+- セキュアな認証フロー実装
+
+## 📊 API連携
+
+バックエンドAPIリポジトリ：
+
+https://github.com/kaminuma/sbm-application_API
+
+## 🤝 コントリビューション
+
+プロジェクトへの貢献を歓迎します！
+
+### 🐛 バグ報告・機能要望
+- [GitHub Issues](https://github.com/kaminuma/sbm-application_UI/issues)からお気軽にお知らせください
+- 既知の技術的課題や改善予定についてもIssuesで管理しています
+
+### 💡 開発への参加
+
+プルリクエストも歓迎します！
+
+## 📄 ライセンス
+
+このプロジェクトは[Apache License 2.0](LICENSE)のもとで公開されています。
+
+## 📧 お問い合わせ
+
+- **メール**: kaminuma.dev@gmail.com
+- **GitHub Issues**: [バグ報告・機能要望](https://github.com/kaminuma/sbm-application_UI/issues)
+- **プロジェクトオーナー**: [@kaminuma](https://github.com/kaminuma)
 
 ---
 
-### 🔐 認証機能
+**Last Updated:** 2025年8月27日  
+**Current Version:** v0.4.0
+## Contributors ✨
 
-このプロジェクトでは、JWT トークンを活用してユーザー認証を行います。
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
----
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kaedeek"><img src="https://avatars.githubusercontent.com/u/170544738?v=4?s=100" width="100px;" alt="ₖₐₑ𝒹ₑ"/><br /><sub><b>ₖₐₑ𝒹ₑ</b></sub></a><br /><a href="#ideas-kaedeek" title="Ideas, Planning, & Feedback">🤔</a></td>
+    </tr>
+  </tbody>
+</table>
 
-### 🛡️ 現在の課題
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 
-- **生活記録分析機能**  
-  ボタンは実装されていますが、分析ロジックが未実装のため、要件定義とバックエンド連携が必要です。
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
-  AI による分析機能を予定しており、API 側からの実装となります。
-
-- **JWT 認証の改善**  
-  トークンリフレッシュとログインリダイレクト機能の最適化。
-
-  **注意** 現在トークンの有効期限が切れると 403 が返ってくるだけになっているため、修正が必要です。
-
-- **レスポンシブデザイン**  
-  さらなるスマートフォン対応を目指して微調整中。
-
----
-
-### 📖 今後の予定
-
-- 生活記録分析機能の完成
-- E2E テストの導入（Cypress）
-- デザイン統一のためのスタイルガイド作成
-
----
-
-### 📧 問い合わせ
-
-バグ報告や機能リクエストは、Issues をご利用ください。
-
-## 📜 License
-This project is licensed under the **Apache License 2.0**.
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

@@ -26,10 +26,23 @@ export default createStore({
     },
   },
   actions: {
-    async login({ commit }, userId) {
+    async login({ commit }, payload) {
       try {
         commit("setLoading", true);
         commit("clearError");
+        
+        // payloadがオブジェクトの場合（OAuth2ログイン）とuserIdのみの場合（通常ログイン）を処理
+        let userId;
+        if (typeof payload === 'object' && payload !== null) {
+          // OAuth2ログインの場合: { token, userId }
+          userId = payload.userId;
+          console.log('OAuth2 login - token and userId received:', payload);
+        } else {
+          // 通常ログインの場合: userIdのみ
+          userId = payload;
+          console.log('Regular login - userId received:', userId);
+        }
+        
         commit("setAuthentication", true); // ログイン時に認証状態を true に設定
         commit("setUserId", userId); // 受け取った userId をストアに保存
       } catch (error) {
@@ -71,6 +84,11 @@ export default createStore({
       commit("setAuthentication", false); // ログアウト時に認証状態を false に設定
       commit("setUserId", null); // ログアウト時に userId を null に設定
       commit("clearError");
+      
+      // ローカルストレージからトークンとユーザーIDを削除
+      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      console.log('Logout - token and userId removed from localStorage');
     },
     clearError({ commit }) {
       commit("clearError");
