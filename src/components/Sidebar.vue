@@ -64,8 +64,8 @@ export default {
 </script>
 
 <style scoped>
-.v-theme--light .sidebar {
-  background-color: #ffffff;
+.sidebar {
+  background-color: var(--theme-bg-surface);
   width: 250px;
   height: 100vh;
   position: fixed;
@@ -75,19 +75,6 @@ export default {
   top: 0;
   padding-top: 60px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.v-theme--dark .sidebar {
-  background-color: rgb(var(--v-theme-surface));
-  width: 250px;
-  height: 100vh;
-  position: fixed;
-  z-index: 1000;
-  overflow-y: auto;
-  left: 0;
-  top: 0;
-  padding-top: 60px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn {
@@ -113,25 +100,13 @@ export default {
   align-items: center;
 }
 
-.v-theme--light .sidebar-item a {
+.sidebar-item a {
   display: flex;
   align-items: center;
   width: 100%;
   padding: 0 20px;
   text-decoration: none;
-  color: #333333;
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.v-theme--dark .sidebar-item a {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 0 20px;
-  text-decoration: none;
-  color: #ffffff;
+  color: var(--theme-text-primary);
   font-family: "Poppins", sans-serif;
   font-size: 16px;
   font-weight: 500;
@@ -141,30 +116,18 @@ export default {
   margin-right: 16px;
 }
 
-.v-theme--light .sidebar-item:hover {
-  background-color: #f0f4f8;
-}
-
-.v-theme--dark .sidebar-item:hover {
-  background-color: rgb(var(--v-theme-surface-variant));
+.sidebar-item:hover {
+  background-color: var(--theme-bg-hover);
 }
 
 .sidebar-divider {
   padding: 12px 20px 8px 20px;
   margin-top: 16px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--theme-outline);
 }
 
-.v-theme--light .divider-text {
-  color: #999;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.v-theme--dark .divider-text {
-  color: #cccccc;
+.divider-text {
+  color: var(--theme-text-tertiary);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;

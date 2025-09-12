@@ -81,6 +81,9 @@ export default {
         this.errorMessage = error;
         this.showError = true;
       }
+    },
+    getTheme(newTheme) {
+      this.updateThemeAttribute();
     }
   },
   created() {
@@ -99,6 +102,12 @@ export default {
     console.log("Current route:", this.$route.path);
     console.log("Is landing page:", this.$route.name === 'LandingPage');
     console.log("Auth state after check:", this.$store.getters.isAuthenticated);
+    
+    // テーマ初期化（ダークモード無効化対応含む）
+    this.$store.dispatch('initializeTheme');
+    
+    // data-theme属性を設定
+    this.updateThemeAttribute();
   },
   methods: {
     ...mapActions(["setAuthentication", "clearError"]),
@@ -115,6 +124,11 @@ export default {
     clearErrorMessage() {
       this.showError = false;
       this.clearError();
+    },
+    updateThemeAttribute() {
+      if (typeof document !== 'undefined') {
+        document.documentElement.setAttribute('data-theme', this.getTheme);
+      }
     },
     // デバッグ用：認証状態をリセットしてランディングページに移動
     resetAuthAndRedirect() {
@@ -162,38 +176,76 @@ body {
   z-index: 9999;
 }
 
-/* 共通テーマ対応スタイル */
-/* ライトモード */
-.v-theme--light .theme-bg-white {
-  background: white;
+/* グローバルCSS変数システム */
+:root {
+  /* ライトモード（デフォルト）*/
+  --theme-text-primary: #333333;
+  --theme-text-secondary: #666666;
+  --theme-text-tertiary: #999999;
+  --theme-text-muted: #555555;
+  --theme-bg-surface: #ffffff;
+  --theme-bg-primary: #f0f4f8;
+  --theme-bg-secondary: #f8f9fa;
+  --theme-bg-hover: #f5f5f5;
+  --theme-accent-blue: #2196f3;
+  --theme-accent-blue-hover: #1976d2;
+  --theme-accent-green: #4caf50;
+  --theme-accent-red: #f44336;
+  --theme-accent-purple: #d63aff;
+  --theme-outline: #e0e0e0;
+  --theme-outline-light: #f0f0f0;
+  --theme-outline-strong: #ddd;
+  --theme-border: #e2e8f0;
+  --theme-link: #3182ce;
+  --theme-link-hover: #2c5aa0;
 }
 
-.v-theme--light .theme-text-primary {
-  color: #333;
+/* ダークモード変数 */
+[data-theme="dark"] {
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #cccccc;
+  --theme-text-tertiary: #999999;
+  --theme-text-muted: #888888;
+  --theme-bg-surface: #1e1e1e;
+  --theme-bg-primary: #121212;
+  --theme-bg-secondary: #2d2d2d;
+  --theme-bg-hover: #333333;
+  --theme-accent-blue: #64b5f6;
+  --theme-accent-blue-hover: #42a5f5;
+  --theme-accent-green: #4caf50;
+  --theme-accent-red: #f44336;
+  --theme-accent-purple: #d63aff;
+  --theme-outline: #444444;
+  --theme-outline-light: #555555;
+  --theme-outline-strong: #666666;
+  --theme-border: #444444;
+  --theme-link: #64b5f6;
+  --theme-link-hover: #42a5f5;
 }
 
-.v-theme--light .theme-text-secondary {
-  color: #666;
+/* 共通ユーティリティクラス */
+.theme-text-primary {
+  color: var(--theme-text-primary) !important;
 }
 
-.v-theme--light .theme-text-blue {
-  color: #2196f3;
+.theme-text-secondary {
+  color: var(--theme-text-secondary) !important;
 }
 
-/* ダークモード */
-.v-theme--dark .theme-bg-white {
-  background: rgb(var(--v-theme-surface));
+.theme-bg-surface {
+  background-color: var(--theme-bg-surface) !important;
 }
 
-.v-theme--dark .theme-text-primary {
-  color: #ffffff; /* より明るく */
+.theme-bg-primary {
+  background-color: var(--theme-bg-primary) !important;
 }
 
-.v-theme--dark .theme-text-secondary {
-  color: #cccccc; /* より明るく */
+.theme-text-blue {
+  color: var(--theme-accent-blue) !important;
 }
 
-.v-theme--dark .theme-text-blue {
-  color: #64b5f6; /* より明るく */
+/* ユーティリティクラス */
+.theme-bg-white {
+  background: var(--theme-bg-surface) !important;
 }
 </style>

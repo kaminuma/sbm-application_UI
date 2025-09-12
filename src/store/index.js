@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
+import { THEME_CONFIG, isThemeEnabled } from "../config/theme";
 
 export default createStore({
   state: {
@@ -7,7 +8,7 @@ export default createStore({
     userId: null, // ユーザーIDを格納
     loading: false, // アプリ全体のローディング状態
     error: null, // グローバルエラーメッセージ
-    theme: 'light', // テーマ設定 ('light' または 'dark')
+    theme: THEME_CONFIG.DEFAULT_THEME, // テーマ設定 ('light' または 'dark')
   },
   mutations: {
     setAuthentication(state, status) {
@@ -26,7 +27,16 @@ export default createStore({
       state.error = null; // エラーをクリア
     },
     setTheme(state, theme) {
-      state.theme = theme; // テーマを更新
+      // 設定で有効なテーマかチェック
+      if (isThemeEnabled(theme)) {
+        state.theme = theme; // テーマを更新
+        // data-theme属性も更新
+        if (typeof document !== 'undefined') {
+          document.documentElement.setAttribute('data-theme', theme);
+        }
+      } else {
+        console.warn(`Theme "${theme}" is not enabled in configuration`);
+      }
     },
   },
   actions: {
@@ -100,9 +110,36 @@ export default createStore({
     toggleTheme({ commit, state }) {
       const newTheme = state.theme === 'light' ? 'dark' : 'light';
       commit('setTheme', newTheme);
+      return true;
     },
     setTheme({ commit }, theme) {
+      // 設定チェック済みのため、commitに委譲
       commit('setTheme', theme);
+      return isThemeEnabled(theme);
+    },
+    initializeTheme({ commit }) {
+      // アプリ起動時のテーマ初期化
+      let savedTheme = localStorage.getItem('vuex-auth');
+      if (savedTheme) {
+        try {
+          const parsed = JSON.parse(savedTheme);
+          savedTheme = parsed.theme;
+        } catch (e) {
+          savedTheme = null;
+        }
+      }
+      
+      // システム設定の検出
+      let systemTheme = 'light';
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      // 優先順位: 保存済み設定 > システム設定 > デフォルト設定
+      const targetTheme = savedTheme || systemTheme || THEME_CONFIG.DEFAULT_THEME;
+      
+      commit('setTheme', targetTheme);
+      return targetTheme;
     },
   },
   getters: {

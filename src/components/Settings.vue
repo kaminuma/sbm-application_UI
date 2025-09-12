@@ -265,30 +265,7 @@
           <v-divider></v-divider>
           <v-card-text class="py-6">
             <div class="theme-section">
-              <div class="info-section">
-                <div class="info-icon-wrapper">
-                  <v-icon color="primary">{{ isDarkMode ? 'mdi-weather-night' : 'mdi-weather-sunny' }}</v-icon>
-                </div>
-                <div class="info-content">
-                  <div class="info-label">現在のテーマ</div>
-                  <div class="info-value">{{ isDarkMode ? 'ダークモード' : 'ライトモード' }}</div>
-                </div>
-                <div class="theme-toggle">
-                  <v-switch
-                    v-model="isDarkMode"
-                    color="primary"
-                    hide-details
-                    :label="`${isDarkMode ? 'ダーク' : 'ライト'}モード`"
-                  >
-                    <template v-slot:prepend>
-                      <v-icon>mdi-weather-sunny</v-icon>
-                    </template>
-                    <template v-slot:append>
-                      <v-icon>mdi-weather-night</v-icon>
-                    </template>
-                  </v-switch>
-                </div>
-              </div>
+              <ThemeToggle @theme-changed="onThemeChanged" />
             </div>
           </v-card-text>
         </v-card>
@@ -581,9 +558,13 @@
 import apiFacade from "../services/apiFacade";
 import { clearAuthToken } from "../services/authUtils";
 import { mapGetters } from "vuex";
+import ThemeToggle from "./ThemeToggle.vue";
 
 export default {
   name: "Settings",
+  components: {
+    ThemeToggle,
+  },
   data() {
     return {
       // ユーザー情報
@@ -639,15 +620,6 @@ export default {
   },
   computed: {
     ...mapGetters(['getTheme']),
-    isDarkMode: {
-      get() {
-        return this.getTheme === 'dark';
-      },
-      set(value) {
-        this.$store.dispatch('setTheme', value ? 'dark' : 'light');
-        this.showSuccess(`${value ? 'ダーク' : 'ライト'}モードに切り替えました`);
-      }
-    }
   },
   mounted() {
     this.loadUserInfo();
@@ -852,6 +824,11 @@ export default {
       this.errorSnackbar = true;
     },
 
+    // ThemeToggleコンポーネントからのイベントハンドラ
+    onThemeChanged(eventData) {
+      this.showSuccess(`${eventData.themeName}に切り替えました`);
+    },
+
     
     async changePassword() {
       if (!this.$refs.passwordForm.validate()) {
@@ -993,22 +970,12 @@ export default {
   margin-bottom: 32px;
 }
 
-/* ライトモード - ヘッダー */
-.v-theme--light .settings-header h2 {
-  color: #2c3e50;
+.settings-header h2 {
+  color: var(--theme-text-primary);
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* ダークモード - ヘッダー */
-.v-theme--dark .settings-header h2 {
-  color: #ffffff;
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .settings-content {
@@ -1154,26 +1121,19 @@ export default {
   letter-spacing: 0.5px;
 }
 
-.v-theme--light .info-value {
+.info-value {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-primary);
 }
 
-/* ダークモード用 */
-.v-theme--dark .info-label {
+.info-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #cccccc; /* より明るく */
+  color: var(--theme-text-secondary);
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-.v-theme--dark .info-value {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #ffffff; /* より明るく */
 }
 
 /* プロフィール画像セクションのスタイル */
@@ -1182,31 +1142,17 @@ export default {
   padding: 20px;
 }
 
-/* ライトモード - プロフィール画像セクション */
-.v-theme--light .profile-image-section {
-  background: rgba(255, 255, 255, 0.5);
+.profile-image-section {
+  background: var(--theme-bg-secondary);
 }
 
-/* ダークモード - プロフィール画像セクション */
-.v-theme--dark .profile-image-section {
-  background: rgba(var(--v-theme-surface-variant), 0.5);
-}
-
-/* ライトモード - セクションタイトル */
-.v-theme--light .section-title {
+.section-title {
   display: flex;
   align-items: center;
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-primary);
 }
 
-/* ダークモード - セクションタイトル */
-.v-theme--dark .section-title {
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  color: #ffffff;
-}
 
 .section-label {
   font-size: 1.1rem;
