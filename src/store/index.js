@@ -7,6 +7,7 @@ export default createStore({
     userId: null, // ユーザーIDを格納
     loading: false, // アプリ全体のローディング状態
     error: null, // グローバルエラーメッセージ
+    theme: 'light', // テーマ設定 ('light' または 'dark')
   },
   mutations: {
     setAuthentication(state, status) {
@@ -23,6 +24,9 @@ export default createStore({
     },
     clearError(state) {
       state.error = null; // エラーをクリア
+    },
+    setTheme(state, theme) {
+      state.theme = theme; // テーマを更新
     },
   },
   actions: {
@@ -93,12 +97,20 @@ export default createStore({
     clearError({ commit }) {
       commit("clearError");
     },
+    toggleTheme({ commit, state }) {
+      const newTheme = state.theme === 'light' ? 'dark' : 'light';
+      commit('setTheme', newTheme);
+    },
+    setTheme({ commit }, theme) {
+      commit('setTheme', theme);
+    },
   },
   getters: {
     isAuthenticated: (state) => state.isAuthenticated, // 認証状態を取得するゲッター
     getUserId: (state) => state.userId, // userId を取得するゲッター
     isLoading: (state) => state.loading, // ローディング状態を取得するゲッター
     getError: (state) => state.error, // エラー状態を取得するゲッター
+    getTheme: (state) => state.theme, // テーマを取得するゲッター
   },
   plugins: [
     createPersistedState({

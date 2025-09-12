@@ -435,13 +435,19 @@ export default {
 }
 
 /* Features Section */
-.features-section {
+.v-theme--light .features-section {
   padding: 100px 0;
   background-color: #f8f9fa;
   position: relative;
 }
 
-.features-section::before {
+.v-theme--dark .features-section {
+  padding: 100px 0;
+  background-color: rgb(var(--v-theme-background)); /* ダーク背景 */
+  position: relative;
+}
+
+.v-theme--light .features-section::before {
   content: "";
   position: absolute;
   top: -80px;
@@ -452,10 +458,30 @@ export default {
   clip-path: ellipse(70% 80px at 50% 80px);
 }
 
-.features-title {
+.v-theme--dark .features-section::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgb(var(--v-theme-surface));
+  clip-path: ellipse(70% 80px at 50% 80px);
+}
+
+.v-theme--light .features-title {
   font-size: 2.8rem;
   font-weight: 700;
   color: #1a365d;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+}
+
+.v-theme--dark .features-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #ffffff; /* ダークモードは白文字 */
   margin-bottom: 1rem;
   position: relative;
   display: inline-block;
@@ -474,9 +500,18 @@ export default {
   box-shadow: 0 2px 10px rgba(214, 58, 255, 0.3);
 }
 
-.features-subtitle {
+.v-theme--light .features-subtitle {
   font-size: 1.3rem;
   color: #4a5568;
+  margin-bottom: 4rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.v-theme--dark .features-subtitle {
+  font-size: 1.3rem;
+  color: #ffffff; /* ダークモードは明るいグレー */
   margin-bottom: 4rem;
   max-width: 700px;
   margin-left: auto;
@@ -488,9 +523,20 @@ export default {
   border-radius: 16px;
   overflow: hidden;
   height: 100%;
-  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* ライトモード - 機能カード */
+.v-theme--light .feature-card {
   background: white;
+  border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ダークモード - 機能カード */
+.v-theme--dark .feature-card {
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgba(var(--v-theme-outline), 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
 }
 
 .feature-card:hover {
@@ -499,15 +545,29 @@ export default {
   border-color: rgba(214, 58, 255, 0.1);
 }
 
-.feature-title {
+.v-theme--light .feature-title {
   font-size: 1.4rem;
   font-weight: 600;
   color: #1a365d;
   margin-top: 0.5rem;
 }
 
-.feature-description {
+.v-theme--dark .feature-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #ffffff; /* ダークモードは白文字 */
+  margin-top: 0.5rem;
+}
+
+.v-theme--light .feature-description {
   color: #4a5568;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  margin-top: 0.75rem;
+}
+
+.v-theme--dark .feature-description {
+  color: #ffffff; /* ダークモードは明るいグレー */
   line-height: 1.7;
   font-size: 1.05rem;
   margin-top: 0.75rem;
@@ -757,7 +817,7 @@ export default {
 }
 
 .footer-link {
-  color: #cbd5e0;
+  color: #ffffff;
   text-decoration: none;
   margin: 0 15px;
   font-size: 0.95rem;
@@ -787,7 +847,7 @@ export default {
 }
 
 .footer-copyright {
-  color: #a0aec0;
+  color: #cccccc;
   font-size: 0.9rem;
   margin-top: 20px;
 }

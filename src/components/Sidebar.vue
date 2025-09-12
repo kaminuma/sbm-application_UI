@@ -64,7 +64,7 @@ export default {
 </script>
 
 <style scoped>
-.sidebar {
+.v-theme--light .sidebar {
   background-color: #ffffff;
   width: 250px;
   height: 100vh;
@@ -75,6 +75,19 @@ export default {
   top: 0;
   padding-top: 60px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.v-theme--dark .sidebar {
+  background-color: rgb(var(--v-theme-surface));
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  z-index: 1000;
+  overflow-y: auto;
+  left: 0;
+  top: 0;
+  padding-top: 60px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn {
@@ -100,7 +113,7 @@ export default {
   align-items: center;
 }
 
-.sidebar-item a {
+.v-theme--light .sidebar-item a {
   display: flex;
   align-items: center;
   width: 100%;
@@ -112,12 +125,28 @@ export default {
   font-weight: 500;
 }
 
+.v-theme--dark .sidebar-item a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+}
+
 .sidebar-icon {
   margin-right: 16px;
 }
 
-.sidebar-item:hover {
+.v-theme--light .sidebar-item:hover {
   background-color: #f0f4f8;
+}
+
+.v-theme--dark .sidebar-item:hover {
+  background-color: rgb(var(--v-theme-surface-variant));
 }
 
 .sidebar-divider {
@@ -126,8 +155,16 @@ export default {
   border-top: 1px solid #e0e0e0;
 }
 
-.divider-text {
+.v-theme--light .divider-text {
   color: #999;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.v-theme--dark .divider-text {
+  color: #cccccc;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;

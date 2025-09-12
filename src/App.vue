@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :theme="currentTheme">
     <!-- グローバルローディングインジケーター -->
     <div v-if="isLoading" class="global-loading-overlay">
       <v-progress-circular
@@ -65,11 +65,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["isLoading", "getError"]),
+    ...mapGetters(["isLoading", "getError", "getTheme"]),
     
     isLandingPage() {
       // ルートがランディングページの場合はtrue
       return this.$route.name === 'LandingPage';
+    },
+    currentTheme() {
+      return this.getTheme;
     }
   },
   watch: {
@@ -138,7 +141,8 @@ export default {
 <style>
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #f0f4f8;
+  background-color: rgb(var(--v-theme-background)) !important;
+  color: rgb(var(--v-theme-on-background)) !important;
 }
 .landing-page-main {
   padding: 0 !important; /* ランディングページのメインコンテンツではパディングをなくす */
@@ -156,5 +160,40 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 9999;
+}
+
+/* 共通テーマ対応スタイル */
+/* ライトモード */
+.v-theme--light .theme-bg-white {
+  background: white;
+}
+
+.v-theme--light .theme-text-primary {
+  color: #333;
+}
+
+.v-theme--light .theme-text-secondary {
+  color: #666;
+}
+
+.v-theme--light .theme-text-blue {
+  color: #2196f3;
+}
+
+/* ダークモード */
+.v-theme--dark .theme-bg-white {
+  background: rgb(var(--v-theme-surface));
+}
+
+.v-theme--dark .theme-text-primary {
+  color: #ffffff; /* より明るく */
+}
+
+.v-theme--dark .theme-text-secondary {
+  color: #cccccc; /* より明るく */
+}
+
+.v-theme--dark .theme-text-blue {
+  color: #64b5f6; /* より明るく */
 }
 </style>

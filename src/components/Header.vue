@@ -155,12 +155,12 @@ export default {
 
 <style scoped>
 .header {
-  background-color: #00bfa5; /* ネオミント */
+  background-color: rgb(var(--v-theme-primary));
   height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #ffffff;
+  color: rgb(var(--v-theme-on-primary));
   padding: 0 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

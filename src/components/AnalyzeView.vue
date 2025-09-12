@@ -255,11 +255,19 @@ export default {
   border-bottom: 2px solid #e0e0e0;
 }
 
-.analyze-header h2 {
+.v-theme--light .analyze-header h2 {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
   color: #333;
+  font-family: "Poppins", sans-serif;
+}
+
+.v-theme--dark .analyze-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
   font-family: "Poppins", sans-serif;
 }
 
@@ -324,8 +332,22 @@ export default {
   text-align: left;
 }
 
-.activity-table th {
+.v-theme--dark .activity-table th,
+.v-theme--dark .activity-table td {
+  border: 1px solid #444;
+  color: #ffffff;
+}
+
+.v-theme--dark .activity-table tbody tr td {
+  color: #cccccc;
+}
+
+.v-theme--light .activity-table th {
   background: #f7f7f7;
+}
+
+.v-theme--dark .activity-table th {
+  background: rgb(var(--v-theme-surface));
 }
 
 .activity-contents {
@@ -334,7 +356,7 @@ export default {
 }
 
 /* ローディング画面のスタイル */
-.loading-screen {
+.v-theme--light .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
@@ -347,10 +369,29 @@ export default {
   z-index: 1000;
 }
 
-.loading-content {
+.v-theme--dark .loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.v-theme--light .loading-content {
   text-align: center;
   font-family: Arial, sans-serif;
   color: #333;
+}
+
+.v-theme--dark .loading-content {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
 }
 
 .spinner {
@@ -371,7 +412,7 @@ export default {
     transform: rotate(360deg);
   }
 }
-.category-banner {
+.v-theme--light .category-banner {
   background: #f4f6f8;
   padding: 10px 15px;
   margin-bottom: 15px;
@@ -379,14 +420,33 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.category-banner p {
+.v-theme--dark .category-banner {
+  background: rgb(var(--v-theme-surface));
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.v-theme--light .category-banner p {
   margin: 0;
   font-size: 14px;
   color: #333;
 }
 
-.category-item {
+.v-theme--dark .category-banner p {
+  margin: 0;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.v-theme--light .category-item {
   font-weight: bold;
   color: #0073e6;
+}
+
+.v-theme--dark .category-item {
+  font-weight: bold;
+  color: #4fc3f7;
 }
 </style>

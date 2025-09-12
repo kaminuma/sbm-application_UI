@@ -1,7 +1,7 @@
 <template>
   <div class="mood-view">
     <div class="mood-header">
-      <h2>📝 気分記録</h2>
+      <h2 class="mood-history-title">📝 気分記録</h2>
       <v-btn color="primary" @click="showMoodDialog = true" class="btn-rounded">
         気分を記録
       </v-btn>
@@ -557,18 +557,70 @@ export default {
 
 .mood-history-section,
 .mood-analysis-section {
-  background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.mood-history-section h3,
-.mood-analysis-section h3 {
+/* ライトモード */
+.v-theme--light .mood-history-section,
+.v-theme--light .mood-analysis-section {
+  background: white;
+}
+
+/* ダークモード */
+.v-theme--dark .mood-history-section,
+.v-theme--dark .mood-analysis-section {
+  background: rgb(var(--v-theme-surface));
+}
+
+/* ライトモード - テキスト */
+.v-theme--light .mood-history-section h3, h2,
+.v-theme--light .mood-analysis-section h3, h2{
   margin: 0 0 20px 0;
   color: #333;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+/* ダークモード - テキスト */
+.v-theme--dark .mood-history-section h3,
+.v-theme--dark .mood-analysis-section h3,
+.v-theme--dark .mood-history-section h2,
+.v-theme--dark .mood-analysis-section h2 {
+  margin: 0 0 20px 0;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.v-theme--dark .mood-label-display {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.v-theme--dark .mood-note {
+  flex: 2;
+  color: #cccccc;
+  font-size: 0.9rem;
+}
+
+.v-theme--dark .mood-date {
+  min-width: 120px;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.v-theme--dark .mood-history-title,
+.v-theme--dark .mood-header h2 {
+  color: #ffffff;
+}
+
+.v-theme--dark .empty-mood-state p {
+  margin: 15px 0;
+  color: #cccccc;
+  font-size: 1.1rem;
 }
 
 /* 気分評価セクション */
@@ -581,6 +633,13 @@ export default {
   margin-bottom: 10px;
   font-weight: 600;
   color: #333;
+}
+
+.v-theme--dark .mood-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .mood-emoji-container {
@@ -695,6 +754,12 @@ export default {
   margin-bottom: 10px;
 }
 
+.v-theme--dark .analysis-title {
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
 .analysis-value {
   display: flex;
   align-items: center;
@@ -736,6 +801,11 @@ export default {
 .distribution-count {
   font-weight: 600;
   color: #333;
+}
+
+.v-theme--dark .distribution-count {
+  font-weight: 600;
+  color: #ffffff;
 }
 
 /* ローディング状態 */
@@ -822,10 +892,19 @@ export default {
 /* 気分グラフセクション */
 .mood-chart-section {
   margin-top: 30px;
-  background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ライトモード - チャートセクション */
+.v-theme--light .mood-chart-section {
+  background: white;
+}
+
+/* ダークモード - チャートセクション */
+.v-theme--dark .mood-chart-section {
+  background: rgb(var(--v-theme-surface));
 }
 
 .chart-header {
@@ -840,6 +919,13 @@ export default {
 .chart-header h3 {
   margin: 0;
   color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.v-theme--dark .chart-header h3 {
+  margin: 0;
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 600;
 }
