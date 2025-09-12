@@ -557,7 +557,6 @@
 <script>
 import apiFacade from "../services/apiFacade";
 import { clearAuthToken } from "../services/authUtils";
-import { mapGetters } from "vuex";
 import ThemeToggle from "./ThemeToggle.vue";
 
 export default {
@@ -617,9 +616,6 @@ export default {
           v === this.newPassword || "パスワードが一致しません。",
       },
     };
-  },
-  computed: {
-    ...mapGetters(['getTheme']),
   },
   mounted() {
     this.loadUserInfo();

@@ -119,14 +119,17 @@ export default createStore({
     },
     initializeTheme({ commit }) {
       // アプリ起動時のテーマ初期化
-      let savedTheme = localStorage.getItem('vuex-auth');
-      if (savedTheme) {
-        try {
-          const parsed = JSON.parse(savedTheme);
-          savedTheme = parsed.theme;
-        } catch (e) {
-          savedTheme = null;
+      let savedTheme = null;
+      try {
+        const storedData = localStorage.getItem('vuex-auth');
+        if (storedData) {
+          const parsed = JSON.parse(storedData);
+          // パースされたオブジェクトからテーマを正しく抽出
+          savedTheme = parsed?.theme || null;
         }
+      } catch (e) {
+        console.warn('Failed to parse stored theme data:', e);
+        savedTheme = null;
       }
       
       // システム設定の検出
@@ -136,7 +139,8 @@ export default createStore({
       }
       
       // 優先順位: 保存済み設定 > システム設定 > デフォルト設定
-      const targetTheme = savedTheme || systemTheme || THEME_CONFIG.DEFAULT_THEME;
+      // 明示的にnull/undefinedチェック
+      const targetTheme = savedTheme !== null ? savedTheme : systemTheme || THEME_CONFIG.DEFAULT_THEME;
       
       commit('setTheme', targetTheme);
       return targetTheme;
