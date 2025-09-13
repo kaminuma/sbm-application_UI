@@ -52,14 +52,12 @@ export default {
       set(value) {
         // 現在の状態と異なる場合のみトグル実行
         if (value !== isDark.value) {
-          const success = toggleTheme()
-          if (success) {
-            emit('theme-changed', {
-              theme: currentTheme.value,
-              themeName: themeName.value,
-              isDark: isDark.value
-            })
-          }
+          toggleTheme()
+          emit('theme-changed', {
+            theme: currentTheme.value,
+            themeName: themeName.value,
+            isDark: isDark.value
+          })
         }
       }
     })
