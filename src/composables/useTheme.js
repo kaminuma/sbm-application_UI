@@ -23,12 +23,8 @@ export function useTheme() {
   
   // テーマの切り替え
   const toggleTheme = () => {
-    const newTheme = isDark.value ? 'light' : 'dark'
-    if (isThemeEnabled(newTheme)) {
-      store.dispatch('setTheme', newTheme)
-      return true
-    }
-    return false
+    store.dispatch('toggleTheme')
+    return true
   }
   
   // 特定のテーマを設定
