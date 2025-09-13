@@ -138,9 +138,9 @@ export default createStore({
         systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
       
-      // 優先順位: 保存済み設定 > システム設定 > デフォルト設定
+      // 優先順位: 保存済み設定 > システム設定
       // 明示的にnull/undefinedチェック
-      const targetTheme = savedTheme !== null ? savedTheme : systemTheme || THEME_CONFIG.DEFAULT_THEME;
+      const targetTheme = savedTheme !== null ? savedTheme : systemTheme;
       
       commit('setTheme', targetTheme);
       return targetTheme;
