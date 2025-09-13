@@ -1427,25 +1427,6 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
-
-.v-theme--light body {
-  background-color: #f0f4f8;
-  font-family: "Poppins", sans-serif;
-}
-
-.v-theme--dark body {
-  background-color: rgb(var(--v-theme-background));
-  font-family: "Poppins", sans-serif;
-}
-
-.v-theme--light .v-application {
-  background-color: #f0f4f8;
-}
-
-.v-theme--dark .v-application {
-  background-color: rgb(var(--v-theme-background));
-}
 
 .content-container {
   padding: 20px;
@@ -1942,7 +1923,16 @@ export default {
 
 /* VueCalダークモード追加設定 */
 .v-theme--dark .vuecal--custom-theme,
-.v-theme--dark .vuecal--custom-theme * {
+.v-theme--dark .vuecal--custom-theme .vuecal__event,
+.v-theme--dark .vuecal--custom-theme .vuecal__title,
+.v-theme--dark .vuecal--custom-theme .vuecal__header,
+.v-theme--dark .vuecal--custom-theme .vuecal__menu,
+.v-theme--dark .vuecal--custom-theme .vuecal__menu-item,
+.v-theme--dark .vuecal--custom-theme .vuecal__cell,
+.v-theme--dark .vuecal--custom-theme .vuecal__weekdays,
+.v-theme--dark .vuecal--custom-theme .vuecal__time,
+.v-theme--dark .vuecal--custom-theme .vuecal__event-title,
+.v-theme--dark .vuecal--custom-theme .vuecal__event-time {
   background-color: #1e1e1e !important;
   color: #ffffff !important;
 }

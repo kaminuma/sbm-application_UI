@@ -153,10 +153,30 @@ export default {
 </script>
 
 <style>
+/* Google Fonts読み込み */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
 body {
   font-family: "Poppins", sans-serif;
-  background-color: rgb(var(--v-theme-background)) !important;
-  color: rgb(var(--v-theme-on-background)) !important;
+}
+
+/* テーマ別bodyスタイル */
+.v-theme--light body {
+  background-color: #f0f4f8;
+  font-family: "Poppins", sans-serif;
+}
+
+.v-theme--dark body {
+  background-color: rgb(var(--v-theme-background));
+  font-family: "Poppins", sans-serif;
+}
+
+.v-theme--light .v-application {
+  background-color: #f0f4f8;
+}
+
+.v-theme--dark .v-application {
+  background-color: rgb(var(--v-theme-background));
 }
 .landing-page-main {
   padding: 0 !important; /* ランディングページのメインコンテンツではパディングをなくす */
