@@ -50,15 +50,16 @@ export default {
         return isDark.value
       },
       set(value) {
-        // valueパラメータを使用してテーマを明示的に設定
-        const targetTheme = value ? 'dark' : 'light'
-        const success = setTheme(targetTheme)
-        if (success) {
-          emit('theme-changed', {
-            theme: currentTheme.value,
-            themeName: themeName.value,
-            isDark: isDark.value
-          })
+        // 現在の状態と異なる場合のみトグル実行
+        if (value !== isDark.value) {
+          const success = toggleTheme()
+          if (success) {
+            emit('theme-changed', {
+              theme: currentTheme.value,
+              themeName: themeName.value,
+              isDark: isDark.value
+            })
+          }
         }
       }
     })
