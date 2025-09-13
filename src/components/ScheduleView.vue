@@ -1427,16 +1427,6 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
-
-body {
-  background-color: #f0f4f8;
-  font-family: "Poppins", sans-serif;
-}
-
-.v-application {
-  background-color: #f0f4f8;
-}
 
 .content-container {
   padding: 20px;
@@ -1457,9 +1447,18 @@ body {
   gap: 10px;
 }
 
-.button-group-title {
+.v-theme--light .button-group-title {
   margin: 0;
   color: #666;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.v-theme--dark .button-group-title {
+  margin: 0;
+  color: #cccccc;
   font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -1489,11 +1488,18 @@ body {
   overflow-y: auto;
 }
 
-.datetime-label {
+.v-theme--light .datetime-label {
   margin-bottom: 10px;
   font-weight: 600;
   font-size: 16px;
   color: #333;
+}
+
+.v-theme--dark .datetime-label {
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #ffffff;
 }
 
 .date-time-picker {
@@ -1502,7 +1508,8 @@ body {
   gap: 10px;
 }
 
-.vuecal--custom-theme {
+/* ライトモード用VueCalテーマ */
+.v-theme--light .vuecal--custom-theme {
   --vuecal-color-primary: #00bfa5;
   --vuecal-color-secondary: #a7ffeb;
   --vuecal-background: #f0f4f8;
@@ -1511,23 +1518,53 @@ body {
   --vuecal-font-family: "Poppins", sans-serif;
 }
 
-.vuecal--custom-theme .vuecal__header {
+/* ダークモード用VueCalテーマ */
+.v-theme--dark .vuecal--custom-theme {
+  --vuecal-color-primary: #2d2d2d;
+  --vuecal-color-secondary: #1e1e1e;
+  --vuecal-background: #1e1e1e;
+  --vuecal-border-radius: 8px;
+  --vuecal-event-border-radius: 8px;
+  --vuecal-font-family: "Poppins", sans-serif;
+}
+
+/* ライトモード - VueCalヘッダー */
+.v-theme--light .vuecal--custom-theme .vuecal__header {
   background-color: #a7ffeb;
   color: #00695c;
+}
+
+/* ダークモード - VueCalヘッダー */
+.v-theme--dark .vuecal--custom-theme .vuecal__header {
+  background-color: #1e1e1e;
+  color: #ffffff;
 }
 
 .vuecal--custom-theme .vuecal__event {
   border-radius: 8px;
 }
 
-.vuecal--custom-theme .vuecal__event-title {
+/* ライトモード - VueCalイベントタイトル */
+.v-theme--light .vuecal--custom-theme .vuecal__event-title {
   color: #00695c;
 }
 
-.vuecal--custom-theme .vuecal__time {
+/* ダークモード - VueCalイベントタイトル */
+.v-theme--dark .vuecal--custom-theme .vuecal__event-title {
+  color: #ffffff;
+}
+
+/* ライトモード - VueCal時刻表示 */
+.v-theme--light .vuecal--custom-theme .vuecal__time {
   color: #00695c;
 }
-.vuecal--custom-theme .vuecal__weekday-date {
+
+/* ダークモード - VueCal時刻表示 */
+.v-theme--dark .vuecal--custom-theme .vuecal__time {
+  color: #cccccc;
+}
+/* ライトモード - VueCal週日表示 */
+.v-theme--light .vuecal--custom-theme .vuecal__weekday-date {
   cursor: pointer !important;
   display: inline-block !important;
   padding: 6px 12px !important;
@@ -1537,8 +1574,25 @@ body {
   pointer-events: auto !important;
 }
 
-.vuecal--custom-theme .vuecal__weekday-date:hover {
+/* ダークモード - VueCal週日表示 */
+.v-theme--dark .vuecal--custom-theme .vuecal__weekday-date {
+  cursor: pointer !important;
+  display: inline-block !important;
+  padding: 6px 12px !important;
+  background: #3a3a3a !important;
+  border-radius: 4px !important;
+  transition: background 0.2s !important;
+  pointer-events: auto !important;
+}
+
+/* ライトモード - VueCal週日ホバー */
+.v-theme--light .vuecal--custom-theme .vuecal__weekday-date:hover {
   background: #c7d2fe !important;
+}
+
+/* ダークモード - VueCal週日ホバー */
+.v-theme--dark .vuecal--custom-theme .vuecal__weekday-date:hover {
+  background: #424242 !important;
 }
 /* ヘッダーセル全体をクリック可能に見せる */
 .vuecal--custom-theme .vuecal__weekday {
@@ -1628,6 +1682,10 @@ body {
   color: #333;
 }
 
+.v-theme--dark .mood-label {
+  color: #ffffff;
+}
+
 .mood-emoji-container {
   display: flex;
   justify-content: space-between;
@@ -1662,6 +1720,10 @@ body {
 .mood-text {
   font-size: 0.9rem;
   color: #666;
+}
+
+.v-theme--dark .mood-text {
+  color: #cccccc;
 }
 
 /* カレンダーセル内の気分記録アイコン */
@@ -1714,7 +1776,7 @@ body {
 }
 
 /* 気分記録履歴セクション */
-.mood-history-section {
+.v-theme--light .mood-history-section {
   margin-top: 30px;
   background: white;
   border-radius: 12px;
@@ -1722,9 +1784,24 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.mood-history-section h3 {
+.v-theme--dark .mood-history-section {
+  margin-top: 30px;
+  background: rgb(var(--v-theme-surface));
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.v-theme--light .mood-history-section h3 {
   margin: 0 0 20px 0;
   color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.v-theme--dark .mood-history-section h3 {
+  margin: 0 0 20px 0;
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -1738,9 +1815,15 @@ body {
   text-align: center;
 }
 
-.empty-mood-state p {
+.v-theme--light .empty-mood-state p {
   margin: 15px 0;
   color: #666;
+  font-size: 1.1rem;
+}
+
+.v-theme--dark .empty-mood-state p {
+  margin: 15px 0;
+  color: #ffffff;
   font-size: 1.1rem;
 }
 
@@ -1761,10 +1844,17 @@ body {
   border-bottom: none;
 }
 
-.mood-date {
+.v-theme--light .mood-date {
   min-width: 120px;
   font-weight: 600;
   color: #666;
+  font-size: 0.9rem;
+}
+
+.v-theme--dark .mood-date {
+  min-width: 120px;
+  font-weight: 600;
+  color: #ffffff;
   font-size: 0.9rem;
 }
 
@@ -1779,14 +1869,25 @@ body {
   font-size: 1.2rem;
 }
 
-.mood-label-display {
+.v-theme--light .mood-label-display {
   font-weight: 500;
   color: #333;
 }
 
-.mood-note {
+.v-theme--dark .mood-label-display {
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.v-theme--light .mood-note {
   flex: 2;
   color: #666;
+  font-size: 0.9rem;
+}
+
+.v-theme--dark .mood-note {
+  flex: 2;
+  color: #cccccc;
   font-size: 0.9rem;
 }
 
@@ -1819,6 +1920,36 @@ body {
   filter: brightness(0.95);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* VueCalダークモード追加設定 */
+.v-theme--dark .vuecal--custom-theme,
+.v-theme--dark .vuecal--custom-theme .vuecal__event,
+.v-theme--dark .vuecal--custom-theme .vuecal__title,
+.v-theme--dark .vuecal--custom-theme .vuecal__header,
+.v-theme--dark .vuecal--custom-theme .vuecal__menu,
+.v-theme--dark .vuecal--custom-theme .vuecal__menu-item,
+.v-theme--dark .vuecal--custom-theme .vuecal__cell,
+.v-theme--dark .vuecal--custom-theme .vuecal__weekdays,
+.v-theme--dark .vuecal--custom-theme .vuecal__time,
+.v-theme--dark .vuecal--custom-theme .vuecal__event-title,
+.v-theme--dark .vuecal--custom-theme .vuecal__event-time {
+  background-color: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+.v-theme--dark .vuecal--custom-theme .vuecal__title,
+.v-theme--dark .vuecal--custom-theme .vuecal__header,
+.v-theme--dark .vuecal--custom-theme .vuecal__menu,
+.v-theme--dark .vuecal--custom-theme .vuecal__menu-item,
+.v-theme--dark .vuecal--custom-theme .vuecal__flex.vuecal__menu {
+  background-color: #2d2d2d !important;
+  color: #ffffff !important;
+}
+
+.v-theme--dark .vuecal--custom-theme .vuecal__title {
+  background: #2d2d2d !important;
+}
+
 .vuecal--default-theme {
   height: 1000px; /* 高さを1000pxに設定 */
   max-height: 1000px; /* 最大高さも1000pxに設定 */

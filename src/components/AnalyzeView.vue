@@ -252,14 +252,14 @@ export default {
   justify-content: space-between;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--theme-border);
 }
 
 .analyze-header h2 {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-primary);
   font-family: "Poppins", sans-serif;
 }
 
@@ -283,7 +283,7 @@ export default {
 
 .fetch-button {
   padding: 8px 16px;
-  background: #36a2eb;
+  background: var(--theme-accent-blue);
   color: #fff;
   border: none;
   cursor: pointer;
@@ -319,13 +319,18 @@ export default {
 
 .activity-table th,
 .activity-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--theme-outline-strong);
   padding: 8px;
   text-align: left;
+  color: var(--theme-text-primary);
+}
+
+.activity-table tbody tr td {
+  color: var(--theme-text-secondary);
 }
 
 .activity-table th {
-  background: #f7f7f7;
+  background: var(--theme-bg-secondary);
 }
 
 .activity-contents {
@@ -334,7 +339,7 @@ export default {
 }
 
 /* ローディング画面のスタイル */
-.loading-screen {
+.v-theme--light .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
@@ -347,16 +352,35 @@ export default {
   z-index: 1000;
 }
 
-.loading-content {
+.v-theme--dark .loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.v-theme--light .loading-content {
   text-align: center;
   font-family: Arial, sans-serif;
   color: #333;
 }
 
+.v-theme--dark .loading-content {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+}
+
 .spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid #36a2eb;
+  border: 5px solid var(--theme-accent-blue);
   border-top: 5px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -372,7 +396,7 @@ export default {
   }
 }
 .category-banner {
-  background: #f4f6f8;
+  background: var(--theme-bg-secondary);
   padding: 10px 15px;
   margin-bottom: 15px;
   border-radius: 5px;
@@ -382,11 +406,16 @@ export default {
 .category-banner p {
   margin: 0;
   font-size: 14px;
-  color: #333;
+  color: var(--theme-text-primary);
 }
 
 .category-item {
   font-weight: bold;
-  color: #0073e6;
+  color: var(--theme-accent-blue);
+}
+
+.v-theme--dark .category-item {
+  font-weight: bold;
+  color: #4fc3f7;
 }
 </style>

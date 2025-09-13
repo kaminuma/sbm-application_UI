@@ -1,7 +1,7 @@
 <template>
   <div class="mood-view">
     <div class="mood-header">
-      <h2>📝 気分記録</h2>
+      <h2 class="mood-history-title">📝 気分記録</h2>
       <v-btn color="primary" @click="showMoodDialog = true" class="btn-rounded">
         気分を記録
       </v-btn>
@@ -544,7 +544,7 @@ export default {
 
 .mood-header h2 {
   margin: 0;
-  color: #333;
+  color: var(--theme-text-primary);
   font-size: 2rem;
   font-weight: 600;
 }
@@ -557,18 +557,60 @@ export default {
 
 .mood-history-section,
 .mood-analysis-section {
-  background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.mood-history-section h3,
-.mood-analysis-section h3 {
+/* ライトモード */
+.v-theme--light .mood-history-section,
+.v-theme--light .mood-analysis-section {
+  background: white;
+}
+
+/* ダークモード */
+.v-theme--dark .mood-history-section,
+.v-theme--dark .mood-analysis-section {
+  background: rgb(var(--v-theme-surface));
+}
+
+/* テーマ対応テキスト */
+.mood-history-section h3, h2,
+.mood-analysis-section h3, h2{
   margin: 0 0 20px 0;
-  color: #333;
+  color: var(--theme-text-primary);
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+
+.mood-label-display {
+  font-weight: 500;
+  color: var(--theme-text-primary);
+}
+
+.mood-note {
+  flex: 2;
+  color: var(--theme-text-secondary);
+  font-size: 0.9rem;
+}
+
+.mood-date {
+  min-width: 120px;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+  font-size: 0.9rem;
+}
+
+.mood-history-title,
+.mood-header h2 {
+  color: var(--theme-text-primary);
+}
+
+.empty-mood-state p {
+  margin: 15px 0;
+  color: var(--theme-text-secondary);
+  font-size: 1.1rem;
 }
 
 /* 気分評価セクション */
@@ -583,6 +625,13 @@ export default {
   color: #333;
 }
 
+.v-theme--dark .mood-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
 .mood-emoji-container {
   display: flex;
   justify-content: space-between;
@@ -593,20 +642,20 @@ export default {
   flex: 1;
   text-align: center;
   padding: 15px 10px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--theme-outline);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .mood-emoji-item:hover {
-  border-color: #2196f3;
-  background-color: #f5f5f5;
+  border-color: var(--theme-accent-blue);
+  background-color: var(--theme-bg-hover);
 }
 
 .mood-emoji-item.selected {
-  border-color: #2196f3;
-  background-color: #e3f2fd;
+  border-color: var(--theme-accent-blue);
+  background-color: var(--theme-bg-hover);
 }
 
 .mood-emoji {
@@ -616,7 +665,7 @@ export default {
 
 .mood-text {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--theme-text-secondary);
 }
 
 /* 気分履歴 */
@@ -629,7 +678,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--theme-outline-light);
   gap: 15px;
 }
 
@@ -640,7 +689,7 @@ export default {
 .mood-date {
   min-width: 80px;
   font-weight: 600;
-  color: #666;
+  color: var(--theme-text-primary);
 }
 
 .mood-display {
@@ -656,12 +705,12 @@ export default {
 
 .mood-label-display {
   font-weight: 500;
-  color: #333;
+  color: var(--theme-text-primary);
 }
 
 .mood-note {
   flex: 2;
-  color: #666;
+  color: var(--theme-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -672,11 +721,11 @@ export default {
 
 .edit-btn,
 .delete-btn {
-  color: #666;
+  color: var(--theme-text-secondary);
 }
 
 .delete-btn:hover {
-  color: #f44336;
+  color: var(--theme-accent-red);
 }
 
 /* 分析セクション */
@@ -691,9 +740,10 @@ export default {
 
 .analysis-title {
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-primary);
   margin-bottom: 10px;
 }
+
 
 .analysis-value {
   display: flex;
@@ -704,7 +754,7 @@ export default {
 .average-mood {
   font-size: 2rem;
   font-weight: 700;
-  color: #2196f3;
+  color: var(--theme-accent-blue);
 }
 
 .average-emoji {
@@ -722,7 +772,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--theme-outline-light);
 }
 
 .distribution-item:last-child {
@@ -735,7 +785,7 @@ export default {
 
 .distribution-count {
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-primary);
 }
 
 /* ローディング状態 */
@@ -750,7 +800,7 @@ export default {
 
 .loading-container p {
   margin-top: 20px;
-  color: #666;
+  color: var(--theme-text-secondary);
   font-size: 1.1rem;
 }
 
@@ -766,7 +816,7 @@ export default {
 
 .empty-state p {
   margin: 20px 0;
-  color: #666;
+  color: var(--theme-text-secondary);
   font-size: 1.1rem;
 }
 
@@ -822,10 +872,19 @@ export default {
 /* 気分グラフセクション */
 .mood-chart-section {
   margin-top: 30px;
-  background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ライトモード - チャートセクション */
+.v-theme--light .mood-chart-section {
+  background: white;
+}
+
+/* ダークモード - チャートセクション */
+.v-theme--dark .mood-chart-section {
+  background: rgb(var(--v-theme-surface));
 }
 
 .chart-header {
@@ -839,7 +898,7 @@ export default {
 
 .chart-header h3 {
   margin: 0;
-  color: #333;
+  color: var(--theme-text-primary);
   font-size: 1.5rem;
   font-weight: 600;
 }

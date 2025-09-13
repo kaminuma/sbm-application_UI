@@ -278,9 +278,14 @@ export default {
   margin-bottom: 0.5rem;
 }
 
-.v-card-text p {
+.v-theme--light .v-card-text p {
   font-size: 1rem;
   color: #555;
+}
+
+.v-theme--dark .v-card-text p {
+  font-size: 1rem;
+  color: #ffffff;
 }
 
 /* アイコンとテキストの間隔調整 */
