@@ -62,7 +62,7 @@ export const THEME_CONFIG = {
 
 // テーマが有効かどうかをチェックする関数
 export const isThemeEnabled = (theme) => {
-  return Object.keys(THEME_CONFIG.THEMES).includes(theme)
+  return Object.keys(THEME_CONFIG.THEMES).includes(theme);
 }
 
 // Vuetifyテーマオブジェクトを生成する関数
