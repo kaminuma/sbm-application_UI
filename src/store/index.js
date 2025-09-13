@@ -109,8 +109,13 @@ export default createStore({
     },
     toggleTheme({ commit, state }) {
       const newTheme = state.theme === 'light' ? 'dark' : 'light';
-      commit('setTheme', newTheme);
-      return isThemeEnabled(newTheme);
+      if (isThemeEnabled(newTheme)) {
+        commit('setTheme', newTheme);
+        return true;
+      } else {
+        console.warn(`toggleTheme: Attempted to set invalid theme "${newTheme}"`);
+        return false;
+      }
     },
     setTheme({ commit }, theme) {
       // 設定チェック済みのため、commitに委譲
