@@ -25,7 +25,6 @@ export function useTheme() {
   const toggleTheme = () => {
     return store.dispatch('toggleTheme')
   }
-  // (no change)
   
   // 特定のテーマを設定
   const setTheme = (theme) => {
