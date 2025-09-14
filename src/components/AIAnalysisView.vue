@@ -115,21 +115,23 @@
 
       <!-- 分析ボタン -->
       <v-row>
-        <v-col cols="12" class="text-center">
-          <v-btn
-            @click="generateAIAnalysis"
-            :loading="isAnalyzing"
-            :disabled="!canAnalyze"
-            color="primary"
-            size="large"
-            variant="elevated"
-            class="analysis-btn"
-          >
-            <v-icon class="mr-2">mdi-auto-fix</v-icon>
-            AI分析を実行
-          </v-btn>
-          <div v-if="!canAnalyze" class="mt-2 text-caption text-disabled">
-            {{ disableReason }}
+        <v-col cols="12">
+          <div class="analysis-button-container">
+            <v-btn
+              @click="generateAIAnalysis"
+              :loading="isAnalyzing"
+              :disabled="!canAnalyze"
+              color="primary"
+              size="large"
+              variant="elevated"
+              class="analysis-btn"
+            >
+              <v-icon class="mr-2">mdi-auto-fix</v-icon>
+              AI分析を実行
+            </v-btn>
+            <div v-if="!canAnalyze" class="mt-2 text-caption text-disabled analysis-disable-reason">
+              {{ disableReason }}
+            </div>
           </div>
         </v-col>
       </v-row>
@@ -467,11 +469,26 @@ export default {
   opacity: 0.6;
 }
 
+.analysis-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 24px 0;
+}
+
 .analysis-btn {
-  padding: 12px 32px !important;
   font-size: 1.1rem !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
+  min-width: 200px;
+}
+
+.analysis-disable-reason {
+  color: #666 !important;
+  text-align: center;
+  max-width: 300px;
 }
 
 .result-card {
@@ -560,7 +577,11 @@ export default {
   
   .analysis-btn {
     width: 100%;
-    padding: 12px !important;
+    min-width: unset;
+  }
+
+  .analysis-button-container {
+    margin: 20px 0;
   }
   
   .insight-title {
