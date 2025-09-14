@@ -1,6 +1,6 @@
 <template>
-  <v-row align="center">
-    <v-col cols="8">
+  <v-row align="center" class="theme-toggle-row">
+    <v-col cols="12" md="8" class="theme-info-col">
       <div class="theme-info">
         <div class="info-icon-wrapper">
           <v-icon :color="themeIconColor">{{ themeIcon }}</v-icon>
@@ -11,17 +11,20 @@
         </div>
       </div>
     </v-col>
-    <v-col cols="4">
+    <v-col cols="12" md="4" class="theme-control-col">
       <div class="theme-control">
         <span class="mode-label">{{ isDark ? 'ダーク' : 'ライト' }}モード</span>
-        <v-icon class="theme-icon sun-icon">mdi-weather-sunny</v-icon>
-        <v-switch
-          v-model="isDarkModel"
-          color="primary"
-          hide-details
-          class="theme-switch"
-        />
-        <v-icon class="theme-icon moon-icon">mdi-weather-night</v-icon>
+        <div class="switch-wrapper">
+          <v-icon class="theme-icon sun-icon">mdi-weather-sunny</v-icon>
+          <v-switch
+            v-model="isDarkModel"
+            color="primary"
+            hide-details
+            class="theme-switch"
+            density="compact"
+          />
+          <v-icon class="theme-icon moon-icon">mdi-weather-night</v-icon>
+        </div>
       </div>
     </v-col>
   </v-row>
@@ -150,5 +153,67 @@ export default {
 
 .theme-switch {
   flex-shrink: 0;
+}
+
+.switch-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* スマホ対応 - テーマトグル */
+@media (max-width: 768px) {
+  .theme-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+  }
+
+  .mode-label {
+    text-align: center;
+    margin-right: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  /* スイッチとアイコンを横並び */
+  .switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .theme-icon {
+    font-size: 20px;
+  }
+
+  .theme-switch {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .info-label {
+    font-size: 0.8rem;
+  }
+
+  .info-value {
+    font-size: 1rem;
+  }
+
+  .mode-label {
+    font-size: 0.85rem;
+  }
+
+  .theme-icon {
+    font-size: 16px;
+  }
+
+  .info-icon-wrapper {
+    width: 36px;
+    height: 36px;
+  }
 }
 </style>
