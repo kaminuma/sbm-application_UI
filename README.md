@@ -4,7 +4,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Release](https://img.shields.io/badge/release-live-brightgreen)](https://sbm-app.com/)
-[![Version](https://img.shields.io/badge/version-0.4.0-green)](https://github.com/kaminuma/sbm-application_UI)
+[![Version](https://img.shields.io/badge/version-0.6.0-green)](https://github.com/kaminuma/sbm-application_UI)
 [![License](https://img.shields.io/badge/license-Apache%202.0-yellow)](LICENSE)
 
 生活記録の管理・分析を通じて、日々の生活をより充実させるWebアプリケーション
@@ -58,6 +58,12 @@ Google Search Console登録済みの正式サービスです。どなたでも�
 - **構造化データ**: 検索エンジン向けのメタデータ実装
 - **SNSシェア用画像**: SBMブランドロゴを活用したオリジナル画像
 
+### 🎨 テーマ・UI機能 *（v0.6.0新機能）*
+- **ダークモード**: システム設定に応じた自動切り替え機能
+- **テーマトグル**: ライト/ダーク手動切り替え対応
+- **CSS変数システム**: 一貫したデザインシステム実装
+- **レスポンシブ対応**: 全デバイスでの最適なテーマ表示
+
 ### 📊 分析・インサイト機能
 - **基本分析**: 活動記録と気分データの基本的な分析・可視化 ✅
 - **AI分析機能**: 機械学習によるパーソナライズされた洞察 *（開発中）*
@@ -78,6 +84,8 @@ Google Search Console登録済みの正式サービスです。どなたでも�
 - **Vuetify 3** - UIコンポーネントライブラリ
 - **Vue Router** - ルーティング
 - **Vuex** - 状態管理
+- **Composition API** - Vue 3の新機能活用
+- **CSS Variables** - ダイナミックテーマシステム
 - **Axios** - HTTP通信
 - **Chart.js / ECharts** - データ可視化
 - **Vitest** - テストフレームワーク
@@ -149,6 +157,8 @@ sbm-application_UI/
 │   ├── api/          # API通信関連
 │   ├── assets/       # 静的アセット
 │   ├── components/   # Vueコンポーネント
+│   ├── composables/  # Vue 3 Composition API hooks
+│   ├── config/       # 設定ファイル（テーマ設定等）
 │   ├── plugins/      # Vueプラグイン（Vuetify等）
 │   ├── router/       # ルーティング設定
 │   ├── services/     # ビジネスロジック
@@ -200,8 +210,8 @@ https://github.com/kaminuma/sbm-application_API
 
 ---
 
-**Last Updated:** 2025年8月27日  
-**Current Version:** v0.4.0
+**Last Updated:** 2025年9月14日
+**Current Version:** v0.6.0
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
