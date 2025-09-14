@@ -575,8 +575,10 @@ export default {
 }
 
 /* テーマ対応テキスト */
-.mood-history-section h3, h2,
-.mood-analysis-section h3, h2{
+.mood-history-section > h3,
+.mood-history-section > h2,
+.mood-analysis-section > h3,
+.mood-analysis-section > h2 {
   margin: 0 0 20px 0;
   color: var(--theme-text-primary);
   font-size: 1.5rem;

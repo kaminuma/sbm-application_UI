@@ -1059,6 +1059,7 @@ export default {
 }
 
 .info-section {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1107,15 +1108,6 @@ export default {
   flex: 1;
 }
 
-/* ライトモード用 */
-.v-theme--light .info-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #666;
-  margin-bottom: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
 
 .info-value {
   font-size: 1.1rem;
@@ -1428,10 +1420,6 @@ export default {
   margin-left: auto;
   display: flex;
   align-items: center;
-}
-
-.info-section {
-  position: relative;
 }
 
 .info-section .theme-toggle {
