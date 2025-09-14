@@ -1559,7 +1559,7 @@ export default {
   color: #00695c;
 }
 
-/* ダークモード - VueCal時刻表示 - 最強の特異性 */
+/* ダークモード - VueCal時刻表示 */
 .v-theme--dark .vuecal--custom-theme .vuecal__time-cell label {
   color: #000000 !important;
   background-color: transparent !important;
