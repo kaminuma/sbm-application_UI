@@ -1559,15 +1559,6 @@ export default {
   color: #00695c;
 }
 
-/* ダークモード - VueCal時刻表示 */
-.v-theme--dark .vuecal--custom-theme .vuecal__time-cell label {
-  color: #000000 !important;
-  background-color: transparent !important;
-}
-
-.v-theme--dark .vuecal--custom-theme label {
-  color: #000000 !important;
-}
 /* ライトモード - VueCal週日表示 */
 .v-theme--light .vuecal--custom-theme .vuecal__weekday-date {
   cursor: pointer !important;
