@@ -1559,9 +1559,14 @@ export default {
   color: #00695c;
 }
 
-/* ダークモード - VueCal時刻表示 */
-.v-theme--dark .vuecal--custom-theme .vuecal__time {
-  color: #cccccc;
+/* ダークモード - VueCal時刻表示 - 最強の特異性 */
+.v-theme--dark .vuecal--custom-theme .vuecal__time-cell label {
+  color: #000000 !important;
+  background-color: transparent !important;
+}
+
+.v-theme--dark .vuecal--custom-theme label {
+  color: #000000 !important;
 }
 /* ライトモード - VueCal週日表示 */
 .v-theme--light .vuecal--custom-theme .vuecal__weekday-date {
@@ -1930,7 +1935,6 @@ export default {
 .v-theme--dark .vuecal--custom-theme .vuecal__menu-item,
 .v-theme--dark .vuecal--custom-theme .vuecal__cell,
 .v-theme--dark .vuecal--custom-theme .vuecal__weekdays,
-.v-theme--dark .vuecal--custom-theme .vuecal__time,
 .v-theme--dark .vuecal--custom-theme .vuecal__event-title,
 .v-theme--dark .vuecal--custom-theme .vuecal__event-time {
   background-color: #1e1e1e !important;
@@ -1953,5 +1957,21 @@ export default {
 .vuecal--default-theme {
   height: 1000px; /* 高さを1000pxに設定 */
   max-height: 1000px; /* 最大高さも1000pxに設定 */
+}
+
+</style>
+
+<style>
+/* グローバルスタイル: ダークモード時のVueCal時間表示修正 */
+.v-theme--dark .vuecal__time-cell label {
+  color: #000000 !important;
+}
+
+.v-theme--dark .vuecal__time-cell .vuecal__time {
+  color: #000000 !important;
+}
+
+.v-theme--dark .vuecal--custom-theme label {
+  color: #000000 !important;
 }
 </style>
