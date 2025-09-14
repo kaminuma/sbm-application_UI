@@ -251,6 +251,24 @@
           </v-card-actions>
         </v-card>
 
+        <!-- テーマ設定セクション -->
+        <v-card class="settings-card mb-6" elevation="3">
+          <v-card-title class="card-title d-flex align-center py-4">
+            <v-avatar color="purple" size="40" class="mr-4">
+              <v-icon color="white">mdi-theme-light-dark</v-icon>
+            </v-avatar>
+            <div>
+              <h3 class="mb-0">表示設定</h3>
+              <span class="subtitle">テーマの切り替え</span>
+            </div>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="py-6">
+            <div class="theme-section">
+              <ThemeToggle @theme-changed="onThemeChanged" />
+            </div>
+          </v-card-text>
+        </v-card>
 
         <!-- アカウント管理セクション -->
         <v-card class="settings-card danger-zone" elevation="3">
@@ -539,9 +557,13 @@
 <script>
 import apiFacade from "../services/apiFacade";
 import { clearAuthToken } from "../services/authUtils";
+import ThemeToggle from "./ThemeToggle.vue";
 
 export default {
   name: "Settings",
+  components: {
+    ThemeToggle,
+  },
   data() {
     return {
       // ユーザー情報
@@ -798,6 +820,11 @@ export default {
       this.errorSnackbar = true;
     },
 
+    // ThemeToggleコンポーネントからのイベントハンドラ
+    onThemeChanged(eventData) {
+      this.showSuccess(`${eventData.themeName}に切り替えました`);
+    },
+
     
     async changePassword() {
       if (!this.$refs.passwordForm.validate()) {
@@ -922,7 +949,16 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   min-height: calc(100vh - 64px);
+}
+
+/* ライトモードは元のグラデーション */
+.v-theme--light .content-container {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* ダークモードはテーマ背景 */
+.v-theme--dark .content-container {
+  background: rgb(var(--v-theme-background));
 }
 
 .settings-header {
@@ -931,7 +967,7 @@ export default {
 }
 
 .settings-header h2 {
-  color: #2c3e50;
+  color: var(--theme-text-primary);
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
@@ -947,29 +983,55 @@ export default {
 .settings-card {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgb(var(--v-theme-surface));
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
 }
 
 .card-title {
-  background: linear-gradient(135deg, #00bfa5 0%, #00acc1 100%);
-  color: white;
   border-radius: 16px 16px 0 0;
   padding: 20px 24px;
 }
 
-.card-title .v-icon {
+/* ライトモードは元のグラデーション */
+.v-theme--light .card-title {
+  background: linear-gradient(135deg, #00bfa5 0%, #00acc1 100%);
   color: white;
 }
 
-.card-title h3 {
+/* ダークモードはテーマ色 */
+.v-theme--dark .card-title {
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+}
+
+/* ライトモード用アイコン・テキスト */
+.v-theme--light .card-title .v-icon {
+  color: white;
+}
+
+.v-theme--light .card-title h3 {
   color: white;
   font-weight: 600;
 }
 
-.card-title .subtitle {
+.v-theme--light .card-title .subtitle {
   color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+}
+
+/* ダークモード用アイコン・テキスト */
+.v-theme--dark .card-title .v-icon {
+  color: rgb(var(--v-theme-on-primary));
+}
+
+.v-theme--dark .card-title h3 {
+  color: rgb(var(--v-theme-on-primary));
+  font-weight: 600;
+}
+
+.v-theme--dark .card-title .subtitle {
+  color: rgba(var(--v-theme-on-primary), 0.8);
   font-size: 0.875rem;
 }
 
@@ -997,21 +1059,38 @@ export default {
 }
 
 .info-section {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
   border: 1px solid rgba(0, 191, 165, 0.1);
   transition: all 0.3s ease;
 }
 
-.info-section:hover {
+/* ライトモード - info-section */
+.v-theme--light .info-section {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.v-theme--light .info-section:hover {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(0, 191, 165, 0.2);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ダークモード - info-section */
+.v-theme--dark .info-section {
+  background: rgba(var(--v-theme-surface-variant), 0.8);
+}
+
+.v-theme--dark .info-section:hover {
+  background: rgba(var(--v-theme-surface-variant), 0.95);
+  border-color: rgba(var(--v-theme-primary), 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .info-icon-wrapper {
@@ -1029,34 +1108,39 @@ export default {
   flex: 1;
 }
 
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--theme-text-primary);
+}
+
 .info-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #666;
+  color: var(--theme-text-secondary);
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.info-value {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #333;
-}
-
 /* プロフィール画像セクションのスタイル */
 .profile-image-section {
-  background: rgba(255, 255, 255, 0.5);
   border-radius: 12px;
   padding: 20px;
+}
+
+.profile-image-section {
+  background: var(--theme-bg-secondary);
 }
 
 .section-title {
   display: flex;
   align-items: center;
   font-weight: 600;
-  color: #333;
+  color: var(--theme-text-primary);
 }
+
 
 .section-label {
   font-size: 1.1rem;
@@ -1072,17 +1156,33 @@ export default {
   align-items: center;
   gap: 20px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
   border: 1px solid rgba(0, 191, 165, 0.1);
   transition: all 0.3s ease;
 }
 
-.profile-image-card:hover {
+/* ライトモード - プロフィール画像カード */
+.v-theme--light .profile-image-card {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.v-theme--light .profile-image-card:hover {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(0, 191, 165, 0.2);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ダークモード - プロフィール画像カード */
+.v-theme--dark .profile-image-card {
+  background: rgba(var(--v-theme-surface-variant), 0.8);
+}
+
+.v-theme--dark .profile-image-card:hover {
+  background: rgba(var(--v-theme-surface-variant), 0.95);
+  border-color: rgba(var(--v-theme-primary), 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .image-preview-new {
@@ -1306,6 +1406,42 @@ export default {
   
   .card-title {
     padding: 16px 20px;
+  }
+}
+
+/* テーマ設定セクション */
+.theme-section {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.theme-toggle {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.info-section .theme-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  .info-section {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+  }
+  
+  .info-section .theme-toggle {
+    position: static;
+    transform: none;
+    margin-top: 12px;
+    margin-left: 0;
+    align-self: stretch;
   }
 }
 </style>

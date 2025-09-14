@@ -65,7 +65,7 @@ export default {
 
 <style scoped>
 .sidebar {
-  background-color: #ffffff;
+  background-color: var(--theme-bg-surface);
   width: 250px;
   height: 100vh;
   position: fixed;
@@ -106,7 +106,7 @@ export default {
   width: 100%;
   padding: 0 20px;
   text-decoration: none;
-  color: #333333;
+  color: var(--theme-text-primary);
   font-family: "Poppins", sans-serif;
   font-size: 16px;
   font-weight: 500;
@@ -117,17 +117,17 @@ export default {
 }
 
 .sidebar-item:hover {
-  background-color: #f0f4f8;
+  background-color: var(--theme-bg-hover);
 }
 
 .sidebar-divider {
   padding: 12px 20px 8px 20px;
   margin-top: 16px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--theme-outline);
 }
 
 .divider-text {
-  color: #999;
+  color: var(--theme-text-tertiary);
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;

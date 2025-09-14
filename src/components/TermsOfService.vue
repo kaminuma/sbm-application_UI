@@ -160,6 +160,12 @@ export default {
   margin-bottom: 3rem;
 }
 
+.v-theme--dark .terms-updated-date {
+  color: #cccccc;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
 .terms-section {
   background-color: white;
   padding: 2rem;

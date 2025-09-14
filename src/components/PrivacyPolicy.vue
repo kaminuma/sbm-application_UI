@@ -125,6 +125,13 @@ export default {
   font-weight: 600;
 }
 
+.v-theme--dark .privacy-updated-date {
+  color: #cccccc;
+  text-align: center;
+  margin-bottom: 3rem;
+  font-weight: 600;
+}
+
 .privacy-section {
   background-color: white;
   padding: 2rem;

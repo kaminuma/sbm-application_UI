@@ -407,10 +407,16 @@ export default {
 </script>
 
 <style scoped>
-.ai-analysis-container {
+.v-theme--light .ai-analysis-container {
   padding: 16px 0;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.v-theme--dark .ai-analysis-container {
+  padding: 16px 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-background)) 100%);
 }
 
 .page-header {
@@ -418,10 +424,21 @@ export default {
   margin-bottom: 24px;
 }
 
-.page-title {
+.v-theme--light .page-title {
   font-size: 2rem;
   font-weight: 600;
   color: #2c3e50;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.v-theme--dark .page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffffff;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -433,8 +450,15 @@ export default {
   font-size: 2.2rem !important;
 }
 
-.page-description {
+.v-theme--light .page-description {
   color: #5a6c7d;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.v-theme--dark .page-description {
+  color: #cccccc;
   font-size: 1.1rem;
   line-height: 1.5;
   margin: 0;
@@ -500,8 +524,14 @@ export default {
   font-weight: 600 !important;
 }
 
-.analysis-content {
+.v-theme--light .analysis-content {
   background: white;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.v-theme--dark .analysis-content {
+  background: rgb(var(--v-theme-surface));
   border-radius: 8px;
   padding: 20px;
 }
@@ -514,7 +544,7 @@ export default {
   margin-bottom: 0;
 }
 
-.insight-title {
+.v-theme--light .insight-title {
   font-size: 1.1rem;
   font-weight: 600;
   color: #2c3e50;
@@ -523,8 +553,25 @@ export default {
   align-items: center;
 }
 
-.insight-text {
+.v-theme--dark .insight-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.v-theme--light .insight-text {
   color: #34495e;
+  line-height: 1.6;
+  font-size: 1rem;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.v-theme--dark .insight-text {
+  color: #cccccc;
   line-height: 1.6;
   font-size: 1rem;
   margin: 0;
@@ -556,8 +603,16 @@ export default {
   font-weight: 600 !important;
 }
 
-.error-text {
+.v-theme--light .error-text {
   background: white;
+  border-radius: 8px;
+  padding: 16px;
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+.v-theme--dark .error-text {
+  background: rgb(var(--v-theme-surface));
   border-radius: 8px;
   padding: 16px;
   color: #e74c3c;
