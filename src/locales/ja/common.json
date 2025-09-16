@@ -1,0 +1,14 @@
+{
+    "button": {
+      "submit": "送信",
+      "cancel": "キャンセル"
+    },
+    "nav": {
+      "home": "ホーム",
+      "settings": "設定"
+    },
+    "auth": {
+      "login": "ログイン",
+      "logout": "ログアウト"
+    }
+  }
