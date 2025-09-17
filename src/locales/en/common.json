@@ -1,0 +1,14 @@
+{
+    "button": {
+      "submit": "Submit",
+      "cancel": "Cancel"
+    },
+    "nav": {
+      "home": "Home",
+      "settings": "Settings"
+    },
+    "auth": {
+      "login": "Login",
+      "logout": "Logout"
+    }
+  }
