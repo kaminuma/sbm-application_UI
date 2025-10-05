@@ -1,6 +1,7 @@
 import { apiClient } from "../api/interceptor";
 import { saveAuthToken, setAuthToken } from "./authUtils";
 import router from "../router"; // プロジェクト構成に合わせて調整
+import { saveAuthTokens } from "./authUtils";
 
 // 403ステータス返却時のレスポンスインターセプター
 apiClient.interceptors.response.use(
@@ -56,7 +57,7 @@ const apiFacade = {
     try {
       const response = await apiClient.post("/auth/login", credentials);
       if (response.status === 200) {
-        saveAuthToken(response.data.token);
+        saveAuthTokens(response.data.token, response.data.refreshToken);
         return response.data.userId || response.data.user_id; // ユーザーIDを返す
       } else {
         throw new Error("Login failed");

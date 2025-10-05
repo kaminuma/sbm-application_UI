@@ -108,22 +108,30 @@ export default {
 
         const data = await response.json();
 
-        if (data.token && data.userId) {
-          // トークンをローカルストレージに保存
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('userId', data.userId);
-          
-          // Vuexストアを更新
-          await this.login({
-            token: data.token,
-            userId: data.userId
-          });
-          
-          // スケジュールページへリダイレクト
-          this.$router.push('/schedule');
-        } else {
-          throw new Error('無効なレスポンス');
+        // レスポンスデータの検証
+        if (!data.token || !data.refreshToken || !data.userId) {
+          throw new Error('無効なレスポンス: 必要なトークンまたはユーザー情報が不足しています');
         }
+
+        // JWT形式の基本的な検証
+        const validateTokenFormat = (token) => {
+          const parts = token.split('.');
+          return parts.length === 3;
+        };
+
+        if (!validateTokenFormat(data.token)) {
+          throw new Error('無効なトークン形式です');
+        }
+
+        // Vuexストアを更新（両方のトークンを含む）
+        await this.login({
+          token: data.token,
+          refreshToken: data.refreshToken,
+          userId: data.userId
+        });
+
+        // スケジュールページへリダイレクト
+        this.$router.push('/schedule');
       } catch (err) {
         console.error('OAuth callback error:', err);
         this.showError(err.message || 'ログイン処理でエラーが発生しました');
