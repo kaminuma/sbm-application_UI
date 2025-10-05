@@ -1,11 +1,14 @@
 import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import { THEME_CONFIG, isThemeEnabled } from "../config/theme";
+import { saveAuthTokens, getRefreshToken, clearAuthTokens } from "../services/authUtils";
+import logger from "../utils/logger";
 
 export default createStore({
   state: {
     isAuthenticated: false, // 認証状態を管理
     userId: null, // ユーザーIDを格納
+    refreshToken: null, // リフレッシュトークンを格納
     loading: false, // アプリ全体のローディング状態
     error: null, // グローバルエラーメッセージ
     theme: THEME_CONFIG.DEFAULT_THEME, // テーマ設定 ('light' または 'dark')
@@ -16,6 +19,12 @@ export default createStore({
     },
     setUserId(state, userId) {
       state.userId = userId; // userId を保存
+    },
+    setRefreshToken(state, refreshToken) {
+      state.refreshToken = refreshToken;
+    },
+    clearRefreshToken(state) {
+      state.refreshToken = null;
     },
     setLoading(state, isLoading) {
       state.loading = isLoading; // ローディング状態を更新
@@ -35,7 +44,7 @@ export default createStore({
           document.documentElement.setAttribute('data-theme', theme);
         }
       } else {
-        console.warn(`Theme "${theme}" is not enabled in configuration`);
+        logger.warn(`Theme "${theme}" is not enabled in configuration`);
       }
     },
   },
@@ -44,25 +53,29 @@ export default createStore({
       try {
         commit("setLoading", true);
         commit("clearError");
-        
-        // payloadがオブジェクトの場合（OAuth2ログイン）とuserIdのみの場合（通常ログイン）を処理
-        let userId;
+
+        let userId, token, refreshToken;
         if (typeof payload === 'object' && payload !== null) {
-          // OAuth2ログインの場合: { token, userId }
+          // OAuth2またはリフレッシュトークン対応ログイン
           userId = payload.userId;
-          console.log('OAuth2 login - token and userId received:', payload);
+          token = payload.token;
+          refreshToken = payload.refreshToken;
         } else {
           // 通常ログインの場合: userIdのみ
           userId = payload;
-          console.log('Regular login - userId received:', userId);
         }
-        
-        commit("setAuthentication", true); // ログイン時に認証状態を true に設定
-        commit("setUserId", userId); // 受け取った userId をストアに保存
+
+        commit("setAuthentication", true);
+        commit("setUserId", userId);
+
+        if (token && refreshToken) {
+          commit("setRefreshToken", refreshToken);
+          // authUtilsで保存
+          saveAuthTokens(token, refreshToken);
+        }
       } catch (error) {
-        commit("setError", error.message || "ログインに失敗しました"); 
-        console.error("Error in login action:", error);
-        throw error; // エラーを再スロー
+        commit("setError", error.message || "ログインに失敗しました");
+        throw error;
       } finally {
         commit("setLoading", false);
       }
@@ -72,37 +85,56 @@ export default createStore({
         commit("setLoading", true);
         commit("clearError");
         
-        // ユーザーデータの形式をログに出力
-        console.log('Vuex register action - userData:', userData);
+        // ユーザー登録処理開始
+        logger.debug('Starting user registration');
         
         // userIdが明示的に存在する場合のみ認証状態を更新
         if (userData && userData.userId) {
           commit("setAuthentication", true);
           commit("setUserId", userData.userId);
-          console.log('ユーザー登録完了 - userIdを設定:', userData.userId);
+          logger.info('User registration completed successfully');
         } else {
-          console.warn('register action: userIdが見つかりません');
+          logger.warn('User registration: userId not found in response');
           return false; // 登録は成功したが自動ログインはしない
         }
         
         return true; // 登録・ログイン完了
       } catch (error) {
         commit("setError", error.message || "新規登録に失敗しました");
-        console.error("Error in register action:", error);
+        logger.error("Registration error:", error.message);
         throw error;
       } finally {
         commit("setLoading", false);
       }
     },
-    logout({ commit }) {
-      commit("setAuthentication", false); // ログアウト時に認証状態を false に設定
-      commit("setUserId", null); // ログアウト時に userId を null に設定
-      commit("clearError");
-      
-      // ローカルストレージからトークンとユーザーIDを削除
-      localStorage.removeItem('token');
-      localStorage.removeItem('userId');
-      console.log('Logout - token and userId removed from localStorage');
+    async logout({ commit }) {
+      try {
+        const refreshToken = getRefreshToken();
+
+        if (refreshToken) {
+          // サーバーにログアウト通知（エラーは無視）
+          try {
+            await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ refreshToken })
+            });
+          } catch (error) {
+            logger.warn('Server logout failed:', error.message);
+          }
+        }
+
+        // クライアント側クリーンアップ
+        commit("setAuthentication", false);
+        commit("setUserId", null);
+        commit("clearRefreshToken");
+        commit("clearError");
+        clearAuthTokens();
+      } catch (error) {
+        logger.error('Logout error:', error.message);
+      }
     },
     clearError({ commit }) {
       commit("clearError");
@@ -113,7 +145,7 @@ export default createStore({
         commit('setTheme', newTheme);
         return true;
       } else {
-        console.warn(`toggleTheme: Attempted to set invalid theme "${newTheme}"`);
+        logger.warn(`Attempted to set invalid theme: ${newTheme}`);
         return false;
       }
     },
@@ -133,7 +165,7 @@ export default createStore({
           savedTheme = parsed?.theme || null;
         }
       } catch (e) {
-        console.warn('Failed to parse stored theme data:', e);
+        logger.warn('Failed to parse stored theme data:', e.message);
         savedTheme = null;
       }
       
@@ -162,11 +194,12 @@ export default createStore({
     createPersistedState({
       key: "vuex-auth",
       storage: window.localStorage,
-      // デバッグ用に状態変化をログ
+      // 開発環境でのみ状態変化をログ
       subscriber: (store) => (handler) => {
         return store.subscribe((mutation, state) => {
-          console.log('[Vuex] Mutation:', mutation.type, 'with payload:', mutation.payload);
-          console.log('[Vuex] New auth state:', state.isAuthenticated);
+          logger.debug(`Vuex mutation: ${mutation.type}`, {
+            authState: state.isAuthenticated
+          });
           handler(mutation, state);
         });
       }

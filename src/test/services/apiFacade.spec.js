@@ -28,12 +28,13 @@ vi.mock('../../router', () => ({
 
 vi.mock('../../services/authUtils', () => ({
   saveAuthToken: vi.fn(),
+  saveAuthTokens: vi.fn(),
   setAuthToken: vi.fn()
 }))
 
 import apiFacade from '../../services/apiFacade'
 import { apiClient } from '../../api/interceptor'
-import { saveAuthToken } from '../../services/authUtils'
+import { saveAuthToken, saveAuthTokens } from '../../services/authUtils'
 
 describe('apiFacade.js ロジックテスト', () => {
   beforeEach(() => {
@@ -59,7 +60,7 @@ describe('apiFacade.js ロジックテスト', () => {
   it('login: 成功時にトークンが保存される', async () => {
     const username = 'testuser'
     const password = 'password123'
-    const responseData = { token: 'test-token', userId: 'user123' }
+    const responseData = { token: 'test-token', refreshToken: 'refresh-token', userId: 'user123' }
     
     apiClient.post.mockResolvedValue({ 
       status: 200, 
@@ -72,7 +73,8 @@ describe('apiFacade.js ロジックテスト', () => {
       username,
       password
     })
-    expect(saveAuthToken).toHaveBeenCalledWith('test-token')
+    expect(saveAuthTokens).toHaveBeenCalledWith('test-token', 'refresh-token')
+    expect(saveAuthToken).not.toHaveBeenCalled()
     expect(result).toEqual('user123')
   })
 

@@ -1,8 +1,8 @@
 import axios from "axios";
+import { refreshAccessToken } from "../services/authUtils";
+import logger from "../utils/logger";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // 例: http://localhost:8080/api/v1
-
-console.log('API Client initialized with base URL:', API_BASE_URL);
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -18,16 +18,14 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    // リクエストの詳細情報をログに出力
-    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, {
-      params: config.params,
-      headers: config.headers,
-      data: config.data
+    // リクエスト情報をログに出力（機密情報は除外）
+    logger.debug(`API Request: ${config.method?.toUpperCase()} ${config.url}`, {
+      params: config.params
     });
     return config;
   },
   (error) => {
-    console.error('APIリクエスト送信前のエラー:', error);
+    logger.error('API request error:', error.message);
     return Promise.reject(error);
   }
 );
@@ -35,42 +33,35 @@ apiClient.interceptors.request.use(
 // レスポンスインターセプター：すべてのレスポンス後に実行される
 apiClient.interceptors.response.use(
   (response) => {
-    // 成功時のレスポンス情報をログに出力
-    console.log(`[API Response] ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`, {
-      data: response.data
-    });
     return response;
   },
-  (error) => {
-    // エラー時の処理
+  async (error) => {
+    const originalRequest = error.config;
+
     if (error.response) {
-      console.error(`[API Error] ${error.response.status} ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
-        data: error.response.data,
-        headers: error.response.headers
-      });
-      
       // 401エラー（認証失敗）の場合
-      if (error.response.status === 401) {
-        // ログインエンドポイントへのリクエストの場合は、モーダルでエラー処理するためリダイレクトしない
-        const isLoginRequest = error.config?.url?.includes('/auth/login');
-        
-        if (!isLoginRequest) {
-          // ログイン以外の401エラーの場合のみ、トークンを削除してログインページへ
-          console.log('[Auth] Token invalid, clearing authentication and redirecting to login');
-          localStorage.removeItem('token');
-          localStorage.removeItem('userId');
-          // ページ全体をリロードしてVuexストアもリセット
-          window.location.href = '/';
-          return;
+      if (error.response.status === 401 && !originalRequest._retry) {
+        // ログインエンドポイントへのリクエストの場合は、リフレッシュを試行しない
+        const isLoginRequest = originalRequest?.url?.includes('/auth/login');
+        const isRefreshRequest = originalRequest?.url?.includes('/auth/refresh');
+
+        if (!isLoginRequest && !isRefreshRequest) {
+          originalRequest._retry = true;
+
+          try {
+            await refreshAccessToken();
+            return apiClient(originalRequest);
+          } catch (refreshError) {
+            // リフレッシュ失敗時はログインページへリダイレクト
+            window.location.href = '/';
+            return Promise.reject(refreshError);
+          }
         }
-        
-        // ログインリクエストの401エラーはそのまま伝播させて、AuthModalで処理する
-        console.log('[Auth] Login failed, error will be handled by AuthModal');
       }
     } else if (error.request) {
-      console.error('[API Error] Network error or no response:', error.request);
+      logger.error('Network error or no response');
     } else {
-      console.error('[API Error] Request setup error:', error.message);
+      logger.error('Request setup error:', error.message);
     }
     return Promise.reject(error);
   }

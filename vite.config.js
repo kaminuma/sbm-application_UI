@@ -9,6 +9,10 @@ export default defineConfig({
     },
   },
   envPrefix: 'VITE_',
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'vuex', 'axios'],
+    force: true
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -17,6 +21,6 @@ export default defineConfig({
     css: false,
     deps: {
       inline: ['vuetify']
-    }
+    },
   },
 });
