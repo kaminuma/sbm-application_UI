@@ -49,7 +49,8 @@
 import Header from "./components/Header.vue";
 import Sidebar from "./components/Sidebar.vue";
 import { mapActions, mapGetters } from "vuex";
-import { setAuthToken, clearAllAuthData } from "./services/authUtils";
+import { setAuthToken, clearAllAuthData, refreshAccessToken, getRefreshToken } from "./services/authUtils";
+import logger from "./utils/logger";
 
 export default {
   components: {
@@ -86,26 +87,54 @@ export default {
       this.updateThemeAttribute();
     }
   },
-  created() {
+  async created() {
+    // トークンベースで認証状態を初期化
     const token = localStorage.getItem("token");
-    console.log("LocalStorage token:", token);
-    console.log("Initial auth state:", this.$store.getters.isAuthenticated);
-    
+    const refreshToken = getRefreshToken();
+    const userId = localStorage.getItem("userId");
+
+    logger.debug("Initial auth check", { hasToken: !!token, hasRefreshToken: !!refreshToken, hasUserId: !!userId });
+
+    // まず、userIdを復元（Vuex永続化から除外されているため）
+    if (userId) {
+      this.$store.commit('setUserId', userId);
+    }
+
     if (token) {
-      this.setAuthentication(true); // Vuexに認証状態を設定
-      setAuthToken(); // Axiosにトークンを設定
+      // アクセストークンがある場合
+      this.setAuthentication(true);
+      setAuthToken();
+
+      // LPにいる場合はスケジュールページにリダイレクト
+      if (this.$route.name === 'LandingPage') {
+        this.$router.push('/schedule');
+      }
+    } else if (refreshToken) {
+      // アクセストークンはないがリフレッシュトークンがある場合
+      try {
+        logger.info("Attempting to refresh access token on app start");
+        await refreshAccessToken();
+        this.setAuthentication(true);
+        logger.info("Access token refreshed successfully");
+
+        // LPにいる場合はスケジュールページにリダイレクト
+        if (this.$route.name === 'LandingPage') {
+          this.$router.push('/schedule');
+        }
+      } catch (error) {
+        logger.warn("Failed to refresh token on app start:", error.message);
+        // リフレッシュ失敗時は認証状態をリセット
+        this.setAuthentication(false);
+        clearAllAuthData();
+      }
     } else {
-      // トークンがない場合は認証状態をリセット
+      // トークンが何もない場合は認証状態をリセット
       this.setAuthentication(false);
     }
-    
-    console.log("Current route:", this.$route.path);
-    console.log("Is landing page:", this.$route.name === 'LandingPage');
-    console.log("Auth state after check:", this.$store.getters.isAuthenticated);
-    
+
     // テーマ初期化（ダークモード無効化対応含む）
     this.$store.dispatch('initializeTheme');
-    
+
     // data-theme属性を設定
     this.updateThemeAttribute();
   },
