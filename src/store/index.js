@@ -194,6 +194,8 @@ export default createStore({
     createPersistedState({
       key: "vuex-auth",
       storage: window.localStorage,
+      // 永続化する項目を制限
+      paths: ['userId', 'theme', 'isAuthenticated'],
       // 開発環境でのみ状態変化をログ
       subscriber: (store) => (handler) => {
         return store.subscribe((mutation, state) => {

@@ -96,11 +96,19 @@ router.beforeEach((to, from, next) => {
   const isAuthenticated = store.getters.isAuthenticated;
   console.log(`[Router Guard] Navigating to: ${to.path}, Auth state: ${isAuthenticated}`);
 
-  // ルートパスへのアクセス時は常に認証状態に関わらずLandingPageコンポーネントを表示
+  // ルートパスへのアクセス時
   if (to.path === '/') {
-    console.log('[Router Guard] Always allowing access to landing page');
-    next();
-    return;
+    if (isAuthenticated) {
+      // 認証済みの場合はスケジュールページへリダイレクト
+      console.log('[Router Guard] Authenticated user accessing landing page, redirecting to schedule');
+      next('/schedule');
+      return;
+    } else {
+      // 未認証の場合はLPを表示
+      console.log('[Router Guard] Unauthenticated user, showing landing page');
+      next();
+      return;
+    }
   }
 
   // 認証が必要なルートに未認証でアクセス
@@ -109,14 +117,14 @@ router.beforeEach((to, from, next) => {
     next({ path: "/", query: { redirect: to.fullPath } }); // ランディングページへリダイレクト（リダイレクト先を保存）
     return;
   }
-  
-  // ゲスト専用ルート（ランディングページ、認証ページなど）に認証済みでアクセス
+
+  // ゲスト専用ルート（認証ページなど）に認証済みでアクセス
   if (to.matched.some((record) => record.meta.requiresGuest) && isAuthenticated) {
     console.log(`[Router Guard] Authenticated user accessing guest-only route: ${to.path}, redirecting to schedule`);
     next("/schedule"); // 認証済みならスケジュールページへ
     return;
   }
-  
+
   // それ以外はそのまま遷移
   console.log(`[Router Guard] Navigation allowed to: ${to.path}`);
   next();
