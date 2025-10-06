@@ -91,36 +91,23 @@ export default {
     // トークンベースで認証状態を初期化
     const token = localStorage.getItem("token");
     const refreshToken = getRefreshToken();
-    const userId = localStorage.getItem("userId");
 
-    logger.debug("Initial auth check", { hasToken: !!token, hasRefreshToken: !!refreshToken, hasUserId: !!userId });
-
-    // まず、userIdを復元（Vuex永続化から除外されているため）
-    if (userId) {
-      this.$store.commit('setUserId', userId);
-    }
+    logger.debug("Initial auth check", { hasToken: !!token, hasRefreshToken: !!refreshToken });
 
     if (token) {
       // アクセストークンがある場合
       this.setAuthentication(true);
       setAuthToken();
-
-      // LPにいる場合はスケジュールページにリダイレクト
-      if (this.$route.name === 'LandingPage') {
-        this.$router.push('/schedule');
-      }
     } else if (refreshToken) {
       // アクセストークンはないがリフレッシュトークンがある場合
+      // リフレッシュ中は認証状態を一時的にfalseに設定（router guardでのリダイレクトを防ぐ）
+      this.setAuthentication(false);
+
       try {
         logger.info("Attempting to refresh access token on app start");
         await refreshAccessToken();
         this.setAuthentication(true);
         logger.info("Access token refreshed successfully");
-
-        // LPにいる場合はスケジュールページにリダイレクト
-        if (this.$route.name === 'LandingPage') {
-          this.$router.push('/schedule');
-        }
       } catch (error) {
         logger.warn("Failed to refresh token on app start:", error.message);
         // リフレッシュ失敗時は認証状態をリセット

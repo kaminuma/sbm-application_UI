@@ -8,11 +8,11 @@
           <v-col cols="12" md="10" lg="8" class="text-center">
             <h1 class="hero-title">SBM<span class="highlight">アプリ</span></h1>
             <p class="hero-subtitle">
-              生活記録・日記アプリで、より良い毎日を
+              無料の生活記録アプリ・毎日の記録をAI分析
             </p>
             <p class="hero-description">
-              毎日の記録を簡単に。日々の活動、気分、スケジュールをデジタル日記、生活記録表として記録し、
-              データ分析で健康管理、メンタルヘルス、習慣化をサポートします。
+              毎日の記録を簡単に。生活記録表アプリとして日々の活動記録、気分、スケジュールをデジタル日記で管理。
+              AI分析で健康管理、メンタルヘルス、習慣化を無料でサポートします。
             </p>
             <div class="hero-actions">
               <v-btn
@@ -68,7 +68,7 @@
           <v-col cols="12" class="text-center">
             <h2 class="features-title">主な機能</h2>
             <p class="features-subtitle">
-              生活記録アプリ・生活記録表アプリとして実現できることをご紹介します
+              生活記録アプリ・毎日記録アプリとして実現できることをご紹介します
             </p>
           </v-col>
         </v-row>
@@ -105,23 +105,24 @@
         <v-row align="center">
           <v-col cols="12" md="6" order="2" order-md="1">
             <div class="text-content">
-              <h2 class="section-title">より良い生活習慣のために</h2>
+              <h2 class="section-title">AI分析を活用した生活記録アプリ</h2>
               <p class="section-description">
-                SBMアプリは生活記録・日常記録を視覚化し、あなたの健康的な生活習慣をサポートします。毎日の記録、行動記録から得られる洞察で、
+                SBMアプリは生活記録アプリ・毎日記録アプリとして、生活記録表・活動記録表を視覚化。
+                AIによる自動分析で健康的な生活習慣をサポートします。毎日の記録、行動記録から得られる洞察で、
                 より良いセルフマネジメントを実現しましょう。
               </p>
               <div class="feature-points">
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>シンプルな操作で毎日の記録を簡単に</span>
+                  <span>シンプルな操作で毎日の記録・生活記録を簡単に</span>
                 </div>
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>データに基づく生活改善・メンタルヘルス管理</span>
+                  <span>AI分析に基づく生活改善・メンタルヘルス管理</span>
                 </div>
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>カスタマイズ可能なレポート</span>
+                  <span>カスタマイズ可能なレポート機能</span>
                 </div>
               </div>
             </div>
@@ -129,7 +130,7 @@
           <v-col cols="12" md="6" order="1" order-md="2">
                 <v-img
                   src="/images/image.png"
-                  alt="生活記録アプリ 日記アプリ 毎日の記録 日常記録 デジタル日記 行動記録 習慣化 習慣記録 健康管理 スケジュール管理 分析 グラフ カレンダー"
+                  alt="無料 生活記録アプリ AI分析 毎日の記録 生活記録表アプリ 活動記録表 毎日記録アプリ 日記アプリ デジタル日記 行動記録 習慣化 健康管理 メンタルヘルス スケジュール管理 グラフ カレンダー"
                   class="second-demo-image"
                 ></v-img>
           </v-col>
@@ -144,8 +145,8 @@
           <v-col cols="12" md="8" class="text-center">
             <h2 class="cta-title">今すぐ生活記録を始めましょう</h2>
             <p class="cta-description">
-              無料でアカウントを作成して<br>
-              日記アプリでより良い生活習慣を築きませんか？
+              無料アカウントを作成して<br>
+              AIが毎日の記録を分析、より良い生活習慣を築きませんか？
             </p>
             <v-btn
               color="primary"
@@ -207,13 +208,13 @@ export default {
       features: [
         {
           icon: 'mdi-calendar-check',
-          title: '生活記録管理',
-          description: '日々の活動や生活の記録を簡単に管理。カレンダー表示で視覚的に把握できます。'
+          title: '毎日の記録を簡単管理',
+          description: '生活記録表・活動記録表として日々の記録を簡単に管理。カレンダー表示で毎日記録を視覚的に把握できます。'
         },
         {
           icon: 'mdi-chart-line',
-          title: '分析機能',
-          description: '生活記録を分析し、健康や生産性向上に役立つインサイトを提供します。'
+          title: 'AI分析機能',
+          description: 'AIが生活記録を自動分析し、健康管理や生産性向上に役立つインサイトを提供。データに基づく改善提案を受け取れます。'
         },
         {
           icon: 'mdi-emoticon-happy',
