@@ -8,11 +8,11 @@
           <v-col cols="12" md="10" lg="8" class="text-center">
             <h1 class="hero-title">SBM<span class="highlight">アプリ</span></h1>
             <p class="hero-subtitle">
-              無料の生活記録アプリ・毎日の記録をAI分析
+              毎日の記録が、あなたの未来を変える
             </p>
             <p class="hero-description">
-              毎日の記録を簡単に。生活記録表アプリとして日々の活動記録、気分、スケジュールをデジタル日記で管理。
-              AI分析で健康管理、メンタルヘルス、習慣化を無料でサポートします。
+              生活記録表をデジタル化。AIが毎日の記録を分析し、<br>
+              あなたらしい生活習慣を発見します。無料で始める、新しい生活管理。
             </p>
             <div class="hero-actions">
               <v-btn
@@ -66,9 +66,9 @@
       <v-container>
         <v-row justify="center" class="mb-8">
           <v-col cols="12" class="text-center">
-            <h2 class="features-title">主な機能</h2>
+            <h2 class="features-title">生活記録で、毎日がもっと豊かに</h2>
             <p class="features-subtitle">
-              生活記録アプリ・毎日記録アプリとして実現できることをご紹介します
+              生活記録表として使える多彩な機能。健康管理からメンタルケアまで
             </p>
           </v-col>
         </v-row>
@@ -105,24 +105,23 @@
         <v-row align="center">
           <v-col cols="12" md="6" order="2" order-md="1">
             <div class="text-content">
-              <h2 class="section-title">AI分析を活用した生活記録アプリ</h2>
+              <h2 class="section-title">生活記録表として、メンタルケアまで</h2>
               <p class="section-description">
-                SBMアプリは生活記録アプリ・毎日記録アプリとして、生活記録表・活動記録表を視覚化。
-                AIによる自動分析で健康的な生活習慣をサポートします。毎日の記録、行動記録から得られる洞察で、
-                より良いセルフマネジメントを実現しましょう。
+                毎日の生活記録をAIが分析。心と体の健康管理、<br>
+                メンタルヘルスケアにも役立つ生活記録表アプリです。
               </p>
               <div class="feature-points">
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>シンプルな操作で毎日の記録・生活記録を簡単に</span>
+                  <span>シンプルな操作で、毎日の記録を簡単に</span>
                 </div>
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>AI分析に基づく生活改善・メンタルヘルス管理</span>
+                  <span>AIが見つける、あなたの生活パターン</span>
                 </div>
                 <div class="feature-point">
                   <v-icon color="primary" class="mr-2">mdi-check-circle</v-icon>
-                  <span>カスタマイズ可能なレポート機能</span>
+                  <span>見やすいグラフで、変化が実感できる</span>
                 </div>
               </div>
             </div>
@@ -130,7 +129,7 @@
           <v-col cols="12" md="6" order="1" order-md="2">
                 <v-img
                   src="/images/image.png"
-                  alt="無料 生活記録アプリ AI分析 毎日の記録 生活記録表アプリ 活動記録表 毎日記録アプリ 日記アプリ デジタル日記 行動記録 習慣化 健康管理 メンタルヘルス スケジュール管理 グラフ カレンダー"
+                  alt="SBMアプリの生活記録画面とAI分析グラフ"
                   class="second-demo-image"
                 ></v-img>
           </v-col>
@@ -143,10 +142,10 @@
       <v-container>
         <v-row justify="center">
           <v-col cols="12" md="8" class="text-center">
-            <h2 class="cta-title">今すぐ生活記録を始めましょう</h2>
+            <h2 class="cta-title">理想の生活習慣、ここから始まる</h2>
             <p class="cta-description">
-              無料アカウントを作成して<br>
-              AIが毎日の記録を分析、より良い生活習慣を築きませんか？
+              無料で今すぐスタート。<br>
+              あなたの毎日が、もっと輝く。
             </p>
             <v-btn
               color="primary"
@@ -208,29 +207,29 @@ export default {
       features: [
         {
           icon: 'mdi-calendar-check',
-          title: '毎日の記録を簡単管理',
-          description: '生活記録表・活動記録表として日々の記録を簡単に管理。カレンダー表示で毎日記録を視覚的に把握できます。'
+          title: 'カレンダーで見える化',
+          description: '日々の活動をカレンダーに記録。一目で生活のリズムが分かり、習慣化をサポートします。'
         },
         {
           icon: 'mdi-chart-line',
-          title: 'AI分析機能',
-          description: 'AIが生活記録を自動分析し、健康管理や生産性向上に役立つインサイトを提供。データに基づく改善提案を受け取れます。'
+          title: 'AIが自動で分析',
+          description: 'あなたの記録をAIが分析。睡眠、運動、気分の関係性など、見えなかったパターンを発見できます。'
         },
         {
           icon: 'mdi-emoticon-happy',
-          title: '気分記録機能',
-          description: '毎日の気分を簡単に登録し、過去の傾向を振り返りやすくする機能です。'
+          title: '気分の変化を追跡',
+          description: '毎日の気分を記録して、心の健康を見守ります。ストレスの原因も見つけやすくなります。'
         },
         {
           icon: 'mdi-heart-pulse',
-          title: 'メンタルヘルスサポート',
-          description: '生活記録表としても活用可能。メンタル不調時の生活リズムの管理や復職準備にも対応。'
+          title: 'メンタルケアにも',
+          description: '生活リズムの管理で、心の健康をサポート。復職準備や体調管理にも役立ちます。'
         },
-        {
-          icon: 'mdi-bell-outline',
-          title: 'リマインダー',
-          description: '重要なタスクや記録の入力を忘れないよう、リマインダーを設定できます。'
-        },
+        // {
+        //   icon: 'mdi-bell-outline',
+        //   title: 'リマインダー',
+        //   description: '重要なタスクや記録の入力を忘れないよう、リマインダーを設定できます。'
+        // },
         {
           icon: 'mdi-lock-outline',
           title: 'セキュアな保存',
