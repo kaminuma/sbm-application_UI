@@ -106,8 +106,17 @@ export default {
       try {
         logger.info("Attempting to refresh access token on app start");
         await refreshAccessToken();
-        this.setAuthentication(true);
-        logger.info("Access token refreshed successfully");
+
+        // リフレッシュ成功後、実際にトークンが保存されたか確認
+        const newToken = localStorage.getItem("token");
+        if (newToken) {
+          this.setAuthentication(true);
+          logger.info("Access token refreshed successfully");
+        } else {
+          this.setAuthentication(false);
+          logger.warn("Access token refresh did not yield a valid token");
+          clearAllAuthData();
+        }
       } catch (error) {
         logger.warn("Failed to refresh token on app start:", error.message);
         // リフレッシュ失敗時は認証状態をリセット
