@@ -11,8 +11,8 @@
               毎日の記録が、あなたの未来を変える
             </p>
             <p class="hero-description">
-              生活記録表をデジタル化。AIが毎日の記録を分析し、<br>
-              あなたらしい生活習慣を発見します。無料で始める、新しい生活管理。
+              生活記録表をデジタル化。AIが毎日の記録を分析し、あなたらしい生活習慣を発見します。<br>
+              無料で始める、新しい生活管理。
             </p>
             <div class="hero-actions">
               <v-btn
@@ -107,8 +107,7 @@
             <div class="text-content">
               <h2 class="section-title">生活記録表として、メンタルケアまで</h2>
               <p class="section-description">
-                毎日の生活記録をAIが分析。心と体の健康管理、<br>
-                メンタルヘルスケアにも役立つ生活記録表アプリです。
+                毎日の生活記録をAIが分析。心と体の健康管理、メンタルヘルスケアにも役立つ生活記録表アプリです。
               </p>
               <div class="feature-points">
                 <div class="feature-point">
@@ -144,8 +143,7 @@
           <v-col cols="12" md="8" class="text-center">
             <h2 class="cta-title">理想の生活習慣、ここから始まる</h2>
             <p class="cta-description">
-              無料で今すぐスタート。<br>
-              あなたの毎日が、もっと輝く。
+              無料で今すぐスタート。あなたの毎日が、もっと輝く。
             </p>
             <v-btn
               color="primary"
