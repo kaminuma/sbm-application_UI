@@ -4,6 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self';
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                   font-src 'self' https://fonts.gstatic.com data:;
+                   img-src 'self' data: https:;
+                   connect-src 'self' https://api.sbm-app.com http://localhost:8080 http://127.0.0.1:8080;
+                   frame-ancestors 'none';
+                   base-uri 'self';
+                   form-action 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
     <title>生活記録アプリ・日記アプリ - sbm-application | 毎日の記録を簡単に</title>
     <!-- SEO対策: 生活記録・生活管理・健康管理・記録アプリ・日記・スケジュール管理・分析・グラフ・カレンダー -->
     <meta name="description" content="生活記録アプリ・生活記録表アプリで毎日の記録を簡単に。健康管理・メンタルヘルス・習慣記録・日常記録・デジタル日記など、日々の生活をサポートするWebアプリです。無料で始められる生活記録。" />
